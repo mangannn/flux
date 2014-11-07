@@ -19,8 +19,8 @@ public:
 
 	float direction;
 
-	Big(Vector2f pos):
-		Object(pos, Vector2f(0,0), 70.0f, 20.0f),
+	Big(Vector2f pos, Color color):
+		Object(pos, Vector2f(0,0), 100.0f, 20.0f),
 
 		body_pos(0),
 		body_timer(0.0f),
@@ -32,9 +32,9 @@ public:
 
 		direction(0.0f)
 	{
-		if (!bodyTex.loadFromFile("media/images/clumsy_body.png")) {/*error...*/}
-		if (!eyesTex.loadFromFile("media/images/clumsy_eyes.png")) {/*error...*/}
-		if (!mouthTex.loadFromFile("media/images/clumsy_mouth.png")) {/*error...*/}
+		if (!bodyTex.loadFromFile("media/images/clumsy/body.png")) {/*error...*/}
+		if (!eyesTex.loadFromFile("media/images/clumsy/eyes.png")) {/*error...*/}
+		if (!mouthTex.loadFromFile("media/images/clumsy/mouth.png")) {/*error...*/}
 
 		bodyTex.setSmooth(true);
 		eyesTex.setSmooth(true);
@@ -42,7 +42,7 @@ public:
 
 		bodySize = Vector2i(745, 745);
 		eyesSize = Vector2i(455, 35);
-		mouthSize = Vector2i(130, 40);
+		mouthSize = Vector2i(130, 50);
 
 		sf::Vector2f scale((radius * 2.0f) / (float)bodySize.x, (radius * 2.0f) / (float)bodySize.y);
 
@@ -54,13 +54,17 @@ public:
 
 		eyes.setTextureRect(sf::IntRect(0, 0, eyesSize.x, eyesSize.y));
 		eyes.setTexture(eyesTex);
-		eyes.setScale(scale);
+		eyes.setScale(scale * 1.1f);
 		eyes.setOrigin(sf::Vector2f((float)eyesSize.x / 2.0f, (float)eyesSize.y / 2.0f) + Vector2f(0,80));
 
 		mouth.setTextureRect(sf::IntRect(0, 0, mouthSize.x, mouthSize.y));
 		mouth.setTexture(mouthTex);
-		mouth.setScale(scale);
+		mouth.setScale(scale * 1.4f);
 		mouth.setOrigin(sf::Vector2f((float)mouthSize.x / 2.0f, (float)mouthSize.y / 2.0f) + Vector2f(0,-150));
+
+
+		body.setColor(color);
+		mouth.setColor(Color(200, 100, 100));
 	}
 
 	virtual ~Big() {}
