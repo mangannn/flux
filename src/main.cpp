@@ -64,14 +64,17 @@ vector<Constraint *> *constraints;
 #include "Physics.hpp"
 
 
-int main(int argc, char* argv[]) {
+int main() {
 
 	srand(time(NULL));
 
-	RenderWindow *window;
+	sf::ContextSettings settings;
+	settings.antialiasingLevel = 3;
+
+	sf::RenderWindow *window;
 	bool fullscreen = false;
 
-	window = new RenderWindow(VideoMode(800, 620), "FLUX", sf::Style::Resize);
+	window = new RenderWindow(VideoMode(800, 620), "FLUX", sf::Style::Resize, settings);
 	window->setMouseCursorVisible(true);
 
 
@@ -100,13 +103,17 @@ int main(int argc, char* argv[]) {
 	world_shape.setOutlineColor(Color(0, 0, 0));
 
 
-	Player *p1 = new Player(Vector2f(0.0f, 0.0f), Color(200, 100, 0), -1);
-	Big *big = new Big(Vector2f(0.0f, 1.0f));
+	Player *p1 = new Player(Vector2f(0.0f, 0.0f), Color(200, 160, 80), -1);
+	Player *p2 = new Player(Vector2f(1.0f, 0.0f), Color(0, 100, 200), -2);
+
+	Big *big = new Big(Vector2f(0.0f, 1.0f), Color(160, 200, 80));
 
 	objects->push_back(p1);
+	objects->push_back(p2);
 	objects->push_back(big);
 
 	constraints->push_back(new MaxDistanceConstraint(p1, big, 60));
+	constraints->push_back(new MaxDistanceConstraint(p2, big, 60));
 
 	//objects->push_back(new Object(Vector2f(200, 200), Vector2f(0,0), 10, 25, Color(0,200,100)));
 	//constraints->push_back(new DistanceConstraint(objects->at(0), objects->at(1), 100));
@@ -160,9 +167,9 @@ int main(int argc, char* argv[]) {
 							delete window;
 
 							if (fullscreen) {
-								window = new RenderWindow(VideoMode(800, 620), "FLUX", sf::Style::Resize);
+								window = new RenderWindow(VideoMode(800, 620), "FLUX", sf::Style::Resize, settings);
 							} else {
-								window = new RenderWindow(VideoMode(), "FLUX", sf::Style::Fullscreen);
+								window = new RenderWindow(VideoMode(), "FLUX", sf::Style::Fullscreen, settings);
 							}
 							
 							window->setMouseCursorVisible(!fullscreen);
@@ -185,15 +192,18 @@ int main(int argc, char* argv[]) {
 		}
 
 		p1->handleInput(elapsedTime);
+		p2->handleInput(elapsedTime);
 
 		p1->update(elapsedTime);
+		p2->update(elapsedTime);
+
 		big->update(elapsedTime);
 
 
 		step(elapsedTime);
 
 
-		window->clear(Color(100,200,100));
+		window->clear(sf::Color(100, 200, 100));
 
 		window->draw(world_shape);
 

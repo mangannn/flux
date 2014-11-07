@@ -33,11 +33,9 @@ public:
 			cout << "X Axis: " << (sf::Joystick::hasAxis(input_handle, sf::Joystick::X) ? "yes" : "no") << endl;
 			cout << "Y Axis: " << (sf::Joystick::hasAxis(input_handle, sf::Joystick::Y) ? "yes" : "no") << endl;
 			cout << "Z Axis: " << (sf::Joystick::hasAxis(input_handle, sf::Joystick::Z) ? "yes" : "no") << endl;
-		} else {
-			input_handle = -1;
 		}
 
-		if (!texture.loadFromFile("media/images/player_running.png")) {/*error...*/}
+		if (!texture.loadFromFile("media/images/player/running.png")) {/*error...*/}
 		texture.setSmooth(true);
 
 		spriteSize = Vector2i(200, 300);
@@ -46,7 +44,7 @@ public:
 		sprite.setTexture(texture);
 		sprite.setOrigin(sf::Vector2f((float)spriteSize.x / 2.0f, (float)spriteSize.y / 2.0f));
 
-		//sprite.setColor(sf::Color(0, 255, 0)); // green
+		sprite.setColor(color);
 
 		sprite.setScale(sf::Vector2f((radius * 2.0f) / (float)spriteSize.x, (radius * 2.0f) / (float)spriteSize.x));
 	}
@@ -76,7 +74,7 @@ public:
 
 			v = Vector2f(x * a, y * a);
 
-		} else {
+		} else if (input_handle == -1) {
 
 			const float a = 300.0;
 
@@ -100,6 +98,34 @@ public:
 				v.y -= 1.0f;
 			}
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
+				v.y += 1.0f;
+			}
+
+			v *= a;
+		} else if (input_handle == -2) {
+
+			const float a = 300.0;
+
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z)) {
+				cout << "BAM!" << endl;
+			}
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::X)) {
+				cout << "PUH!" << endl;
+			}
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::C)) {
+				cout << "KLONK!" << endl;
+			}
+
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
+				v.x -= 1.0f;
+			}
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
+				v.x += 1.0f;
+			}
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
+				v.y -= 1.0f;
+			}
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
 				v.y += 1.0f;
 			}
 
