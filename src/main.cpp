@@ -22,6 +22,17 @@ float dot(Vector2f a, Vector2f b) {
 	return (a.x * b.x) + (a.y * b.y);
 }
 
+float angle(Vector2f v) {
+  if (v.x >= 0 && v.y < 0)
+    return 90 - atan(abs(v.y) / abs(v.x)) / 2 / M_PI * 360;
+  if (v.x >= 0 && v.y >= 0)
+    return 90 + atan(abs(v.y) / abs(v.x)) / 2 / M_PI * 360;
+  if (v.x < 0 && v.y >= 0)
+    return 270 - atan(abs(v.y) / abs(v.x)) / 2 / M_PI * 360;
+  if (v.x < 0 && v.y < 0)
+    return 270 + atan(abs(v.y) / abs(v.x)) / 2 / M_PI * 360;
+  return -1;
+}
 
 #define RANDOM_COLOR sf::Color(rand()%0xff,rand()%0xff,rand()%0xff)
 
@@ -81,7 +92,7 @@ int main(int argc, char* argv[]) {
 	constraints = new vector<Constraint *>();
 
 
-		
+
 	Vector2f center_of_world = Vector2f(0.0f, 0.0f);
 	CircleShape world_shape(WORLD_SIZE);
 	world_shape.setPosition(center_of_world - Vector2f(WORLD_SIZE, WORLD_SIZE));
@@ -105,8 +116,8 @@ int main(int argc, char* argv[]) {
 
 	/*for (int i = 0; i < 20; i++) {
 		objects->push_back(new Object(
-			Vector2f(RANDOM2 * WORLD_SIZE, RANDOM2 * WORLD_SIZE), Vector2f(0,0), 
-			4, 2, 
+			Vector2f(RANDOM2 * WORLD_SIZE, RANDOM2 * WORLD_SIZE), Vector2f(0,0),
+			4, 2,
 			RANDOM_COLOR));
 		//constraints->push_back(new HaloConstraint(objects->at(0), objects->back(), 50, 100));
 		constraints->push_back(new DistanceConstraint(objects->at(0), objects->back(), 20));
