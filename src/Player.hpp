@@ -135,7 +135,7 @@ public:
 
 		vel += (v * elapsedTime);
 
-		spriteDirection = angle(vel);
+		spriteDirection = periodValueBetween(spriteDirection, angle(vel), 0.1, 360);
 			/*if (size(vel) > 0.1) {
 				float d = ((180.0f / M_PI) * atan2(vel.y, vel.x)) - spriteDirection;
 				if (d > 180.0f) {
@@ -176,7 +176,7 @@ public:
 	}
 
 	virtual void draw(RenderWindow *window) {
-		sprite.setRotation(spriteDirection);
+		sprite.setRotation(spriteDirection + 90);
 
 		sprite.setPosition(pos);
 		window->draw(sprite);

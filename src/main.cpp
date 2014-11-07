@@ -23,15 +23,7 @@ float dot(Vector2f a, Vector2f b) {
 }
 
 float angle(Vector2f v) {
-  if (v.x >= 0 && v.y < 0)
-    return 90 - atan(aabs(v.y) / aabs(v.x)) / 2 / M_PI * 360;
-  if (v.x >= 0 && v.y >= 0)
-    return 90 + atan(aabs(v.y) / aabs(v.x)) / 2 / M_PI * 360;
-  if (v.x < 0 && v.y >= 0)
-    return 270 - atan(aabs(v.y) / aabs(v.x)) / 2 / M_PI * 360;
-  if (v.x < 0 && v.y < 0)
-    return 270 + atan(aabs(v.y) / aabs(v.x)) / 2 / M_PI * 360;
-  return -1;
+	return (atan2(v.y, v.x) * 180.0f) / M_PI;
 }
 
 float cutToPeriod(float v, float periodStart, float periodEnd) {
@@ -40,7 +32,7 @@ float cutToPeriod(float v, float periodStart, float periodEnd) {
 	return v;
 }
 
-float periodValueBetween(float angle, float target, float percent, float period = 360, bool defaultDirection = true) {
+float periodValueBetween(float angle, float target, float percent, float period = 360) {
 	target = cutToPeriod(target - angle, - period / 2, period / 2);
 	angle = cutToPeriod(angle, - period / 2, period / 2);
 	return cutToPeriod(target * percent + angle, 0, period);
