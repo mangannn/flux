@@ -24,13 +24,13 @@ float dot(Vector2f a, Vector2f b) {
 
 float angle(Vector2f v) {
   if (v.x >= 0 && v.y < 0)
-    return 90 - atan(abs(v.y) / abs(v.x)) / 2 / M_PI * 360;
+    return 90 - atan(aabs(v.y) / aabs(v.x)) / 2 / M_PI * 360;
   if (v.x >= 0 && v.y >= 0)
-    return 90 + atan(abs(v.y) / abs(v.x)) / 2 / M_PI * 360;
+    return 90 + atan(aabs(v.y) / aabs(v.x)) / 2 / M_PI * 360;
   if (v.x < 0 && v.y >= 0)
-    return 270 - atan(abs(v.y) / abs(v.x)) / 2 / M_PI * 360;
+    return 270 - atan(aabs(v.y) / aabs(v.x)) / 2 / M_PI * 360;
   if (v.x < 0 && v.y < 0)
-    return 270 + atan(abs(v.y) / abs(v.x)) / 2 / M_PI * 360;
+    return 270 + atan(aabs(v.y) / aabs(v.x)) / 2 / M_PI * 360;
   return -1;
 }
 

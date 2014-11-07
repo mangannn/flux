@@ -28,7 +28,7 @@ public:
 
 		if ((input_handle >= 0 && input_handle < 8) && sf::Joystick::isConnected(input_handle)) {
 
-			cout << "Joystick: " << input_handle << endl; 
+			cout << "Joystick: " << input_handle << endl;
 			cout << "Button Count: " << sf::Joystick::getButtonCount(input_handle) << endl;
 			cout << "X Axis: " << (sf::Joystick::hasAxis(input_handle, sf::Joystick::X) ? "yes" : "no") << endl;
 			cout << "Y Axis: " << (sf::Joystick::hasAxis(input_handle, sf::Joystick::Y) ? "yes" : "no") << endl;
@@ -48,7 +48,7 @@ public:
 
 		//sprite.setColor(sf::Color(0, 255, 0)); // green
 
-		sprite.setScale(sf::Vector2f((radius * 2.0f) / (float)spriteSize.x, (radius * 2.0f) / (float)spriteSize.y));
+		sprite.setScale(sf::Vector2f((radius * 2.0f) / (float)spriteSize.x, (radius * 2.0f) / (float)spriteSize.x));
 	}
 
 	virtual ~Player() {}
@@ -91,16 +91,16 @@ public:
 			}
 
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
-				v.x -= 1;
+				v.x -= .1;
 			}
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
-				v.x += 1;
+				v.x += .1;
 			}
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
-				v.y -= 1;
+				v.y -= .1;
 			}
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
-				v.y += 1;
+				v.y += .1;
 			}
 
 			v *= a;
@@ -148,8 +148,7 @@ public:
 	}
 
 	virtual void draw(RenderWindow *window) {
-
-		sprite.setRotation(direction + 90.0f);
+		sprite.setRotation((sprite.getRotation() + angle(vel)) / 2);
 
 		sprite.setPosition(pos);
 		window->draw(sprite);
