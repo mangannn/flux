@@ -34,6 +34,24 @@ float angle(Vector2f v) {
   return -1;
 }
 
+float cutToPeriod(float v, float periodStart, float periodEnd) {
+	while (v >= periodEnd) v -= periodEnd - periodStart;
+	while (v < periodStart) v += periodEnd - periodStart;
+	return v;
+}
+
+float periodValueBetween(float angle, float target, float percent, float period = 360, bool defaultDirection = true) {
+	angle = cutToPeriod(angle, 0, period);
+	target = cutToPeriod(target, 0, period);
+	if (angle == target) return angle;
+	angle -= target;
+	angle = cutToPeriod(angle, 0, period);
+	if (angle < 180 || (angle == 180 && defaultDirection))  return cutToPeriod(angle * (1 - percent) + target, 0, period);
+	return cutToPeriod((angle - period) * (1 - percent) + target, 0, period);
+}
+
+
+
 #define RANDOM_COLOR sf::Color(rand()%0xff,rand()%0xff,rand()%0xff)
 
 #define RANDOM ((float)rand()/(float)RAND_MAX)
@@ -177,7 +195,7 @@ int main() {
 							} else {
 								window = new RenderWindow(VideoMode(), "FLUX", sf::Style::Fullscreen, settings);
 							}
-							
+
 							window->setMouseCursorVisible(!fullscreen);
 							view.setSize(Vector2f((float)window->getSize().x / (float)window->getSize().y, 1.0f) * WORLD_SCALE);
 							window->setView(view);

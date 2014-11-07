@@ -195,7 +195,7 @@ public:
 	}
 
 	virtual void draw(RenderWindow *window) {
-		sprite.setRotation(angle(vel));//(sprite.getRotation() + angle(vel)) / 2);
+		sprite.setRotation(angle(vel));//0 + periodValueBetween(sprite.getRotation(), angle(vel), 0.5));//(sprite.getRotation() + angle(vel)) / 2);
 
 		sprite.setPosition(pos);
 		window->draw(sprite);
