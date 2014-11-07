@@ -51,16 +51,12 @@ public:
 			float b_u = dot(b->vel, normal);
 
 			if (a_u - b_u > 0.0f) {
-				/*float a_v = ((a_u * (a->mass - b->mass)) + (2.0f * b->mass * b_u)) / (a->mass + b->mass);
-				float b_v = ((b_u * (b->mass - a->mass)) + (2.0f * a->mass * a_u)) / (a->mass + b->mass);
+				// inelastic collision
+				float a_v = ((a_u * a->mass) + (b_u * b->mass)) / (a->mass + b->mass);
+				float b_v = a_v;
 
 				a->vel += (normal * (a_v - a_u));
-				b->vel += (normal * (b_v - b_u));*/
-
-				float vel = ((a_u * a->mass) + (b_u * b->mass)) / (a->mass + b->mass);
-
-				a->vel += (normal * (vel - a_u));
-				b->vel += (normal * (vel - b_u));
+				b->vel += (normal * (b_v - b_u));
 			}
 		}
 	}
@@ -112,10 +108,12 @@ public:
 		float a_u = dot(a->vel, normal);
 		float b_u = dot(b->vel, normal);
 
-		float vel = ((a_u * a->mass) + (b_u * b->mass)) / (a->mass + b->mass);
+		// inelastic collision
+		float a_v = ((a_u * a->mass) + (b_u * b->mass)) / (a->mass + b->mass);
+		float b_v = a_v;
 
-		a->vel += (normal * (vel - a_u));
-		b->vel += (normal * (vel - b_u));
+		a->vel += (normal * (a_v - a_u));
+		b->vel += (normal * (b_v - b_u));
 	}
 
 
@@ -181,17 +179,16 @@ public:
 			float a_u = dot(a->vel, normal);
 			float b_u = dot(b->vel, normal);
 
-			/*float a_v = ((a_u * (a->mass - b->mass)) + (2.0f * b->mass * b_u)) / (a->mass + b->mass);
-			float b_v = ((b_u * (b->mass - a->mass)) + (2.0f * a->mass * a_u)) / (a->mass + b->mass);
+			/*// elastic collision
+			float a_v = ((a_u * (a->mass - b->mass)) + (2.0f * b->mass * b_u)) / (a->mass + b->mass);
+			float b_v = ((b_u * (b->mass - a->mass)) + (2.0f * a->mass * a_u)) / (a->mass + b->mass);*/
 
+			// inelastic collision
+			float a_v = ((a_u * a->mass) + (b_u * b->mass)) / (a->mass + b->mass);
+			float b_v = a_v;
 
 			a->vel += (normal * (a_v - a_u));
-			b->vel += (normal * (b_v - b_u));*/
-
-			float vel = ((a_u * a->mass) + (b_u * b->mass)) / (a->mass + b->mass);
-
-			a->vel += (normal * (vel - a_u));
-			b->vel += (normal * (vel - b_u));
+			b->vel += (normal * (b_v - b_u));
 		}
 	}
 
