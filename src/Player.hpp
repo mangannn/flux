@@ -15,7 +15,7 @@ public:
 	int sprite_dir;
 	float timer;
 
-	float direction;
+	float spriteDirection;
 
 	Player(Vector2f pos, Color color, int input_handleParam):
 		Object(pos, Vector2f(0,0), 50.0f, 5.0f, color),
@@ -23,7 +23,7 @@ public:
 		sprite_pos(0),
 		sprite_dir(0),
 		timer(0.0f),
-		direction(0.0f)
+		spriteDirection(0.0f)
 	{
 
 		if ((input_handle >= 0 && input_handle < 8) && sf::Joystick::isConnected(input_handle)) {
@@ -132,24 +132,26 @@ public:
 			v *= a;
 		}
 
-		if (size(v) > 0.1) {
-			float d = ((180.0f / M_PI) * atan2(v.y, v.x)) - direction;
-			if (d > 180.0f) {
-				d -= 360.0f;
-			} else if (d < -180.0f) {
-				d += 360.0f;
-			}
-
-			const float a = 600.0f;
-
-			if (d < 0.0f) {
-				direction -= a * elapsedTime;
-			} else {
-				direction += a * elapsedTime;
-			}
-		}
 
 		vel += (v * elapsedTime);
+
+		spriteDirection = angle(vel);
+			/*if (size(vel) > 0.1) {
+				float d = ((180.0f / M_PI) * atan2(vel.y, vel.x)) - spriteDirection;
+				if (d > 180.0f) {
+					d -= 360.0f;
+				} else if (d < -180.0f) {
+					d += 360.0f;
+				}
+
+				const float a = 600.0f;
+
+				if (d < 0.0f) {
+					spriteDirection -= a * elapsedTime;
+				} else {
+					spriteDirection += a * elapsedTime;
+				}
+			}*/
 	}
 
 	void update(float elapsedTime) {
@@ -174,7 +176,7 @@ public:
 	}
 
 	virtual void draw(RenderWindow *window) {
-		sprite.setRotation(angle(vel));//0 + periodValueBetween(sprite.getRotation(), angle(vel), 0.5));//(sprite.getRotation() + angle(vel)) / 2);
+		sprite.setRotation(spriteDirection);
 
 		sprite.setPosition(pos);
 		window->draw(sprite);

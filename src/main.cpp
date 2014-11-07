@@ -41,13 +41,9 @@ float cutToPeriod(float v, float periodStart, float periodEnd) {
 }
 
 float periodValueBetween(float angle, float target, float percent, float period = 360, bool defaultDirection = true) {
-	angle = cutToPeriod(angle, 0, period);
-	target = cutToPeriod(target, 0, period);
-	if (angle == target) return angle;
-	angle -= target;
-	angle = cutToPeriod(angle, 0, period);
-	if (angle < 180 || (angle == 180 && defaultDirection))  return cutToPeriod(angle * (1 - percent) + target, 0, period);
-	return cutToPeriod((angle - period) * (1 - percent) + target, 0, period);
+	target = cutToPeriod(target - angle, - period / 2, period / 2);
+	angle = cutToPeriod(angle, - period / 2, period / 2);
+	return cutToPeriod(target * percent + angle, 0, period);
 }
 
 
