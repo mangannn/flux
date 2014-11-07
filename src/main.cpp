@@ -143,7 +143,18 @@ int main(int argc, char* argv[]) {
 						case sf::Keyboard::Escape: {
 							window->close();
 						} break;
-						case sf::Keyboard::F1: {
+						case sf::Keyboard::F2:
+						case sf::Keyboard::F3:
+						case sf::Keyboard::F4:
+						case sf::Keyboard::F5:
+						case sf::Keyboard::F6:
+						case sf::Keyboard::F7:
+						case sf::Keyboard::F8:
+						case sf::Keyboard::F9:
+						case sf::Keyboard::F10:
+						case sf::Keyboard::F11:
+						case sf::Keyboard::F12:
+						{
 
 							window->close();
 							delete window;

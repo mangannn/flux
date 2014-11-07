@@ -78,7 +78,7 @@ public:
 
 		} else {
 
-			const float a = 500.0;
+			const float a = 300.0;
 
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z)) {
 				cout << "BAM!" << endl;
@@ -91,16 +91,16 @@ public:
 			}
 
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
-				v.x -= .1;
+				v.x -= 1.0f;
 			}
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
-				v.x += .1;
+				v.x += 1.0f;
 			}
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
-				v.y -= .1;
+				v.y -= 1.0f;
 			}
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
-				v.y += .1;
+				v.y += 1.0f;
 			}
 
 			v *= a;

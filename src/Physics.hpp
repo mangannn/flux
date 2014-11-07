@@ -139,7 +139,7 @@ void update_positions(float elapsedTime) {
 
 		a->pos += (a->vel * elapsedTime);
 
-		const float friction = 10.0f;
+		const float friction = 30.0f;
 		a->vel *= 1.0f - ((friction / a->mass) * elapsedTime);
 	}
 }
