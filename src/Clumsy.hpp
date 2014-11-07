@@ -20,7 +20,7 @@ public:
 	float direction;
 
 	Clumsy(Vector2f pos, Color color):
-		Object(pos, Vector2f(0,0), 100.0f, 20.0f),
+		Object(pos, Vector2f(0,0), 20.0f, 1000.0f, 20.0f),
 
 		body_pos(0),
 		body_timer(0.0f),
@@ -54,13 +54,13 @@ public:
 
 		eyes.setTextureRect(sf::IntRect(0, 0, eyesSize.x, eyesSize.y));
 		eyes.setTexture(eyesTex);
-		eyes.setScale(scale * 1.1f);
-		eyes.setOrigin(sf::Vector2f((float)eyesSize.x / 2.0f, (float)eyesSize.y / 2.0f) + Vector2f(0,80));
+		eyes.setScale(scale * 1.0f);
+		eyes.setOrigin(sf::Vector2f((float)eyesSize.x / 2.0f, (float)eyesSize.y / 2.0f) + Vector2f(0,50));
 
 		mouth.setTextureRect(sf::IntRect(0, 0, mouthSize.x, mouthSize.y));
 		mouth.setTexture(mouthTex);
-		mouth.setScale(scale * 1.4f);
-		mouth.setOrigin(sf::Vector2f((float)mouthSize.x / 2.0f, (float)mouthSize.y / 2.0f) + Vector2f(0,-150));
+		mouth.setScale(scale * 1.0f);
+		mouth.setOrigin(sf::Vector2f((float)mouthSize.x / 2.0f, (float)mouthSize.y / 2.0f) + Vector2f(0,-190));
 
 
 		body.setColor(color);

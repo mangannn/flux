@@ -6,20 +6,25 @@ class Object {
 public:
 
 	Vector2f pos, vel;
-	float mass, radius;
+	float radius, mass, friction;
 
 	CircleShape shape;
 
 	Object(
 		Vector2f posParam, Vector2f velParam, 
-		float massParam, float radiusParam, 
+		float radiusParam, 
+		float massParam, 
+		float frictionParam = 50.0f,
 		Color colorParam = Color(0, 0, 0)
 		):
 
 		pos(posParam),
 		vel(velParam),
-		mass(massParam),
+
 		radius(radiusParam),
+		mass(massParam),
+		friction(frictionParam),
+
 		shape(radiusParam)
 	{
 		shape.setFillColor(colorParam);

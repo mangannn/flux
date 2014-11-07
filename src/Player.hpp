@@ -13,14 +13,14 @@ public:
 
 	bool running;
 
-	int sprite_pos;
+	float sprite_pos;
 	int sprite_dir;
 	float timer;
 
-	float direction;
+	float spriteDirection;
 
 	Player(Vector2f pos, Color color, int input_handleParam):
-		Object(pos, Vector2f(0,0), 50.0f, 5.0f, color),
+		Object(pos, Vector2f(0,0), 5.0f, 50.0f, 100.0f, color),
 
 		input_handle(input_handleParam),
 
@@ -28,7 +28,7 @@ public:
 		sprite_pos(0),
 		sprite_dir(0),
 		timer(0.0f),
-		direction(0.0f)
+		spriteDirection(0.0f)
 	{
 
 		if ((input_handle >= 0 && input_handle < 8) && sf::Joystick::isConnected(input_handle)) {
@@ -63,9 +63,9 @@ public:
 
 		Vector2f v(0,0);
 
-		if (input_handle >= 0) {
+		const float a = 800.0;
 
-			const float a = 200.0;
+		if (input_handle >= 0) {
 
 			if (sf::Joystick::isButtonPressed(input_handle, 0)) {
 				cout << "BAM!" << endl;
@@ -83,8 +83,6 @@ public:
 			v = Vector2f(x * a, y * a);
 
 		} else if (input_handle == -1) {
-
-			const float a = 300.0;
 
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z)) {
 				cout << "BAM!" << endl;
@@ -111,19 +109,6 @@ public:
 
 			v *= a;
 		} else if (input_handle == -2) {
-
-			const float a = 300.0;
-
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z)) {
-				cout << "BAM!" << endl;
-			}
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::X)) {
-				cout << "PUH!" << endl;
-			}
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::C)) {
-				cout << "KLONK!" << endl;
-			}
-
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
 				v.x -= 1.0f;
 			}
@@ -138,65 +123,95 @@ public:
 			}
 
 			v *= a;
-		}
-
-		if (size(v) > 0.1) {
-			float d = ((180.0f / M_PI) * atan2(v.y, v.x)) - direction;
-			if (d > 180.0f) {
-				d -= 360.0f;
-			} else if (d < -180.0f) {
-				d += 360.0f;
+		} else if (input_handle == -3) {
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::F)) {
+				v.x -= 1.0f;
+			}
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::H)) {
+				v.x += 1.0f;
+			}
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::T)) {
+				v.y -= 1.0f;
+			}
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::G)) {
+				v.y += 1.0f;
 			}
 
-			const float a = 600.0f;
-
-			if (d < 0.0f) {
-				direction -= a * elapsedTime;
-			} else {
-				direction += a * elapsedTime;
+			v *= a;
+		} else if (input_handle == -4) {
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::J)) {
+				v.x -= 1.0f;
+			}
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::L)) {
+				v.x += 1.0f;
+			}
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::I)) {
+				v.y -= 1.0f;
+			}
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::K)) {
+				v.y += 1.0f;
 			}
 
-			running = true;
-			sprite.setTexture(runningTex);
-		} else {
-			running = false;
-			sprite.setTexture(standingTex);
+			v *= a;
 		}
 
 		vel += (v * elapsedTime);
 	}
 
 	virtual void update(float elapsedTime) {
-		timer += elapsedTime;
+
+
+		float current_velocity = size(vel);
+
+		if (current_velocity < 5.0f) {
+			vel = Vector2f(0,0);
+			running = false;
+		} else {
+			running = true;
+		}
 
 		if (running) {
-			if (timer > 0.1f) {
 
-				timer -= 0.1f;
+			spriteDirection = periodValueBetween(spriteDirection, angle(vel), 10.0f * elapsedTime);
 
-				sprite_pos++;
-				if (sprite_pos >= 8) {
-					sprite_pos = 0;
+			int pre = (int)sprite_pos;
+			sprite_pos += current_velocity * elapsedTime * 0.3f;
+			int post = (int)sprite_pos;
+
+			if (post != pre) {
+
+				sprite.setTexture(runningTex);
+
+		//sprite.setPosition(pos);
+		//sprite.setRotation(spriteDirection + 90);
+
+				if (post >= 8.0f) {
+					post = 0;
+					sprite_pos = 0.0f;
 				}
-				sprite.setTextureRect(sf::IntRect(spriteSize.x * sprite_pos, 0, spriteSize.x, spriteSize.y));
+				sprite.setTextureRect(sf::IntRect(spriteSize.x * post, 0, spriteSize.x, spriteSize.y));
 			}
 		} else {
-			if (timer > 0.1f) {
 
-				timer -= 0.1f;
+			timer += elapsedTime;
 
-				sprite_pos++;
-				if (sprite_pos >= 4) {
-					sprite_pos = 0;
+			if (timer > 0.25f) {
+
+				sprite.setTexture(standingTex);
+
+				timer -= 0.25f;
+
+				sprite_pos += 1.0f;
+				if (sprite_pos >= 4.0f) {
+					sprite_pos = 0.0f;
 				}
-				sprite.setTextureRect(sf::IntRect(spriteSize.x * sprite_pos, 0, spriteSize.x, spriteSize.y));
+				sprite.setTextureRect(sf::IntRect(spriteSize.x * (int)sprite_pos, 0, spriteSize.x, spriteSize.y));
 			}
 		}
 	}
 
 	virtual void draw(RenderWindow *window) {
-		sprite.setRotation(angle(vel));//0 + periodValueBetween(sprite.getRotation(), angle(vel), 0.5));//(sprite.getRotation() + angle(vel)) / 2);
-
+		sprite.setRotation(spriteDirection + 90);
 		sprite.setPosition(pos);
 		window->draw(sprite);
 	}

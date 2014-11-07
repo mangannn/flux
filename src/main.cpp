@@ -23,15 +23,7 @@ float dot(Vector2f a, Vector2f b) {
 }
 
 float angle(Vector2f v) {
-  if (v.x >= 0 && v.y < 0)
-    return 90 - atan(aabs(v.y) / aabs(v.x)) / 2 / M_PI * 360;
-  if (v.x >= 0 && v.y >= 0)
-    return 90 + atan(aabs(v.y) / aabs(v.x)) / 2 / M_PI * 360;
-  if (v.x < 0 && v.y >= 0)
-    return 270 - atan(aabs(v.y) / aabs(v.x)) / 2 / M_PI * 360;
-  if (v.x < 0 && v.y < 0)
-    return 270 + atan(aabs(v.y) / aabs(v.x)) / 2 / M_PI * 360;
-  return -1;
+	return (atan2(v.y, v.x) * 180.0f) / M_PI;
 }
 
 float cutToPeriod(float v, float periodStart, float periodEnd) {
@@ -40,14 +32,10 @@ float cutToPeriod(float v, float periodStart, float periodEnd) {
 	return v;
 }
 
-float periodValueBetween(float angle, float target, float percent, float period = 360, bool defaultDirection = true) {
-	angle = cutToPeriod(angle, 0, period);
-	target = cutToPeriod(target, 0, period);
-	if (angle == target) return angle;
-	angle -= target;
-	angle = cutToPeriod(angle, 0, period);
-	if (angle < 180 || (angle == 180 && defaultDirection))  return cutToPeriod(angle * (1 - percent) + target, 0, period);
-	return cutToPeriod((angle - period) * (1 - percent) + target, 0, period);
+float periodValueBetween(float angle, float target, float percent, float period = 360) {
+	target = cutToPeriod(target - angle, - period / 2, period / 2);
+	angle = cutToPeriod(angle, - period / 2, period / 2);
+	return cutToPeriod(target * percent + angle, 0, period);
 }
 
 
@@ -125,8 +113,12 @@ int main() {
 
 
 
-	players->push_back(new Player(Vector2f(-1.0f, 0.0f), Color(200, 160, 80), -1));
-	players->push_back(new Player(Vector2f(1.0f, 0.0f), Color(0, 100, 200), -2));
+	for (int i = 0; i < 10; i++) {
+		players->push_back(new Player(Vector2f(1.0f, 0.0f), Color(200, 160, 80), -1));
+		players->push_back(new Player(Vector2f(0.0f, 1.0f), Color(0, 100, 200), -2));
+		players->push_back(new Player(Vector2f(-1.0f, 0.0f), Color(150, 100, 200), -3));
+		players->push_back(new Player(Vector2f(0.0f, -1.0f), Color(40, 40, 40), -4));
+	}
 
 	for (unsigned int i = 0; i < players->size(); i++) {
 		objects->push_back(players->at(i));
@@ -134,10 +126,10 @@ int main() {
 
 	Clumsy *clumsy;
 
-	objects->push_back(clumsy = new Clumsy(Vector2f(0.0f, 1.0f), Color(160, 200, 80)));
+	objects->push_back(clumsy = new Clumsy(Vector2f(100.0f, 100.0f), Color(160, 200, 80)));
 
-	constraints->push_back(new MaxDistanceConstraint(players->at(0), clumsy, 60));
-	constraints->push_back(new MaxDistanceConstraint(players->at(1), clumsy, 60));
+	//constraints->push_back(new MaxDistanceConstraint(players->at(0), clumsy, 60));
+	//constraints->push_back(new MaxDistanceConstraint(players->at(1), clumsy, 60));
 
 	//objects->push_back(new Object(Vector2f(200, 200), Vector2f(0,0), 10, 25, Color(0,200,100)));
 	//constraints->push_back(new DistanceConstraint(objects->at(0), objects->at(1), 100));
