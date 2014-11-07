@@ -14,6 +14,11 @@ using namespace sf;
 float aabs(float a) {
 	return (a < 0.0 ? -a : a);
 }
+
+float frac(float x) {
+	return x - floor(x);
+}
+
 float size(Vector2f v) {
 	return sqrt((v.x * v.x) + (v.y * v.y));
 }
@@ -46,7 +51,8 @@ float periodValueBetween(float angle, float target, float percent, float period 
 #define RANDOM2 ((RANDOM * 2.0f) - 1.0f)
 
 
-
+sf::Texture standingTex, runningTex;
+	sf::Texture bodyTex, eyesTex, mouthTex;
 
 
 
@@ -105,6 +111,20 @@ int main() {
 	world_shape.setOutlineColor(Color(0, 0, 0));
 
 
+
+	if (!standingTex.loadFromFile("media/images/player/standing.png")) {/*error...*/}
+	standingTex.setSmooth(true);
+
+	if (!runningTex.loadFromFile("media/images/player/running.png")) {/*error...*/}
+	runningTex.setSmooth(true);
+
+	if (!bodyTex.loadFromFile("media/images/clumsy/body.png")) {/*error...*/}
+	if (!eyesTex.loadFromFile("media/images/clumsy/eyes.png")) {/*error...*/}
+	if (!mouthTex.loadFromFile("media/images/clumsy/mouth.png")) {/*error...*/}
+
+	bodyTex.setSmooth(true);
+	eyesTex.setSmooth(true);
+	mouthTex.setSmooth(true);
 
 	objects = new vector<Object *>();
 	constraints = new vector<Constraint *>();
