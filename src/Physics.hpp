@@ -39,7 +39,8 @@ void handle_collisions(float elapsedTime) {
 
 					float a_u = dot(a->vel, normal);
 					float b_u = dot(b->vel, normal);
-
+					
+					// elastic collision
 					float a_v = ((a_u * (a->mass - b->mass)) + (2.0f * b->mass * b_u)) / (a->mass + b->mass);
 					float b_v = ((b_u * (b->mass - a->mass)) + (2.0f * a->mass * a_u)) / (a->mass + b->mass);
 

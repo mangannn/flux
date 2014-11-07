@@ -58,13 +58,11 @@ int main(int argc, char* argv[]) {
 	srand(time(NULL));
 
 	RenderWindow *window;
+	bool fullscreen = false;
 
-	if (argc > 1 && argv[1][0] == '1') {
-		window = new RenderWindow(VideoMode(), "FLUX", sf::Style::Fullscreen);
-		window->setMouseCursorVisible(false);
-	} else {
-		window = new RenderWindow(VideoMode(800, 620), "FLUX", sf::Style::Resize);
-	}
+	window = new RenderWindow(VideoMode(800, 620), "FLUX", sf::Style::Resize);
+	window->setMouseCursorVisible(true);
+
 
 	sf::View view;
 	view.setCenter(Vector2f(0.0f, 0.0f));
@@ -135,7 +133,23 @@ int main(int argc, char* argv[]) {
 							window->close();
 						} break;
 						case sf::Keyboard::F1: {
-							cout << "suppose to toggle fullscreen" << endl;
+
+							window->close();
+							delete window;
+
+							if (fullscreen) {
+								window = new RenderWindow(VideoMode(800, 620), "FLUX", sf::Style::Resize);
+							} else {
+								window = new RenderWindow(VideoMode(), "FLUX", sf::Style::Fullscreen);
+							}
+							
+							window->setMouseCursorVisible(!fullscreen);
+							view.setSize(Vector2f((float)window->getSize().x / (float)window->getSize().y, 1.0f) * WORLD_SCALE);
+							window->setView(view);
+
+
+							fullscreen = !fullscreen;
+
 						} break;
 
 						case sf::Keyboard::Space: {
