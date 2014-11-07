@@ -7,9 +7,11 @@ public:
 
 	int input_handle;
 
-	sf::Texture texture;
+	sf::Texture standingTex, runningTex;
 	sf::Sprite sprite;
 	sf::Vector2i spriteSize;
+
+	bool running;
 
 	int sprite_pos;
 	int sprite_dir;
@@ -19,7 +21,10 @@ public:
 
 	Player(Vector2f pos, Color color, int input_handleParam):
 		Object(pos, Vector2f(0,0), 50.0f, 5.0f, color),
+
 		input_handle(input_handleParam),
+
+		running(false),
 		sprite_pos(0),
 		sprite_dir(0),
 		timer(0.0f),
@@ -35,13 +40,16 @@ public:
 			cout << "Z Axis: " << (sf::Joystick::hasAxis(input_handle, sf::Joystick::Z) ? "yes" : "no") << endl;
 		}
 
-		if (!texture.loadFromFile("media/images/player/running.png")) {/*error...*/}
-		texture.setSmooth(true);
+		if (!standingTex.loadFromFile("media/images/player/standing.png")) {/*error...*/}
+		standingTex.setSmooth(true);
+
+		if (!runningTex.loadFromFile("media/images/player/running.png")) {/*error...*/}
+		runningTex.setSmooth(true);
 
 		spriteSize = Vector2i(200, 300);
 
 		sprite.setTextureRect(sf::IntRect(0, 0, spriteSize.x, spriteSize.y));
-		sprite.setTexture(texture);
+		sprite.setTexture(standingTex);
 		sprite.setOrigin(sf::Vector2f((float)spriteSize.x / 2.0f, (float)spriteSize.y / 2.0f));
 
 		sprite.setColor(color);
@@ -147,29 +155,42 @@ public:
 			} else {
 				direction += a * elapsedTime;
 			}
+
+			running = true;
+			sprite.setTexture(runningTex);
+		} else {
+			running = false;
+			sprite.setTexture(standingTex);
 		}
 
 		vel += (v * elapsedTime);
 	}
 
-	void update(float elapsedTime) {
+	virtual void update(float elapsedTime) {
 		timer += elapsedTime;
-		if (timer > 0.1f) {
 
-			timer -= 0.1f;
+		if (running) {
+			if (timer > 0.1f) {
 
-			if (sprite_dir == 0) {
+				timer -= 0.1f;
+
 				sprite_pos++;
-				if (sprite_pos >= 7) {
-					sprite_dir = 1;
+				if (sprite_pos >= 8) {
+					sprite_pos = 0;
 				}
-			} else {
-				sprite_pos--;
-				if (sprite_pos <= 0) {
-					sprite_dir = 0;
-				}
+				sprite.setTextureRect(sf::IntRect(spriteSize.x * sprite_pos, 0, spriteSize.x, spriteSize.y));
 			}
-			sprite.setTextureRect(sf::IntRect(spriteSize.x * sprite_pos, 0, spriteSize.x, spriteSize.y));
+		} else {
+			if (timer > 0.1f) {
+
+				timer -= 0.1f;
+
+				sprite_pos++;
+				if (sprite_pos >= 4) {
+					sprite_pos = 0;
+				}
+				sprite.setTextureRect(sf::IntRect(spriteSize.x * sprite_pos, 0, spriteSize.x, spriteSize.y));
+			}
 		}
 	}
 

@@ -46,7 +46,7 @@ float angle(Vector2f v) {
 
 #include "Object.hpp"
 #include "Player.hpp"
-#include "Big.hpp"
+#include "Clumsy.hpp"
 
 #include "Constraint.hpp"
 
@@ -56,10 +56,10 @@ float angle(Vector2f v) {
 #define WORLD_SIZE 100.0f
 
 
-
-
 vector<Object *> *objects;
 vector<Constraint *> *constraints;
+
+vector<Player *> *players;
 
 #include "Physics.hpp"
 
@@ -89,10 +89,6 @@ int main() {
 	sf::Clock clock;
 
 
-	objects = new vector<Object *>();
-	constraints = new vector<Constraint *>();
-
-
 
 	Vector2f center_of_world = Vector2f(0.0f, 0.0f);
 	CircleShape world_shape(WORLD_SIZE);
@@ -103,17 +99,27 @@ int main() {
 	world_shape.setOutlineColor(Color(0, 0, 0));
 
 
-	Player *p1 = new Player(Vector2f(0.0f, 0.0f), Color(200, 160, 80), -1);
-	Player *p2 = new Player(Vector2f(1.0f, 0.0f), Color(0, 100, 200), -2);
 
-	Big *big = new Big(Vector2f(0.0f, 1.0f), Color(160, 200, 80));
+	objects = new vector<Object *>();
+	constraints = new vector<Constraint *>();
 
-	objects->push_back(p1);
-	objects->push_back(p2);
-	objects->push_back(big);
+	players = new vector<Player *>();
 
-	constraints->push_back(new MaxDistanceConstraint(p1, big, 60));
-	constraints->push_back(new MaxDistanceConstraint(p2, big, 60));
+
+
+	players->push_back(new Player(Vector2f(-1.0f, 0.0f), Color(200, 160, 80), -1));
+	players->push_back(new Player(Vector2f(1.0f, 0.0f), Color(0, 100, 200), -2));
+
+	for (unsigned int i = 0; i < players->size(); i++) {
+		objects->push_back(players->at(i));
+	}
+
+	Clumsy *clumsy;
+
+	objects->push_back(clumsy = new Clumsy(Vector2f(0.0f, 1.0f), Color(160, 200, 80)));
+
+	constraints->push_back(new MaxDistanceConstraint(players->at(0), clumsy, 60));
+	constraints->push_back(new MaxDistanceConstraint(players->at(1), clumsy, 60));
 
 	//objects->push_back(new Object(Vector2f(200, 200), Vector2f(0,0), 10, 25, Color(0,200,100)));
 	//constraints->push_back(new DistanceConstraint(objects->at(0), objects->at(1), 100));
@@ -191,13 +197,14 @@ int main() {
 			}
 		}
 
-		p1->handleInput(elapsedTime);
-		p2->handleInput(elapsedTime);
 
-		p1->update(elapsedTime);
-		p2->update(elapsedTime);
+		for (unsigned int i = 0; i < players->size(); i++) {
+			players->at(i)->handleInput(elapsedTime);
+		}
 
-		big->update(elapsedTime);
+		for (unsigned int i = 0; i < objects->size(); i++) {
+			objects->at(i)->update(elapsedTime);
+		}
 
 
 		step(elapsedTime);
@@ -221,16 +228,8 @@ int main() {
 
 
 
-
-	{
-		Object *temp;
-		while (!objects->empty()) {
-			temp = objects->back();
-			delete temp;
-			objects->pop_back();
-		}
-		delete objects;
-	}
+	// dont delete the objects i the player vector because they are also a part och the objects vector
+	delete players;
 
 	{
 		Constraint *temp;
@@ -240,6 +239,16 @@ int main() {
 			constraints->pop_back();
 		}
 		delete constraints;
+	}
+
+	{
+		Object *temp;
+		while (!objects->empty()) {
+			temp = objects->back();
+			delete temp;
+			objects->pop_back();
+		}
+		delete objects;
 	}
 
 	delete window;

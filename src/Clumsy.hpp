@@ -1,7 +1,7 @@
 #ifndef _BIG_H_
 #define _BIG_H_
 
-class Big: public Object {
+class Clumsy: public Object {
 
 public:
 
@@ -19,7 +19,7 @@ public:
 
 	float direction;
 
-	Big(Vector2f pos, Color color):
+	Clumsy(Vector2f pos, Color color):
 		Object(pos, Vector2f(0,0), 100.0f, 20.0f),
 
 		body_pos(0),
@@ -67,9 +67,9 @@ public:
 		mouth.setColor(Color(200, 100, 100));
 	}
 
-	virtual ~Big() {}
+	virtual ~Clumsy() {}
 
-	void update(float elapsedTime) {
+	virtual void update(float elapsedTime) {
 
 		body_timer += elapsedTime;
 		if (body_timer > 0.2f) {

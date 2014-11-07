@@ -26,6 +26,8 @@ public:
 	}
 	virtual ~Object() {}
 
+	virtual void update(float elapsedTime) {}
+
 	virtual void draw(RenderWindow *window) {
 		shape.setPosition(pos - Vector2f(radius, radius));
 		window->draw(shape);
