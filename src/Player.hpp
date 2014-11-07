@@ -7,7 +7,6 @@ public:
 
 	int input_handle;
 
-	sf::Texture standingTex, runningTex;
 	sf::Sprite sprite;
 	sf::Vector2i spriteSize;
 
@@ -39,12 +38,6 @@ public:
 			cout << "Y Axis: " << (sf::Joystick::hasAxis(input_handle, sf::Joystick::Y) ? "yes" : "no") << endl;
 			cout << "Z Axis: " << (sf::Joystick::hasAxis(input_handle, sf::Joystick::Z) ? "yes" : "no") << endl;
 		}
-
-		if (!standingTex.loadFromFile("media/images/player/standing.png")) {/*error...*/}
-		standingTex.setSmooth(true);
-
-		if (!runningTex.loadFromFile("media/images/player/running.png")) {/*error...*/}
-		runningTex.setSmooth(true);
 
 		spriteSize = Vector2i(200, 300);
 

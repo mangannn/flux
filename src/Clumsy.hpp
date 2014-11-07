@@ -5,17 +5,17 @@ class Clumsy: public Object {
 
 public:
 
-	sf::Texture bodyTex, eyesTex, mouthTex;
 	sf::Sprite body, eyes, mouth;
 	sf::Vector2i bodySize, eyesSize, mouthSize;
 
 	int body_pos;
-	float body_timer;
+	float body_mouth_timer;
 
 	bool yawning;
-	int sprite_pos;
-	int sprite_dir;
-	float timer;
+	int mouth_index;
+	int mouth_dir;
+	float mouth_timer;
+	float eyes_index;
 
 	float direction;
 
@@ -23,22 +23,16 @@ public:
 		Object(pos, Vector2f(0,0), 20.0f, 1000.0f, 20.0f),
 
 		body_pos(0),
-		body_timer(0.0f),
+		body_mouth_timer(0.0f),
 
 		yawning(false),
-		sprite_pos(0),
-		sprite_dir(0),
-		timer(0.0f),
+		mouth_index(0),
+		mouth_dir(0),
+		mouth_timer(0.0f),
+		eyes_index(-5),
 
 		direction(0.0f)
 	{
-		if (!bodyTex.loadFromFile("media/images/clumsy/body.png")) {/*error...*/}
-		if (!eyesTex.loadFromFile("media/images/clumsy/eyes.png")) {/*error...*/}
-		if (!mouthTex.loadFromFile("media/images/clumsy/mouth.png")) {/*error...*/}
-
-		bodyTex.setSmooth(true);
-		eyesTex.setSmooth(true);
-		mouthTex.setSmooth(true);
 
 		bodySize = Vector2i(745, 745);
 		eyesSize = Vector2i(455, 35);
@@ -71,9 +65,9 @@ public:
 
 	virtual void update(float elapsedTime) {
 
-		body_timer += elapsedTime;
-		if (body_timer > 0.2f) {
-			body_timer -= 0.2f;
+		body_mouth_timer += elapsedTime;
+		if (body_mouth_timer > 0.2f) {
+			body_mouth_timer -= 0.2f;
 			body_pos++;
 			if (body_pos >= 6) {
 				body_pos = 0;
@@ -83,33 +77,42 @@ public:
 
 
 
-		timer += elapsedTime;
+		mouth_timer += elapsedTime;
 		if (yawning) {
-			if (timer > 0.1f) {
+			if (mouth_timer > 0.1f) {
 
-				timer -= 0.1f;
+				mouth_timer -= 0.1f;
 
-				if (sprite_dir == 0) {
-					sprite_pos++;
-					if (sprite_pos >= 8) {
-						sprite_dir = 1;
-						sprite_pos -= 2;
+				if (mouth_dir == 0) {
+					mouth_index++;
+					if (mouth_index >= 8) {
+						mouth_dir = 1;
+						mouth_index -= 2;
 					}
 				} else {
-					sprite_pos--;
-					if (sprite_pos < 0) {
-						sprite_dir = 0;
-						sprite_pos = 0;
+					mouth_index--;
+					if (mouth_index < 0) {
+						mouth_dir = 0;
+						mouth_index = 0;
 						yawning = false;
-						timer = 0.0f;
+						mouth_timer = - (3 + RANDOM * 25);
 					}
 				}
-				eyes.setTextureRect(sf::IntRect(eyesSize.x * (sprite_pos >= 6 ? 5 : sprite_pos), 0, eyesSize.x, eyesSize.y));
-				mouth.setTextureRect(sf::IntRect(mouthSize.x * sprite_pos, 0, mouthSize.x, mouthSize.y));
+				mouth.setTextureRect(sf::IntRect(mouthSize.x * mouth_index, 0, mouthSize.x, mouthSize.y));
 			}
-		} else if (timer > 1.0f) {
-			timer = 0.0f;
+		} else if (mouth_timer > 0) {
+			mouth_timer = 0;
 			yawning = true;
+		}
+
+		eyes_index += elapsedTime;
+		if (eyes_index >= 0) eyes_index += .2;
+		if (eyes_index >= 9) eyes_index = - (3 + RANDOM * 3);
+
+		if (eyes_index >= 3) {
+			eyes.setTextureRect(sf::IntRect(eyesSize.x * (eyes_index >= 6.0f ? (6 + (int)(6 - eyes_index)) : (int)(eyes_index)), 0, eyesSize.x, eyesSize.y));
+		} else {
+			eyes.setTextureRect(sf::IntRect((int)(frac(aabs(eyes_index)) * 3), 0, eyesSize.x, eyesSize.y));
 		}
 	}
 
