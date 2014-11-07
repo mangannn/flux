@@ -113,7 +113,7 @@ int main() {
 
 
 
-	for (int i = 0; i < 10; i++) {
+	for (int i = 0; i < 0; i++) {
 		players->push_back(new Player(Vector2f(1.0f, 0.0f), Color(200, 160, 80), -1));
 		players->push_back(new Player(Vector2f(0.0f, 1.0f), Color(0, 100, 200), -2));
 		players->push_back(new Player(Vector2f(-1.0f, 0.0f), Color(150, 100, 200), -3));
