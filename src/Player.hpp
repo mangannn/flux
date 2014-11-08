@@ -1,6 +1,8 @@
 #ifndef _PLAYER_H_
 #define _PLAYER_H_
 
+#include "Object.hpp"
+
 class Player: public Object {
 
 public:
@@ -8,7 +10,6 @@ public:
 	int input_handle;
 
 	sf::Sprite sprite;
-	sf::Vector2i spriteSize;
 
 	bool running;
 
@@ -39,15 +40,15 @@ public:
 			cout << "Z Axis: " << (sf::Joystick::hasAxis(input_handle, sf::Joystick::Z) ? "yes" : "no") << endl;
 		}
 
-		spriteSize = Vector2i(200, 300);
+		playerSpriteSize = Vector2i(200, 300);
 
-		sprite.setTextureRect(sf::IntRect(0, 0, spriteSize.x, spriteSize.y));
+		sprite.setTextureRect(sf::IntRect(0, 0, playerSpriteSize.x, playerSpriteSize.y));
 		sprite.setTexture(standingTex);
-		sprite.setOrigin(sf::Vector2f((float)spriteSize.x / 2.0f, (float)spriteSize.y / 2.0f));
+		sprite.setOrigin(sf::Vector2f((float)playerSpriteSize.x / 2.0f, (float)playerSpriteSize.y / 2.0f));
 
 		sprite.setColor(color);
 
-		sprite.setScale(sf::Vector2f((radius * 2.0f) / (float)spriteSize.x, (radius * 2.0f) / (float)spriteSize.x));
+		sprite.setScale(sf::Vector2f((radius * 2.0f) / (float)playerSpriteSize.x, (radius * 2.0f) / (float)playerSpriteSize.x));
 	}
 
 	virtual ~Player() {}
@@ -56,7 +57,7 @@ public:
 
 		Vector2f v(0,0);
 
-		const float a = 800.0;
+		const float a = 700.0;
 
 		if (input_handle >= 0) {
 
@@ -182,7 +183,7 @@ public:
 					post = 0;
 					sprite_pos = 0.0f;
 				}
-				sprite.setTextureRect(sf::IntRect(spriteSize.x * post, 0, spriteSize.x, spriteSize.y));
+				sprite.setTextureRect(sf::IntRect(playerSpriteSize.x * post, 0, playerSpriteSize.x, playerSpriteSize.y));
 			}
 		} else {
 
@@ -198,7 +199,7 @@ public:
 				if (sprite_pos >= 4.0f) {
 					sprite_pos = 0.0f;
 				}
-				sprite.setTextureRect(sf::IntRect(spriteSize.x * (int)sprite_pos, 0, spriteSize.x, spriteSize.y));
+				sprite.setTextureRect(sf::IntRect(playerSpriteSize.x * (int)sprite_pos, 0, playerSpriteSize.x, playerSpriteSize.y));
 			}
 		}
 	}

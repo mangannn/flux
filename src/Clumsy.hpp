@@ -1,12 +1,13 @@
-#ifndef _BIG_H_
-#define _BIG_H_
+#ifndef _CLUMSY_H_
+#define _CLUMSY_H_
+
+#include "Object.hpp"
 
 class Clumsy: public Object {
 
 public:
 
 	sf::Sprite body, eyes, mouth;
-	sf::Vector2i bodySize, eyesSize, mouthSize;
 
 	int body_pos;
 	float body_mouth_timer;
@@ -20,7 +21,7 @@ public:
 	float direction;
 
 	Clumsy(Vector2f pos, Color color):
-		Object(pos, Vector2f(0,0), 20.0f, 1000.0f, 20.0f),
+		Object(pos, Vector2f(0,0), 20.0f, 200.0f, 10.0f),
 
 		body_pos(0),
 		body_mouth_timer(0.0f),
@@ -34,10 +35,6 @@ public:
 		direction(0.0f)
 	{
 
-		bodySize = Vector2i(745, 745);
-		eyesSize = Vector2i(455, 35);
-		mouthSize = Vector2i(130, 50);
-
 		sf::Vector2f scale((radius * 2.0f) / (float)bodySize.x, (radius * 2.0f) / (float)bodySize.y);
 
 
@@ -48,12 +45,12 @@ public:
 
 		eyes.setTextureRect(sf::IntRect(0, 0, eyesSize.x, eyesSize.y));
 		eyes.setTexture(eyesTex);
-		eyes.setScale(scale * 1.0f);
+		eyes.setScale(scale);
 		eyes.setOrigin(sf::Vector2f((float)eyesSize.x / 2.0f, (float)eyesSize.y / 2.0f) + Vector2f(0,50));
 
 		mouth.setTextureRect(sf::IntRect(0, 0, mouthSize.x, mouthSize.y));
 		mouth.setTexture(mouthTex);
-		mouth.setScale(scale * 1.0f);
+		mouth.setScale(scale);
 		mouth.setOrigin(sf::Vector2f((float)mouthSize.x / 2.0f, (float)mouthSize.y / 2.0f) + Vector2f(0,-190));
 
 

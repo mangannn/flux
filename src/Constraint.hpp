@@ -1,6 +1,8 @@
 #ifndef _CONSTRAINT_H_
 #define _CONSTRAINT_H_
 
+#include "Object.hpp"
+
 class Constraint {
 
 public:
@@ -20,57 +22,41 @@ public:
 
 	virtual void solve() = 0;
 
-	virtual void draw(RenderWindow *window) = 0;
+	virtual void draw(RenderWindow *window) {};
 };
 
-class MaxDistanceConstraint: public Constraint {
+class PointConstraint: public Constraint {
 
 public:
 
-	float distance;
-
-	MaxDistanceConstraint(Object *a, Object *b, float distanceParam = 100.0f):
-		Constraint(a, b),
-		distance(distanceParam)
+	PointConstraint(Object *a, Object *b):
+		Constraint(a, b)
 	{}
-	virtual ~MaxDistanceConstraint() {}
+	virtual ~PointConstraint() {}
 
 	virtual void solve() {
 
-		Vector2f diff = (a->pos - b->pos);
+		Vector2f diffrence = (a->pos - b->pos);
+		float current_distance = size(diffrence);
 
-		float current_distance = size(diff);
-
-
-		if (current_distance > distance) {
-
-			Vector2f normal = (diff / current_distance);
-
+		if (current_distance > 0.0) {
+			Vector2f normal = (diffrence / current_distance);
 
 			float a_u = dot(a->vel, normal);
 			float b_u = dot(b->vel, normal);
 
-			if (a_u - b_u > 0.0f) {
-				// inelastic collision
-				float a_v = ((a_u * a->mass) + (b_u * b->mass)) / (a->mass + b->mass);
-				float b_v = a_v;
+			// inelastic collision
+			float a_v = ((a_u * a->mass) + (b_u * b->mass)) / (a->mass + b->mass);
+			float b_v = a_v;
 
-				a->vel += (normal * (a_v - a_u));
-				b->vel += (normal * (b_v - b_u));
-			}
+			a->vel += (normal * (a_v - a_u));
+			b->vel += (normal * (b_v - b_u));
+
+			Vector2f position = (a->pos + b->pos) / 2.0f;
+
+			a->pos = position;
+			b->pos = position;
 		}
-	}
-
-
-	virtual void draw(RenderWindow *window) {
-		CircleShape shape(distance / 2.0f);
-		shape.setPosition(((a->pos + b->pos) / 2.0f) - Vector2f(distance / 2.0f, distance / 2.0f));
-		shape.setFillColor(Color(0,0,0,0));
-
-		shape.setOutlineThickness(1);
-		shape.setOutlineColor(Color(0xff, 0, 0));
-
-		window->draw(shape);
 	}
 };
 
@@ -88,11 +74,11 @@ public:
 
 	virtual void solve() {
 
-		Vector2f diff = (a->pos - b->pos);
+		Vector2f diffrence = (a->pos - b->pos);
 
-		float current_distance = size(diff);
+		float current_distance = size(diffrence);
 
-		Vector2f normal = (diff / current_distance);
+		Vector2f normal = (diffrence / current_distance);
 
 		const float error = 0.01f;
 
@@ -129,6 +115,48 @@ public:
 	}
 };
 
+class ElasticDistanceConstraint: public Constraint {
+
+public:
+
+	float distance, elasticity;
+
+	ElasticDistanceConstraint(Object *a, Object *b, float distanceParam = 100.0f, float elasticityParam = 5.0f):
+		Constraint(a, b),
+		distance(distanceParam),
+		elasticity(elasticityParam)
+	{}
+	virtual ~ElasticDistanceConstraint() {}
+
+	virtual void solve() {
+
+		Vector2f diffrence = (a->pos - b->pos);
+
+		float current_distance = size(diffrence);
+
+
+		if (current_distance > distance) {
+
+			Vector2f normal = (diffrence / current_distance);
+
+			a->vel -= (normal * ((current_distance - distance) * elasticity) * (b->mass / (a->mass + b->mass)));
+			b->vel += (normal * ((current_distance - distance) * elasticity) * (a->mass / (a->mass + b->mass)));
+		}
+	}
+
+
+	virtual void draw(RenderWindow *window) {
+		CircleShape shape(distance / 2.0f);
+		shape.setPosition(((a->pos + b->pos) / 2.0f) - Vector2f(distance / 2.0f, distance / 2.0f));
+		shape.setFillColor(Color(0,0,0,0));
+
+		shape.setOutlineThickness(1);
+		shape.setOutlineColor(Color(0xff, 0, 0));
+
+		window->draw(shape);
+	}
+};
+
 class HaloConstraint: public Constraint {
 
 public:
@@ -150,9 +178,9 @@ public:
 
 	virtual void solve() {
 
-		Vector2f diff = (a->pos - b->pos);
+		Vector2f diffrence = (a->pos - b->pos);
 
-		float current_distance = size(diff);
+		float current_distance = size(diffrence);
 
 		bool need_correction = false;
 		float intended_distance;
@@ -169,7 +197,7 @@ public:
 
 		if (need_correction) {
 
-			Vector2f normal = (diff / current_distance);
+			Vector2f normal = (diffrence / current_distance);
 
 			Vector2f center = (a->pos + b->pos) / 2.0f;
 			a->pos = center + (normal * (intended_distance / 2.0f));

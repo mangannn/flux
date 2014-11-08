@@ -10,6 +10,8 @@
 using namespace std;
 using namespace sf;
 
+#define WORLD_SCALE 210.0f
+
 
 float aabs(float a) {
 	return (a < 0.0 ? -a : a);
@@ -32,8 +34,8 @@ float angle(Vector2f v) {
 }
 
 float cutToPeriod(float v, float periodStart, float periodEnd) {
-	while (v >= periodEnd) v -= periodEnd - periodStart;
-	while (v < periodStart) v += periodEnd - periodStart;
+	while (v >= periodEnd) {v -= periodEnd - periodStart;}
+	while (v < periodStart) {v += periodEnd - periodStart;}
 	return v;
 }
 
@@ -52,36 +54,96 @@ float periodValueBetween(float angle, float target, float percent, float period 
 
 
 sf::Texture standingTex, runningTex;
-	sf::Texture bodyTex, eyesTex, mouthTex;
+sf::Texture bodyTex, eyesTex, mouthTex;
+sf::Texture bollTex;
 
+sf::Vector2i playerSpriteSize(200, 300);
 
+sf::Vector2i bodySize(745, 745);
+sf::Vector2i eyesSize(455, 35);
+sf::Vector2i mouthSize(130, 50);
 
-#include "Object.hpp"
+sf::Vector2i bollSize(125, 125);
+
+#include "Physics.hpp"
+
+#include "Battleground.hpp"
 #include "Player.hpp"
 #include "Clumsy.hpp"
-
-#include "Constraint.hpp"
-
+#include "Boll.hpp"
 
 
-#define WORLD_SCALE 208.0f
-#define WORLD_SIZE 100.0f
+
 
 
 vector<Object *> *objects;
 vector<Constraint *> *constraints;
 
+World *world;
+
 vector<Player *> *players;
 
-#include "Physics.hpp"
+
+
+bool collision_callback(Object *a, Object *b) {
+
+	Boll *bo;
+	Player *pl;
+
+	Constraint *c;
+
+	if ((bo = dynamic_cast<Boll *>(a))) {
+		if ((pl = dynamic_cast<Player *>(b))) {
+			if (!bo->connected) {
+				constraints->push_back(c = new PointConstraint(pl, bo));
+				bo->constraint = c;
+				bo->connected = true;
+			}
+			return false;
+		}
+	} else if ((bo = dynamic_cast<Boll *>(b))) {
+		if ((pl = dynamic_cast<Player *>(a))) {
+			if (!bo->connected) {
+				constraints->push_back(c = new PointConstraint(pl, bo));
+				bo->constraint = c;
+				bo->connected = true;
+			}
+			return false;
+		}
+	}
+	return true;
+}
 
 
 int main() {
 
+
+	cout << "Loading textures..." << endl;
+	if (!standingTex.loadFromFile("media/images/player/standing.png") ||
+		!runningTex.loadFromFile("media/images/player/running.png") ||
+		!bodyTex.loadFromFile("media/images/clumsy/body.png") ||
+		!eyesTex.loadFromFile("media/images/clumsy/eyes.png") ||
+		!mouthTex.loadFromFile("media/images/clumsy/mouth.png") ||
+		!bollTex.loadFromFile("media/images/boll/strip.png")) {
+		
+		return 1;
+	}
+	cout << "Done!" << endl;
+
+	standingTex.setSmooth(true);
+	runningTex.setSmooth(true);
+	bodyTex.setSmooth(true);
+	eyesTex.setSmooth(true);
+	mouthTex.setSmooth(true);
+	bollTex.setSmooth(true);
+
+
+
+
 	srand(time(NULL));
 
 	sf::ContextSettings settings;
-	settings.antialiasingLevel = 3;
+	settings.antialiasingLevel = 5;
 
 	sf::RenderWindow *window;
 	bool fullscreen = false;
@@ -100,69 +162,36 @@ int main() {
 
 	sf::Clock clock;
 
-
-
-	Vector2f center_of_world = Vector2f(0.0f, 0.0f);
-	CircleShape world_shape(WORLD_SIZE);
-	world_shape.setPosition(center_of_world - Vector2f(WORLD_SIZE, WORLD_SIZE));
-	world_shape.setFillColor(Color(0xff,0xff,0xff));
-
-	world_shape.setOutlineThickness(0.6f);
-	world_shape.setOutlineColor(Color(0, 0, 0));
-
-
-
-	if (!standingTex.loadFromFile("media/images/player/standing.png")) {/*error...*/}
-	standingTex.setSmooth(true);
-
-	if (!runningTex.loadFromFile("media/images/player/running.png")) {/*error...*/}
-	runningTex.setSmooth(true);
-
-	if (!bodyTex.loadFromFile("media/images/clumsy/body.png")) {/*error...*/}
-	if (!eyesTex.loadFromFile("media/images/clumsy/eyes.png")) {/*error...*/}
-	if (!mouthTex.loadFromFile("media/images/clumsy/mouth.png")) {/*error...*/}
-
-	bodyTex.setSmooth(true);
-	eyesTex.setSmooth(true);
-	mouthTex.setSmooth(true);
-
 	objects = new vector<Object *>();
 	constraints = new vector<Constraint *>();
 
 	players = new vector<Player *>();
 
 
+	//world = new RectWorld(Vector2f(100.0f, 100.0f));
+	//world = new ElasticCircleWorld(150.0f, 40.0f);
+	world = new Battleground(100.0f, 40.0f);
 
-	for (int i = 0; i < 0; i++) {
-		players->push_back(new Player(Vector2f(1.0f, 0.0f), Color(200, 160, 80), -1));
-		players->push_back(new Player(Vector2f(0.0f, 1.0f), Color(0, 100, 200), -2));
-		players->push_back(new Player(Vector2f(-1.0f, 0.0f), Color(150, 100, 200), -3));
-		players->push_back(new Player(Vector2f(0.0f, -1.0f), Color(40, 40, 40), -4));
-	}
+
+	/*for (int i = 1; i < 2; i++) {
+		players->push_back(new Player(Vector2f(i, 0.0f), Color(200, 160, 80), -1));
+		players->push_back(new Player(Vector2f(-i, 0.0f), Color(0, 100, 200), -2));
+		players->push_back(new Player(Vector2f(0.0f, i), Color(150, 100, 200), -3));
+		players->push_back(new Player(Vector2f(0.0f, -i), Color(40, 40, 40), -4));
+	}*/
+	players->push_back(new Player(Vector2f(25.0f, 0.0f), Color(200, 160, 80), -1));
+	players->push_back(new Player(Vector2f(-25.0f, 0.0f), Color(0, 100, 200), -2));
 
 	for (unsigned int i = 0; i < players->size(); i++) {
 		objects->push_back(players->at(i));
 	}
 
-	Clumsy *clumsy;
+	Clumsy *clumsy = new Clumsy(Vector2f(0.0f, 25.0f), Color(160, 200, 80));
+	Boll *boll = new Boll(Vector2f(0.0f, -25.0f), Color(200, 80, 160, 50), clumsy);
+	objects->push_back(clumsy);
+	objects->push_back(boll);
 
-	objects->push_back(clumsy = new Clumsy(Vector2f(100.0f, 100.0f), Color(160, 200, 80)));
-
-	//constraints->push_back(new MaxDistanceConstraint(players->at(0), clumsy, 60));
-	//constraints->push_back(new MaxDistanceConstraint(players->at(1), clumsy, 60));
-
-	//objects->push_back(new Object(Vector2f(200, 200), Vector2f(0,0), 10, 25, Color(0,200,100)));
-	//constraints->push_back(new DistanceConstraint(objects->at(0), objects->at(1), 100));
-
-
-	/*for (int i = 0; i < 20; i++) {
-		objects->push_back(new Object(
-			Vector2f(RANDOM2 * WORLD_SIZE, RANDOM2 * WORLD_SIZE), Vector2f(0,0),
-			4, 2,
-			RANDOM_COLOR));
-		//constraints->push_back(new HaloConstraint(objects->at(0), objects->back(), 50, 100));
-		constraints->push_back(new DistanceConstraint(objects->at(0), objects->back(), 20));
-	}*/
+	constraints->push_back(new ElasticDistanceConstraint(clumsy, boll, 60.0f, 4.0f));
 
 
 	sf::Event event;
@@ -190,13 +219,7 @@ int main() {
 						case sf::Keyboard::F3:
 						case sf::Keyboard::F4:
 						case sf::Keyboard::F5:
-						case sf::Keyboard::F6:
-						case sf::Keyboard::F7:
-						case sf::Keyboard::F8:
-						case sf::Keyboard::F9:
-						case sf::Keyboard::F10:
 						case sf::Keyboard::F11:
-						case sf::Keyboard::F12:
 						{
 
 							window->close();
@@ -218,6 +241,33 @@ int main() {
 						} break;
 
 						case sf::Keyboard::Space: {
+							if (boll->connected) {
+								Constraint *c = boll->constraint;
+
+								Object *o;
+
+								if (c->a == boll) {
+									o = c->b;
+								} else {
+									o = c->a;
+								}
+
+								for (unsigned int i = 0; i < constraints->size(); i++) {
+									if (c == constraints->at(i)) {
+										constraints->erase(constraints->begin() + i);
+									}
+								}
+
+
+								Vector2f diffrence = (clumsy->pos - boll->pos);
+								Vector2f normal = (diffrence / size(diffrence));
+
+								boll->vel += normal * 200.0f;
+								boll->pos += normal * (o->radius + boll->radius);
+
+								delete c;
+								boll->connected = false;
+							}
 						} break;
 						default: break;
 					}
@@ -226,6 +276,7 @@ int main() {
 				default: break;
 			}
 		}
+
 
 
 		for (unsigned int i = 0; i < players->size(); i++) {
@@ -242,7 +293,16 @@ int main() {
 
 		window->clear(sf::Color(100, 200, 100));
 
-		window->draw(world_shape);
+		world->draw(window);
+
+		Vector2f diffrence = (boll->pos - clumsy->pos);
+
+		sf::RectangleShape line(sf::Vector2f(size(diffrence), 1));
+		line.rotate(angle(diffrence));
+		line.setPosition(clumsy->pos);
+		line.setFillColor(sf::Color(0, 0, 0));
+
+		window->draw(line);
 
 		/*for (unsigned int i = 0; i < constraints->size(); i++) {
 			constraints->at(i)->draw(window);
@@ -257,6 +317,8 @@ int main() {
 	}
 
 
+
+	delete world;
 
 	// dont delete the objects i the player vector because they are also a part och the objects vector
 	delete players;
