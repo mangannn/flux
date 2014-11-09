@@ -1,6 +1,9 @@
 #ifndef _PHYSICS_H_
 #define _PHYSICS_H_
 
+using namespace sf;
+using namespace std;
+
 #include "Object.hpp"
 #include "Constraint.hpp"
 #include "World.hpp"
@@ -57,10 +60,14 @@ void handle_collisions(float elapsedTime) {
 						float a_v = ((a_u * (a->mass - b->mass)) + (2.0f * b->mass * b_u)) / (a->mass + b->mass);
 						float b_v = ((b_u * (b->mass - a->mass)) + (2.0f * a->mass * a_u)) / (a->mass + b->mass);
 
+
+						// impulse
+						a->collision_callback(aabs(a->mass * (a_v - a_u)));
+						b->collision_callback(aabs(b->mass * (b_v - b_u)));
+
+
 						a->vel += (normal * (a_v - a_u));
 						b->vel += (normal * (b_v - b_u));
-
-
 
 						// m1u1+m2u2=m1v1+m2v2 -> v1 = u1+(m2/m1)(u2-v2)
 						// (m1u1^2)/2+(m2u2^2)/2=(m1v1^2)/2+(m2v2^2)/2 -> v1 = sqrt(u1^2+(m2/m1)(u2^2-v2^2))

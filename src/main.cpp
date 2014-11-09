@@ -7,65 +7,17 @@
 #include <stdlib.h>
 #include <time.h>
 
-using namespace std;
 using namespace sf;
-
-#define WORLD_SCALE 210.0f
-
-
-float aabs(float a) {
-	return (a < 0.0 ? -a : a);
-}
-
-float frac(float x) {
-	return x - floor(x);
-}
-
-float size(Vector2f v) {
-	return sqrt((v.x * v.x) + (v.y * v.y));
-}
-
-float dot(Vector2f a, Vector2f b) {
-	return (a.x * b.x) + (a.y * b.y);
-}
-
-float angle(Vector2f v) {
-	return (atan2(v.y, v.x) * 180.0f) / M_PI;
-}
-
-float cutToPeriod(float v, float periodStart, float periodEnd) {
-	while (v >= periodEnd) {v -= periodEnd - periodStart;}
-	while (v < periodStart) {v += periodEnd - periodStart;}
-	return v;
-}
-
-float periodValueBetween(float angle, float target, float percent, float period = 360) {
-	target = cutToPeriod(target - angle, - period / 2, period / 2);
-	angle = cutToPeriod(angle, - period / 2, period / 2);
-	return cutToPeriod(target * percent + angle, 0, period);
-}
+using namespace std;
 
 
 
-#define RANDOM_COLOR sf::Color(rand()%0xff,rand()%0xff,rand()%0xff)
+#include "Functions.hpp"
 
-#define RANDOM ((float)rand()/(float)RAND_MAX)
-#define RANDOM2 ((RANDOM * 2.0f) - 1.0f)
-
-
-sf::Texture standingTex, runningTex;
-sf::Texture bodyTex, eyesTex, mouthTex;
-sf::Texture bollTex;
-
-sf::Vector2i playerSpriteSize(200, 300);
-
-sf::Vector2i bodySize(745, 745);
-sf::Vector2i eyesSize(455, 35);
-sf::Vector2i mouthSize(130, 50);
-
-sf::Vector2i bollSize(125, 125);
+#include "Resources.hpp"
 
 #include "Physics.hpp"
+
 
 #include "Battleground.hpp"
 #include "Player.hpp"
@@ -76,12 +28,14 @@ sf::Vector2i bollSize(125, 125);
 
 
 
-vector<Object *> *objects;
-vector<Constraint *> *constraints;
+#define WORLD_SCALE 210.0f
+
+std::vector<Object *> *objects;
+std::vector<Constraint *> *constraints;
 
 World *world;
 
-vector<Player *> *players;
+std::vector<Player *> *players;
 
 
 
@@ -117,27 +71,9 @@ bool collision_callback(Object *a, Object *b) {
 
 int main() {
 
-
-	cout << "Loading textures..." << endl;
-	if (!standingTex.loadFromFile("media/images/player/standing.png") ||
-		!runningTex.loadFromFile("media/images/player/running.png") ||
-		!bodyTex.loadFromFile("media/images/clumsy/body.png") ||
-		!eyesTex.loadFromFile("media/images/clumsy/eyes.png") ||
-		!mouthTex.loadFromFile("media/images/clumsy/mouth.png") ||
-		!bollTex.loadFromFile("media/images/boll/strip.png")) {
-		
+	if (!load_resources()) {
 		return 1;
 	}
-	cout << "Done!" << endl;
-
-	standingTex.setSmooth(true);
-	runningTex.setSmooth(true);
-	bodyTex.setSmooth(true);
-	eyesTex.setSmooth(true);
-	mouthTex.setSmooth(true);
-	bollTex.setSmooth(true);
-
-
 
 
 	srand(time(NULL));
@@ -162,10 +98,10 @@ int main() {
 
 	sf::Clock clock;
 
-	objects = new vector<Object *>();
-	constraints = new vector<Constraint *>();
+	objects = new std::vector<Object *>();
+	constraints = new std::vector<Constraint *>();
 
-	players = new vector<Player *>();
+	players = new std::vector<Player *>();
 
 
 	//world = new RectWorld(Vector2f(100.0f, 100.0f));
@@ -173,14 +109,16 @@ int main() {
 	world = new Battleground(100.0f, 40.0f);
 
 
-	/*for (int i = 1; i < 2; i++) {
-		players->push_back(new Player(Vector2f(i, 0.0f), Color(200, 160, 80), -1));
-		players->push_back(new Player(Vector2f(-i, 0.0f), Color(0, 100, 200), -2));
-		players->push_back(new Player(Vector2f(0.0f, i), Color(150, 100, 200), -3));
-		players->push_back(new Player(Vector2f(0.0f, -i), Color(40, 40, 40), -4));
-	}*/
-	players->push_back(new Player(Vector2f(25.0f, 0.0f), Color(200, 160, 80), -1));
-	players->push_back(new Player(Vector2f(-25.0f, 0.0f), Color(0, 100, 200), -2));
+	for (int i = 0; i < 2; i++) {
+		players->push_back(new Player(Vector2f((i + 1), 0.0f), RANDOM_COLOR, -1));
+		players->push_back(new Player(Vector2f(-(i + 1), 0.0f), RANDOM_COLOR, -2));
+		players->push_back(new Player(Vector2f(0.0f, (i + 1)), RANDOM_COLOR, -3));
+		players->push_back(new Player(Vector2f(0.0f, -(i + 1)), RANDOM_COLOR, -4));
+	}
+	//players->push_back(new Player(Vector2f(25.0f, 0.0f), Color(200, 160, 80), -1));
+	//players->push_back(new Player(Vector2f(-25.0f, 0.0f), Color(0, 100, 200), -2));
+	//players->push_back(new Player(Vector2f(25.0f, 25.0f), Color(150, 100, 200), -3));
+	//players->push_back(new Player(Vector2f(-25.0f, 25.0f), Color(40, 40, 40), -4));
 
 	for (unsigned int i = 0; i < players->size(); i++) {
 		objects->push_back(players->at(i));
@@ -292,17 +230,20 @@ int main() {
 
 
 		window->clear(sf::Color(100, 200, 100));
+		//window->clear(sf::Color(0xff, 0xff, 0xff));
 
 		world->draw(window);
 
-		Vector2f diffrence = (boll->pos - clumsy->pos);
+		{
+			Vector2f diffrence = (boll->pos - clumsy->pos);
 
-		sf::RectangleShape line(sf::Vector2f(size(diffrence), 1));
-		line.rotate(angle(diffrence));
-		line.setPosition(clumsy->pos);
-		line.setFillColor(sf::Color(0, 0, 0));
+			sf::RectangleShape line(sf::Vector2f(size(diffrence), 1));
+			line.rotate(angle(diffrence));
+			line.setPosition(clumsy->pos);
+			line.setFillColor(sf::Color(0, 0, 0));
 
-		window->draw(line);
+			window->draw(line);
+		}
 
 		/*for (unsigned int i = 0; i < constraints->size(); i++) {
 			constraints->at(i)->draw(window);
@@ -310,6 +251,39 @@ int main() {
 
 		for (unsigned int i = 0; i < objects->size(); i++) {
 			objects->at(i)->draw(window);
+		}
+
+		{
+
+			Vector2f size(50, 5);
+			float space = 5;
+
+			Vector2f offset(10, 10);
+
+			sf::RectangleShape healthBar(size);
+			healthBar.setPosition(Vector2f(-WORLD_SCALE / 2.0f, -WORLD_SCALE / 2.0f) + offset);
+
+			Vector2f border(1.0f, 1.0f);
+			sf::RectangleShape outline(size + border * 2.0f);
+			outline.setPosition(Vector2f(-WORLD_SCALE / 2.0f, -WORLD_SCALE / 2.0f) + offset - border);
+			outline.setFillColor(Color(0, 0, 0, 100));
+
+			for (unsigned int i = 0; i < players->size(); i++) {
+
+				window->draw(outline);
+
+				if (players->at(i)->health > 0.0f) {
+
+					Color color(players->at(i)->sprite.getColor());
+					color.a = 200;
+					healthBar.setFillColor(color);
+					healthBar.setScale(Vector2f(players->at(i)->health, 1.0f));
+					window->draw(healthBar);
+				}
+
+				outline.move(Vector2f(0, size.y + space));
+				healthBar.move(Vector2f(0, size.y + space));
+			}
 		}
 
 		//Update window

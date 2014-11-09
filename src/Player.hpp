@@ -19,6 +19,8 @@ public:
 
 	float spriteDirection;
 
+	float health;
+
 	Player(Vector2f pos, Color color, int input_handleParam):
 		Object(pos, Vector2f(0,0), 5.0f, 50.0f, 100.0f, color),
 
@@ -28,7 +30,9 @@ public:
 		sprite_pos(0),
 		sprite_dir(0),
 		timer(0.0f),
-		spriteDirection(0.0f)
+		spriteDirection(0.0f),
+
+		health(1.0f)
 	{
 
 		if ((input_handle >= 0 && input_handle < 8) && sf::Joystick::isConnected(input_handle)) {
@@ -150,6 +154,14 @@ public:
 		}
 
 		vel += (v * elapsedTime);
+	}
+
+	virtual void collision_callback(float impulse) {
+		health -= impulse * 0.00001f;
+		if (health < 0.0f) {
+			cout << "DEAD" << endl;
+			health = 1.0f;
+		} 
 	}
 
 	virtual void update(float elapsedTime) {

@@ -31,6 +31,8 @@ public:
 	}
 	virtual ~Object() {}
 
+	virtual void collision_callback(float impulse) {}
+
 	virtual void update(float elapsedTime) {}
 
 	virtual void draw(RenderWindow *window) {

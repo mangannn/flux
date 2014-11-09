@@ -14,7 +14,7 @@ public:
 	virtual ~Battleground() {}
 
 	virtual void draw(RenderWindow *window) {
-		
+		ElasticCircleWorld::draw(window);
 	}
 };
 
