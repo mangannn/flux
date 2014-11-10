@@ -2,6 +2,7 @@
 #define _PLAYER_H_
 
 #include "Object.hpp"
+#include "Controls.hpp"
 
 class Player: public Object {
 

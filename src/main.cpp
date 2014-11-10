@@ -87,17 +87,31 @@ int main() {
 
 	window = new RenderWindow(VideoMode(800, 620), "FLUX", sf::Style::Resize, settings);
 	window->setMouseCursorVisible(true);
-
-
-	sf::View view;
-	view.setCenter(Vector2f(0.0f, 0.0f));
-	view.setSize(Vector2f((float)window->getSize().x / (float)window->getSize().y, 1.0f) * WORLD_SCALE);
-	window->setView(view);
-
-
 	window->setFramerateLimit(50);
 
-	sf::Clock clock;
+
+
+
+
+
+
+
+
+	sf::View game_view;
+	sf::View gui_view;
+	gui_view.setSize(Vector2f((float)window->getSize().x / (float)window->getSize().y, 1.0f));
+	gui_view.setCenter(gui_view.getSize() / 2.0f);
+
+
+
+
+
+
+
+
+
+
+
 
 	objects = new std::vector<Object *>();
 	constraints = new std::vector<Constraint *>();
@@ -105,9 +119,14 @@ int main() {
 	players = new std::vector<Player *>();
 
 
+
+
+
+
+
 	//world = new RectWorld(Vector2f(100.0f, 100.0f));
 	//world = new ElasticCircleWorld(150.0f, 40.0f);
-	world = new Battleground(100.0f, 40.0f);
+	world = new Battleground(200.0f, 40.0f);
 
 
 	/*for (int i = 0; i < 2; i++) {
@@ -133,7 +152,23 @@ int main() {
 	constraints->push_back(new ElasticDistanceConstraint(clumsy, boll, 60.0f, 4.0f));
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	sf::Event event;
+	sf::Clock clock;
 
 	while (window->isOpen()) {
 
@@ -145,8 +180,8 @@ int main() {
 					window->close();
 				} break;
 				case sf::Event::Resized: {
-					view.setSize(Vector2f((float)event.size.width / (float)event.size.height, 1.0f) * WORLD_SCALE);
-					window->setView(view);
+					gui_view.setSize(Vector2f((float)event.size.width / (float)event.size.height, 1.0f));
+					gui_view.setCenter(gui_view.getSize() / 2.0f);
 				} break;
 				case sf::Event::KeyPressed: {
 
@@ -171,9 +206,6 @@ int main() {
 							}
 
 							window->setMouseCursorVisible(!fullscreen);
-							view.setSize(Vector2f((float)window->getSize().x / (float)window->getSize().y, 1.0f) * WORLD_SCALE);
-							window->setView(view);
-
 
 							fullscreen = !fullscreen;
 
@@ -215,6 +247,19 @@ int main() {
 				default: break;
 			}
 		}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 		if (boll->connected) {
@@ -262,8 +307,53 @@ int main() {
 		step(elapsedTime);
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 		window->clear(sf::Color(100, 200, 100));
 		//window->clear(sf::Color(0xff, 0xff, 0xff));
+
+
+
+		Vector2f center_position(0.0f,0.0f);
+		for (unsigned int i = 0; i < players->size(); i++) {
+			center_position += players->at(i)->pos;
+		}
+		center_position /= (float)players->size();
+
+		float largers_dist = 0.0f;
+		for (unsigned int i = 0; i < players->size() - 1; i++) {
+			float dist = size(players->at(i)->pos - center_position);
+			if (dist > largers_dist) {
+				largers_dist = dist;
+			}
+		}
+
+		float scale_multiply = 2.0f * (largers_dist + 20.0f);
+		if (scale_multiply < 200.0f) {
+			scale_multiply = 200.0f;
+		}
+
+		game_view.setSize(Vector2f((float)window->getSize().x / (float)window->getSize().y, 1.0f) * scale_multiply);
+		game_view.setCenter(center_position);
+		window->setView(game_view);
 
 		world->draw(window);
 
@@ -286,19 +376,36 @@ int main() {
 			objects->at(i)->draw(window);
 		}
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		window->setView(gui_view);
+
 		{
 
-			Vector2f size(50, 5);
-			float space = 5;
+			Vector2f size(0.3, 0.03);
+			float space = 0.02;
 
-			Vector2f offset(10, 10);
+			Vector2f offset(0.02, 0.02);
 
 			sf::RectangleShape healthBar(size);
-			healthBar.setPosition(Vector2f(-WORLD_SCALE / 2.0f, -WORLD_SCALE / 2.0f) + offset);
+			healthBar.setPosition(offset);
 
-			Vector2f border(1.0f, 1.0f);
+			Vector2f border(0.006f, 0.006f);
 			sf::RectangleShape outline(size + border * 2.0f);
-			outline.setPosition(Vector2f(-WORLD_SCALE / 2.0f, -WORLD_SCALE / 2.0f) + offset - border);
+			outline.setPosition(offset - border);
 			outline.setFillColor(Color(0, 0, 0, 100));
 
 			for (unsigned int i = 0; i < players->size(); i++) {
@@ -322,6 +429,14 @@ int main() {
 		//Update window
 		window->display();
 	}
+
+
+
+
+
+
+
+
 
 
 
