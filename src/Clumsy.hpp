@@ -21,7 +21,7 @@ public:
 	float direction;
 
 	Clumsy(Vector2f pos, Color color):
-		Object(pos, Vector2f(0,0), 20.0f, 200.0f, 10.0f),
+		Object(pos, Vector2f(0,0), 20.0f, 50.0f, 10.0f),
 
 		body_pos(0),
 		body_mouth_timer(0.0f),

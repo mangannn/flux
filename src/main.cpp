@@ -69,6 +69,7 @@ bool collision_callback(Object *a, Object *b) {
 }
 
 
+
 int main() {
 
 	if (!load_resources()) {
@@ -109,14 +110,14 @@ int main() {
 	world = new Battleground(100.0f, 40.0f);
 
 
-	for (int i = 0; i < 2; i++) {
+	/*for (int i = 0; i < 2; i++) {
 		players->push_back(new Player(Vector2f((i + 1), 0.0f), RANDOM_COLOR, -1));
 		players->push_back(new Player(Vector2f(-(i + 1), 0.0f), RANDOM_COLOR, -2));
 		players->push_back(new Player(Vector2f(0.0f, (i + 1)), RANDOM_COLOR, -3));
 		players->push_back(new Player(Vector2f(0.0f, -(i + 1)), RANDOM_COLOR, -4));
-	}
-	//players->push_back(new Player(Vector2f(25.0f, 0.0f), Color(200, 160, 80), -1));
-	//players->push_back(new Player(Vector2f(-25.0f, 0.0f), Color(0, 100, 200), -2));
+	}*/
+	players->push_back(new Player(Vector2f(25.0f, 0.0f), Color(200, 160, 80), -1));
+	players->push_back(new Player(Vector2f(-25.0f, 0.0f), Color(0, 100, 200), -2));
 	//players->push_back(new Player(Vector2f(25.0f, 25.0f), Color(150, 100, 200), -3));
 	//players->push_back(new Player(Vector2f(-25.0f, 25.0f), Color(40, 40, 40), -4));
 
@@ -212,6 +213,38 @@ int main() {
 
 				} break;
 				default: break;
+			}
+		}
+
+
+		if (boll->connected) {
+			if (RANDOM < 0.001) {
+
+				Constraint *c = boll->constraint;
+
+				Object *o;
+
+				if (c->a == boll) {
+					o = c->b;
+				} else {
+					o = c->a;
+				}
+
+				for (unsigned int i = 0; i < constraints->size(); i++) {
+					if (c == constraints->at(i)) {
+						constraints->erase(constraints->begin() + i);
+					}
+				}
+
+
+				Vector2f diffrence = (clumsy->pos - boll->pos);
+				Vector2f normal = (diffrence / size(diffrence));
+
+				boll->vel += normal * 200.0f;
+				boll->pos += normal * (o->radius + boll->radius);
+
+				delete c;
+				boll->connected = false;
 			}
 		}
 
