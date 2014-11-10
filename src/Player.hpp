@@ -10,6 +10,8 @@ public:
 
 	int input_handle;
 
+	Controls *controls;
+
 	sf::Sprite sprite;
 
 	bool running;
@@ -36,6 +38,14 @@ public:
 		health(1.0f)
 	{
 
+		if (input_handle >= 0) {
+			controls = new JoystickControls(input_handle);
+		} else {
+			controls = new KeyboardControls((-input_handle) - 1);
+		}
+
+		/*
+
 		if ((input_handle >= 0 && input_handle < 8) && sf::Joystick::isConnected(input_handle)) {
 
 			cout << "Joystick: " << input_handle << endl;
@@ -44,6 +54,8 @@ public:
 			cout << "Y Axis: " << (sf::Joystick::hasAxis(input_handle, sf::Joystick::Y) ? "yes" : "no") << endl;
 			cout << "Z Axis: " << (sf::Joystick::hasAxis(input_handle, sf::Joystick::Z) ? "yes" : "no") << endl;
 		}
+
+		*/
 
 		playerSpriteSize = Vector2i(200, 300);
 
@@ -56,9 +68,13 @@ public:
 		sprite.setScale(sf::Vector2f((radius * 2.0f) / (float)playerSpriteSize.x, (radius * 2.0f) / (float)playerSpriteSize.x));
 	}
 
-	virtual ~Player() {}
+	virtual ~Player() {
+		delete controls;
+	}
 
 	void handleInput(float elapsedTime) {
+
+		/*
 
 		Vector2f v(0,0);
 
@@ -154,7 +170,25 @@ public:
 			v *= a;
 		}
 
-		vel += (v * elapsedTime);
+
+		*/
+
+
+		if (controls->action(0)) {
+			cout << "BAM!" << endl;
+		}
+		if (controls->action(1)) {
+			cout << "PUH!" << endl;
+		}
+		if (controls->action(2)) {
+			cout << "KLONK!" << endl;
+		}
+
+		const float a = 700.0;
+
+		Vector2f v = controls->movement();
+
+		vel += (v * a) * elapsedTime;
 	}
 
 	virtual void collision_callback(float impulse) {

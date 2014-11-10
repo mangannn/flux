@@ -27,9 +27,6 @@ using namespace std;
 
 
 
-
-#define WORLD_SCALE 210.0f
-
 std::vector<Object *> *objects;
 std::vector<Constraint *> *constraints;
 
@@ -137,8 +134,8 @@ int main() {
 	}*/
 	players->push_back(new Player(Vector2f(25.0f, 0.0f), Color(200, 160, 80), -1));
 	players->push_back(new Player(Vector2f(-25.0f, 0.0f), Color(0, 100, 200), -2));
-	//players->push_back(new Player(Vector2f(25.0f, 25.0f), Color(150, 100, 200), -3));
-	//players->push_back(new Player(Vector2f(-25.0f, 25.0f), Color(40, 40, 40), -4));
+	players->push_back(new Player(Vector2f(25.0f, -25.0f), Color(150, 100, 200), -3));
+	players->push_back(new Player(Vector2f(-25.0f, -25.0f), Color(40, 40, 40), -4));
 
 	for (unsigned int i = 0; i < players->size(); i++) {
 		objects->push_back(players->at(i));
@@ -189,6 +186,7 @@ int main() {
 						case sf::Keyboard::Escape: {
 							window->close();
 						} break;
+						
 						case sf::Keyboard::F2:
 						case sf::Keyboard::F3:
 						case sf::Keyboard::F4:
@@ -332,14 +330,14 @@ int main() {
 
 
 
-		Vector2f center_position(0.0f,0.0f);
+		/*Vector2f center_position(0.0f,0.0f);
 		for (unsigned int i = 0; i < players->size(); i++) {
 			center_position += players->at(i)->pos;
 		}
-		center_position /= (float)players->size();
+		center_position /= (float)players->size();*/
 
-		float largers_dist = 0.0f;
-		for (unsigned int i = 0; i < players->size() - 1; i++) {
+		/*float largers_dist = 0.0f;
+		for (unsigned int i = 0; i < players->size(); i++) {
 			float dist = size(players->at(i)->pos - center_position);
 			if (dist > largers_dist) {
 				largers_dist = dist;
@@ -347,6 +345,51 @@ int main() {
 		}
 
 		float scale_multiply = 2.0f * (largers_dist + 20.0f);
+		*/
+
+		/*Vector2f outermost(0.0f, 0.0f);
+		for (unsigned int i = 0; i < players->size(); i++) {
+			Vector2f v = players->at(i)->pos - center_position;
+			if (fabs(v.x) > outermost.x) {
+				outermost.x = fabs(v.x);
+			}
+			if (fabs(v.y) > outermost.y) {
+				outermost.y = fabs(v.y);
+			}
+		}
+
+		Vector2f thing(outermost.x / ((float)window->getSize().x / (float)window->getSize().y), outermost.y);
+
+
+		//float scale_multiply = 2.0f * ((thing.x > thing.y ? thing.x : thing.y) + 20.0f);
+		float scale_multiply = 2.0f * (size(thing) + 20.0f);
+		*/
+
+
+		Vector2f smalest_most = objects->at(0)->pos;
+		Vector2f largest_most = objects->at(0)->pos;
+		for (unsigned int i = 1; i < objects->size(); i++) {
+			Vector2f v = objects->at(i)->pos;
+			if (v.x > largest_most.x) {
+				largest_most.x = v.x;
+			} else if (v.x < smalest_most.x) {
+				smalest_most.x = v.x;
+			}
+			if (v.y > largest_most.y) {
+				largest_most.y = v.y;
+			} else if (v.y < smalest_most.y) {
+				smalest_most.y = v.y;
+			}
+		}
+
+		Vector2f center_position = (smalest_most + largest_most) / 2.0f;
+
+		smalest_most.x /= ((float)window->getSize().x / (float)window->getSize().y);
+		largest_most.x /= ((float)window->getSize().x / (float)window->getSize().y);
+
+
+		float scale_multiply = size(smalest_most - largest_most) + 40.0f;
+
 		if (scale_multiply < 200.0f) {
 			scale_multiply = 200.0f;
 		}
