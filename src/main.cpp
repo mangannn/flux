@@ -155,7 +155,15 @@ int main() {
 
 
 
+	/*sf::Text text;
+	text.setFont(font);
+	text.setString("");
+	text.setCharacterSize(64);
+	text.setColor(sf::Color::Blue);
+	//text.setStyle(sf::Text::Bold | sf::Text::Underlined);
 
+	text.setPosition(Vector2f(0,0));
+	text.setScale(Vector2f(0.002,0.002));*/
 
 
 
@@ -240,7 +248,34 @@ int main() {
 						} break;
 						default: break;
 					}
+				} break;
 
+				/*case sf::Event::TextEntered: {
+					if (event.text.unicode < 128) {
+						if (event.text.unicode == '\b') {
+							sf::String str = text.getString();
+							if (str.getSize() > 0) {
+								str.erase(str.getSize() - 1);
+								text.setString(str);
+							}
+						} else if (event.text.unicode == '\r') {
+							text.move(0,0.1);
+						} else {
+							sf::String str(static_cast<char>(event.text.unicode));
+							std::cout << "ASCII character typed: " << static_cast<char>(event.text.unicode) << std::endl;
+							
+							text.setString(text.getString() + str);
+						}
+					} else {
+						std::cout << "character typed: " << (char)(event.text.unicode) << std::endl;
+					}
+				} break;*/
+
+				case sf::Event::JoystickConnected: {
+					std::cout << "Joystick connected: " << event.joystickConnect.joystickId << std::endl;
+				} break;
+				case sf::Event::JoystickDisconnected: {
+					std::cout << "Joystick disconnected: " << event.joystickConnect.joystickId << std::endl;
 				} break;
 				default: break;
 			}
@@ -468,6 +503,10 @@ int main() {
 				healthBar.move(Vector2f(0, size.y + space));
 			}
 		}
+
+		//window->draw(text);
+
+
 
 		//Update window
 		window->display();

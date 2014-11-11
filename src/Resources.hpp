@@ -14,6 +14,7 @@ sf::Vector2i mouthSize(130, 50);
 
 sf::Vector2i bollSize(125, 125);
 
+sf::Font font;
 
 bool load_resources() {
 
@@ -35,6 +36,16 @@ bool load_resources() {
 	eyesTex.setSmooth(true);
 	mouthTex.setSmooth(true);
 	bollTex.setSmooth(true);
+
+
+
+	std::cout << "Loading font..." << std::endl;
+	if (!font.loadFromFile("media/fonts/8bitlimo.ttf")) {
+	    return false;
+	}
+	std::cout << "Done!" << std::endl;
+
+	bollTex.setSmooth(false);
 
 	return true;
 }
