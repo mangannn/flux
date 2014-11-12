@@ -21,8 +21,8 @@ public:
 
 	float health;
 
-	Player(Vector2f pos, Color color, int input_handleParam):
-		Object(pos, Vector2f(0,0), 5.0f, 50.0f, 100.0f, color),
+	Player(Vector2f pos, Vector2f vel, Color color, int input_handleParam):
+		Object(pos, vel, 5.0f, 50.0f, 100.0f, color),
 
 		input_handle(input_handleParam),
 
@@ -78,7 +78,7 @@ public:
 			float x = sf::Joystick::getAxisPosition(input_handle, sf::Joystick::X);
 			float y = sf::Joystick::getAxisPosition(input_handle, sf::Joystick::Y);
 
-			v = Vector2f(x * a, y * a);
+			v = Vector2f(x, y);
 
 		} else if (input_handle == -1) {
 
@@ -104,8 +104,6 @@ public:
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
 				v.y += 1.0f;
 			}
-
-			v *= a;
 		} else if (input_handle == -2) {
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
 				v.x -= 1.0f;
@@ -119,8 +117,6 @@ public:
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
 				v.y += 1.0f;
 			}
-
-			v *= a;
 		} else if (input_handle == -3) {
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::F)) {
 				v.x -= 1.0f;
@@ -134,8 +130,6 @@ public:
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::G)) {
 				v.y += 1.0f;
 			}
-
-			v *= a;
 		} else if (input_handle == -4) {
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::J)) {
 				v.x -= 1.0f;
@@ -149,19 +143,21 @@ public:
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::K)) {
 				v.y += 1.0f;
 			}
-
-			v *= a;
 		}
 
-		vel += (v * elapsedTime);
+		float s = size(v);
+
+		if (s > 0) {
+			vel += ((v / size(v)) * a * elapsedTime);
+		}
 	}
 
 	virtual void collision_callback(float impulse) {
 		health -= impulse * 0.00001f;
 		if (health < 0.0f) {
-			cout << "DEAD" << endl;
+			cout << "DEAD: " << endl;
 			health = 1.0f;
-		} 
+		}
 	}
 
 	virtual void update(float elapsedTime) {

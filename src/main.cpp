@@ -19,11 +19,10 @@ using namespace std;
 #include "Physics.hpp"
 
 
-#include "Battleground.hpp"
 #include "Player.hpp"
 #include "Clumsy.hpp"
 #include "Boll.hpp"
-
+#include "Battleground.hpp"
 
 
 
@@ -107,7 +106,7 @@ int main() {
 
 	//world = new RectWorld(Vector2f(100.0f, 100.0f));
 	//world = new ElasticCircleWorld(150.0f, 40.0f);
-	world = new Battleground(100.0f, 40.0f);
+	world = new Battleground(100.0f, 20.0f);
 
 
 	/*for (int i = 0; i < 2; i++) {
@@ -116,9 +115,9 @@ int main() {
 		players->push_back(new Player(Vector2f(0.0f, (i + 1)), RANDOM_COLOR, -3));
 		players->push_back(new Player(Vector2f(0.0f, -(i + 1)), RANDOM_COLOR, -4));
 	}*/
-	players->push_back(new Player(Vector2f(25.0f, 0.0f), Color(200, 160, 80), -1));
-	players->push_back(new Player(Vector2f(-25.0f, 0.0f), Color(0, 100, 200), -2));
-	//players->push_back(new Player(Vector2f(25.0f, 25.0f), Color(150, 100, 200), -3));
+	players->push_back(new Player(Vector2f(25.0f, 0.0f), Vector2f(RANDOM2 * 100.0f, RANDOM2 * 100.0f), Color(200, 160, 80), -1));
+	players->push_back(new Player(Vector2f(-25.0f, 0.0f), Vector2f(RANDOM2 * 100.0f, RANDOM2 * 100.0f), Color(0, 100, 200), -2));
+	//players->push_back(new Player(Vector2f(25.0f, 25.0f), Vector2f(RANDOM2 * 100.0f, RANDOM2 * 100.0f), Color(150, 100, 200), -3));
 	//players->push_back(new Player(Vector2f(-25.0f, 25.0f), Color(40, 40, 40), -4));
 
 	for (unsigned int i = 0; i < players->size(); i++) {
@@ -130,7 +129,7 @@ int main() {
 	objects->push_back(clumsy);
 	objects->push_back(boll);
 
-	constraints->push_back(new ElasticDistanceConstraint(clumsy, boll, 60.0f, 4.0f));
+	constraints->push_back(new ElasticDistanceConstraint(clumsy, boll, 70.0f, 4.0f));
 
 
 	sf::Event event;
