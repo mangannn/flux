@@ -2,12 +2,15 @@
 #define _PLAYER_H_
 
 #include "Object.hpp"
+#include "Controls.hpp"
 
 class Player: public Object {
 
 public:
 
 	int input_handle;
+
+	Controls *controls;
 
 	sf::Sprite sprite;
 
@@ -35,6 +38,14 @@ public:
 		health(1.0f)
 	{
 
+		if (input_handle >= 0) {
+			controls = new JoystickControls(input_handle);
+		} else {
+			controls = new KeyboardControls((-input_handle) - 1);
+		}
+
+		/*
+
 		if ((input_handle >= 0 && input_handle < 8) && sf::Joystick::isConnected(input_handle)) {
 
 			cout << "Joystick: " << input_handle << endl;
@@ -43,6 +54,8 @@ public:
 			cout << "Y Axis: " << (sf::Joystick::hasAxis(input_handle, sf::Joystick::Y) ? "yes" : "no") << endl;
 			cout << "Z Axis: " << (sf::Joystick::hasAxis(input_handle, sf::Joystick::Z) ? "yes" : "no") << endl;
 		}
+
+		*/
 
 		playerSpriteSize = Vector2i(200, 300);
 
@@ -55,101 +68,27 @@ public:
 		sprite.setScale(sf::Vector2f((radius * 2.0f) / (float)playerSpriteSize.x, (radius * 2.0f) / (float)playerSpriteSize.x));
 	}
 
-	virtual ~Player() {}
+	virtual ~Player() {
+		delete controls;
+	}
 
 	void handleInput(float elapsedTime) {
 
-		Vector2f v(0,0);
+		if (controls->action(0)) {
+			cout << "BAM!" << endl;
+		}
+		if (controls->action(1)) {
+			cout << "PUH!" << endl;
+		}
+		if (controls->action(2)) {
+			cout << "KLONK!" << endl;
+		}
 
 		const float a = 700.0;
 
-		if (input_handle >= 0) {
+		Vector2f v = controls->movement();
 
-			if (sf::Joystick::isButtonPressed(input_handle, 0)) {
-				cout << "BAM!" << endl;
-			}
-			if (sf::Joystick::isButtonPressed(input_handle, 1)) {
-				cout << "PUH!" << endl;
-			}
-			if (sf::Joystick::isButtonPressed(input_handle, 3)) {
-				cout << "KLONK!" << endl;
-			}
-
-			float x = sf::Joystick::getAxisPosition(input_handle, sf::Joystick::X);
-			float y = sf::Joystick::getAxisPosition(input_handle, sf::Joystick::Y);
-
-			v = Vector2f(x, y);
-
-		} else if (input_handle == -1) {
-
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z)) {
-				cout << "BAM!" << endl;
-			}
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::X)) {
-				cout << "PUH!" << endl;
-			}
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::C)) {
-				cout << "KLONK!" << endl;
-			}
-
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
-				v.x -= 1.0f;
-			}
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
-				v.x += 1.0f;
-			}
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
-				v.y -= 1.0f;
-			}
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
-				v.y += 1.0f;
-			}
-		} else if (input_handle == -2) {
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
-				v.x -= 1.0f;
-			}
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-				v.x += 1.0f;
-			}
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
-				v.y -= 1.0f;
-			}
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
-				v.y += 1.0f;
-			}
-		} else if (input_handle == -3) {
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::F)) {
-				v.x -= 1.0f;
-			}
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::H)) {
-				v.x += 1.0f;
-			}
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::T)) {
-				v.y -= 1.0f;
-			}
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::G)) {
-				v.y += 1.0f;
-			}
-		} else if (input_handle == -4) {
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::J)) {
-				v.x -= 1.0f;
-			}
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::L)) {
-				v.x += 1.0f;
-			}
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::I)) {
-				v.y -= 1.0f;
-			}
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::K)) {
-				v.y += 1.0f;
-			}
-		}
-
-		float s = size(v);
-
-		if (s > 0) {
-			vel += ((v / size(v)) * a * elapsedTime);
-		}
+		vel += (v * a) * elapsedTime;
 	}
 
 	virtual void collision_callback(float impulse) {

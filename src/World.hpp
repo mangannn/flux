@@ -129,12 +129,11 @@ public:
 		Vector2f next_a = a->pos + (a->vel * elapsedTime);
 		Vector2f difference = next_a;
 		float current_distance = size(difference);
-		if (Clumsy *temp = dynamic_cast<Clumsy *>(a)) {
-			if (temp->connected) return;
-		}
+
 		if (current_distance > radius) {
 			Vector2f normal = (difference / current_distance);
-			a->vel -= normal * (((current_distance - radius) * elasticity) / a->mass);
+			//a->vel -= normal * (((current_distance - radius) * elasticity) / a->mass);
+			a->vel -= normal * (((current_distance - radius) * elasticity) * 0.01f);
 		}
 	}
 

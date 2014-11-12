@@ -26,9 +26,6 @@ using namespace std;
 
 
 
-
-#define WORLD_SCALE 210.0f
-
 std::vector<Object *> *objects;
 std::vector<Constraint *> *constraints;
 
@@ -86,17 +83,31 @@ int main() {
 
 	window = new RenderWindow(VideoMode(800, 620), "FLUX", sf::Style::Resize, settings);
 	window->setMouseCursorVisible(true);
-
-
-	sf::View view;
-	view.setCenter(Vector2f(0.0f, 0.0f));
-	view.setSize(Vector2f((float)window->getSize().x / (float)window->getSize().y, 1.0f) * WORLD_SCALE);
-	window->setView(view);
-
-
 	window->setFramerateLimit(50);
 
-	sf::Clock clock;
+
+
+
+
+
+
+
+
+	sf::View game_view;
+	sf::View gui_view;
+	gui_view.setSize(Vector2f((float)window->getSize().x / (float)window->getSize().y, 1.0f));
+	gui_view.setCenter(gui_view.getSize() / 2.0f);
+
+
+
+
+
+
+
+
+
+
+
 
 	objects = new std::vector<Object *>();
 	constraints = new std::vector<Constraint *>();
@@ -104,9 +115,14 @@ int main() {
 	players = new std::vector<Player *>();
 
 
+
+
+
+
+
 	//world = new RectWorld(Vector2f(100.0f, 100.0f));
 	//world = new ElasticCircleWorld(150.0f, 40.0f);
-	world = new Battleground(100.0f, 20.0f);
+	world = new Battleground(200.0f, 40.0f);
 
 
 	/*for (int i = 0; i < 2; i++) {
@@ -115,6 +131,7 @@ int main() {
 		players->push_back(new Player(Vector2f(0.0f, (i + 1)), RANDOM_COLOR, -3));
 		players->push_back(new Player(Vector2f(0.0f, -(i + 1)), RANDOM_COLOR, -4));
 	}*/
+	
 	players->push_back(new Player(Vector2f(25.0f, 0.0f), Vector2f(RANDOM2 * 100.0f, RANDOM2 * 100.0f), Color(200, 160, 80), -1));
 	players->push_back(new Player(Vector2f(-25.0f, 0.0f), Vector2f(RANDOM2 * 100.0f, RANDOM2 * 100.0f), Color(0, 100, 200), -2));
 	//players->push_back(new Player(Vector2f(25.0f, 25.0f), Vector2f(RANDOM2 * 100.0f, RANDOM2 * 100.0f), Color(150, 100, 200), -3));
@@ -132,7 +149,31 @@ int main() {
 	constraints->push_back(new ElasticDistanceConstraint(clumsy, boll, 70.0f, 4.0f));
 
 
+
+
+
+
+
+
+	/*sf::Text text;
+	text.setFont(font);
+	text.setString("");
+	text.setCharacterSize(64);
+	text.setColor(sf::Color::Blue);
+	//text.setStyle(sf::Text::Bold | sf::Text::Underlined);
+
+	text.setPosition(Vector2f(0,0));
+	text.setScale(Vector2f(0.002,0.002));*/
+
+
+
+
+
+
+
+
 	sf::Event event;
+	sf::Clock clock;
 
 	while (window->isOpen()) {
 
@@ -144,8 +185,8 @@ int main() {
 					window->close();
 				} break;
 				case sf::Event::Resized: {
-					view.setSize(Vector2f((float)event.size.width / (float)event.size.height, 1.0f) * WORLD_SCALE);
-					window->setView(view);
+					gui_view.setSize(Vector2f((float)event.size.width / (float)event.size.height, 1.0f));
+					gui_view.setCenter(gui_view.getSize() / 2.0f);
 				} break;
 				case sf::Event::KeyPressed: {
 
@@ -153,6 +194,7 @@ int main() {
 						case sf::Keyboard::Escape: {
 							window->close();
 						} break;
+
 						case sf::Keyboard::F2:
 						case sf::Keyboard::F3:
 						case sf::Keyboard::F4:
@@ -170,9 +212,6 @@ int main() {
 							}
 
 							window->setMouseCursorVisible(!fullscreen);
-							view.setSize(Vector2f((float)window->getSize().x / (float)window->getSize().y, 1.0f) * WORLD_SCALE);
-							window->setView(view);
-
 
 							fullscreen = !fullscreen;
 
@@ -209,11 +248,51 @@ int main() {
 						} break;
 						default: break;
 					}
+				} break;
 
+				/*case sf::Event::TextEntered: {
+					if (event.text.unicode < 128) {
+						if (event.text.unicode == '\b') {
+							sf::String str = text.getString();
+							if (str.getSize() > 0) {
+								str.erase(str.getSize() - 1);
+								text.setString(str);
+							}
+						} else if (event.text.unicode == '\r') {
+							text.move(0,0.1);
+						} else {
+							sf::String str(static_cast<char>(event.text.unicode));
+							std::cout << "ASCII character typed: " << static_cast<char>(event.text.unicode) << std::endl;
+
+							text.setString(text.getString() + str);
+						}
+					} else {
+						std::cout << "character typed: " << (char)(event.text.unicode) << std::endl;
+					}
+				} break;*/
+
+				case sf::Event::JoystickConnected: {
+					std::cout << "Joystick connected: " << event.joystickConnect.joystickId << std::endl;
+				} break;
+				case sf::Event::JoystickDisconnected: {
+					std::cout << "Joystick disconnected: " << event.joystickConnect.joystickId << std::endl;
 				} break;
 				default: break;
 			}
 		}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 		if (boll->connected) {
@@ -261,8 +340,98 @@ int main() {
 		step(elapsedTime);
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 		window->clear(sf::Color(100, 200, 100));
 		//window->clear(sf::Color(0xff, 0xff, 0xff));
+
+
+
+		/*Vector2f center_position(0.0f,0.0f);
+		for (unsigned int i = 0; i < players->size(); i++) {
+			center_position += players->at(i)->pos;
+		}
+		center_position /= (float)players->size();*/
+
+		/*float largers_dist = 0.0f;
+		for (unsigned int i = 0; i < players->size(); i++) {
+			float dist = size(players->at(i)->pos - center_position);
+			if (dist > largers_dist) {
+				largers_dist = dist;
+			}
+		}
+
+		float scale_multiply = 2.0f * (largers_dist + 20.0f);
+		*/
+
+		/*Vector2f outermost(0.0f, 0.0f);
+		for (unsigned int i = 0; i < players->size(); i++) {
+			Vector2f v = players->at(i)->pos - center_position;
+			if (fabs(v.x) > outermost.x) {
+				outermost.x = fabs(v.x);
+			}
+			if (fabs(v.y) > outermost.y) {
+				outermost.y = fabs(v.y);
+			}
+		}
+
+		Vector2f thing(outermost.x / ((float)window->getSize().x / (float)window->getSize().y), outermost.y);
+
+
+		//float scale_multiply = 2.0f * ((thing.x > thing.y ? thing.x : thing.y) + 20.0f);
+		float scale_multiply = 2.0f * (size(thing) + 20.0f);
+		*/
+
+
+		Vector2f smalest_most = objects->at(0)->pos;
+		Vector2f largest_most = objects->at(0)->pos;
+		for (unsigned int i = 1; i < objects->size(); i++) {
+			Vector2f v = objects->at(i)->pos;
+			if (v.x > largest_most.x) {
+				largest_most.x = v.x;
+			} else if (v.x < smalest_most.x) {
+				smalest_most.x = v.x;
+			}
+			if (v.y > largest_most.y) {
+				largest_most.y = v.y;
+			} else if (v.y < smalest_most.y) {
+				smalest_most.y = v.y;
+			}
+		}
+
+		Vector2f center_position = (smalest_most + largest_most) / 2.0f;
+
+		smalest_most.x /= ((float)window->getSize().x / (float)window->getSize().y);
+		largest_most.x /= ((float)window->getSize().x / (float)window->getSize().y);
+
+
+		float scale_multiply = size(smalest_most - largest_most) + 40.0f;
+
+		if (scale_multiply < 200.0f) {
+			scale_multiply = 200.0f;
+		}
+
+		game_view.setSize(Vector2f((float)window->getSize().x / (float)window->getSize().y, 1.0f) * scale_multiply);
+		game_view.setCenter(center_position);
+		window->setView(game_view);
 
 		world->draw(window);
 
@@ -285,19 +454,36 @@ int main() {
 			objects->at(i)->draw(window);
 		}
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		window->setView(gui_view);
+
 		{
 
-			Vector2f size(50, 5);
-			float space = 5;
+			Vector2f size(0.3, 0.03);
+			float space = 0.02;
 
-			Vector2f offset(10, 10);
+			Vector2f offset(0.02, 0.02);
 
 			sf::RectangleShape healthBar(size);
-			healthBar.setPosition(Vector2f(-WORLD_SCALE / 2.0f, -WORLD_SCALE / 2.0f) + offset);
+			healthBar.setPosition(offset);
 
-			Vector2f border(1.0f, 1.0f);
+			Vector2f border(0.006f, 0.006f);
 			sf::RectangleShape outline(size + border * 2.0f);
-			outline.setPosition(Vector2f(-WORLD_SCALE / 2.0f, -WORLD_SCALE / 2.0f) + offset - border);
+			outline.setPosition(offset - border);
 			outline.setFillColor(Color(0, 0, 0, 100));
 
 			for (unsigned int i = 0; i < players->size(); i++) {
@@ -318,9 +504,21 @@ int main() {
 			}
 		}
 
+		//window->draw(text);
+
+
+
 		//Update window
 		window->display();
 	}
+
+
+
+
+
+
+
+
 
 
 

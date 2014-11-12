@@ -27,7 +27,7 @@ public:
 	Constraint *constraint;
 
 	Boll(Vector2f pos, Color color, Clumsy *clumsyParam):
-		Object(pos, Vector2f(0,0), 5.0f, 10.0f, 0.0f),
+		Object(pos, Vector2f(0,0), 5.0f, 10.0f, 2.0f),
 
 		body_pos(0),
 		body_mouth_timer(0.0f),
