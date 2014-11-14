@@ -25,24 +25,28 @@ public:
 			DOWN = sf::Keyboard::Down;
 			LEFT = sf::Keyboard::Left;
 			RIGHT = sf::Keyboard::Right;
+			action_button[0] = sf::Keyboard::M;
 		} else if (keyboard_type == 1) {
 			UP = sf::Keyboard::W;
 			DOWN = sf::Keyboard::S;
 			LEFT = sf::Keyboard::A;
 			RIGHT = sf::Keyboard::D;
+			action_button[0] = sf::Keyboard::Q;
 		} else if (keyboard_type == 2) {
 			UP = sf::Keyboard::T;
 			DOWN = sf::Keyboard::G;
 			LEFT = sf::Keyboard::F;
 			RIGHT = sf::Keyboard::H;
+			action_button[0] = sf::Keyboard::R;
 		} else {
 			UP = sf::Keyboard::I;
 			DOWN = sf::Keyboard::K;
 			LEFT = sf::Keyboard::J;
 			RIGHT = sf::Keyboard::L;
+			action_button[0] = sf::Keyboard::U;
 		}
 
-		action_button[0] = sf::Keyboard::Z;
+
 		action_button[1] = sf::Keyboard::X;
 		action_button[2] = sf::Keyboard::C;
 	}

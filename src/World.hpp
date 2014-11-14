@@ -121,6 +121,8 @@ public:
 
 		shape.setOutlineThickness(0.6f);
 		shape.setOutlineColor(Color(0, 0, 0));
+
+		shape.setPointCount(100);
 	}
 	virtual ~ElasticCircleWorld() {}
 
@@ -133,7 +135,8 @@ public:
 		if (current_distance > radius) {
 			Vector2f normal = (difference / current_distance);
 			//a->vel -= normal * (((current_distance - radius) * elasticity) / a->mass);
-			a->vel -= normal * (((current_distance - radius) * elasticity) * 0.01f);
+			//a->vel -= normal * (((current_distance - radius) * elasticity) * 0.01f);
+			a->vel -= normal * (((current_distance - radius) * elasticity) * 0.0001f * a->mass);
 		}
 	}
 

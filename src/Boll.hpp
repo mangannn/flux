@@ -22,11 +22,10 @@ public:
 	float direction;
 
 	bool connected;
-	Clumsy *clumsy;
 
 	Constraint *constraint;
 
-	Boll(Vector2f pos, Color color, Clumsy *clumsyParam):
+	Boll(Vector2f pos, Color color):
 		Object(pos, Vector2f(0,0), 5.0f, 10.0f, 2.0f),
 
 		body_pos(0),
@@ -41,7 +40,6 @@ public:
 		direction(0.0f),
 
 		connected(false),
-		clumsy(clumsyParam),
 
 		constraint(NULL)
 	{

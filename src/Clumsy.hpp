@@ -7,124 +7,128 @@ class Clumsy: public Object {
 
 public:
 
-	sf::Sprite body, eyes, mouth;
+  sf::Sprite body, eyes, mouth;
 
-	int body_pos;
-	float body_mouth_timer;
+  int body_pos;
+  float body_mouth_timer;
 
-	bool yawning;
-	int mouth_index;
-	int mouth_dir;
-	float mouth_timer;
-	float eyes_index;
+  bool yawning;
+  int mouth_index;
+  int mouth_dir;
+  float mouth_timer;
+  float eyes_index;
 
-	float direction;
+  float direction;
 
-	Clumsy(Vector2f pos, Color color):
-		Object(pos, Vector2f(0,0), 20.0f, 50.0f, 1.0f),
+  Boll *boll;
 
-		body_pos(0),
-		body_mouth_timer(0.0f),
+  Clumsy(Vector2f pos, Color color, Boll *bollParam):
+    Object(pos, Vector2f(0,0), 40.0f, 50.0f, 1.0f),
 
-		yawning(false),
-		mouth_index(0),
-		mouth_dir(0),
-		mouth_timer(0.0f),
-		eyes_index(-5),
+    body_pos(0),
+    body_mouth_timer(0.0f),
 
-		direction(0.0f)
-	{
+    yawning(false),
+    mouth_index(0),
+    mouth_dir(0),
+    mouth_timer(0.0f),
+    eyes_index(-5),
 
-		sf::Vector2f scale((radius * 2.0f) / (float)bodySize.x, (radius * 2.0f) / (float)bodySize.y);
+    direction(0.0f),
 
+    boll(bollParam)
+  {
 
-		body.setTextureRect(sf::IntRect(0, 0, bodySize.x, bodySize.y));
-		body.setTexture(bodyTex);
-		body.setScale(scale);
-		body.setOrigin(sf::Vector2f((float)bodySize.x / 2.0f, (float)bodySize.y / 2.0f));
-
-		eyes.setTextureRect(sf::IntRect(0, 0, eyesSize.x, eyesSize.y));
-		eyes.setTexture(eyesTex);
-		eyes.setScale(scale);
-		eyes.setOrigin(sf::Vector2f((float)eyesSize.x / 2.0f, (float)eyesSize.y / 2.0f) + Vector2f(0,50));
-
-		mouth.setTextureRect(sf::IntRect(0, 0, mouthSize.x, mouthSize.y));
-		mouth.setTexture(mouthTex);
-		mouth.setScale(scale);
-		mouth.setOrigin(sf::Vector2f((float)mouthSize.x / 2.0f, (float)mouthSize.y / 2.0f) + Vector2f(0,-190));
+    sf::Vector2f scale((radius * 2.0f) / (float)bodySize.x, (radius * 2.0f) / (float)bodySize.y);
 
 
-		body.setColor(color);
-		mouth.setColor(Color(200, 100, 100));
-	}
+    body.setTextureRect(sf::IntRect(0, 0, bodySize.x, bodySize.y));
+    body.setTexture(bodyTex);
+    body.setScale(scale);
+    body.setOrigin(sf::Vector2f((float)bodySize.x / 2.0f, (float)bodySize.y / 2.0f));
 
-	virtual ~Clumsy() {}
+    eyes.setTextureRect(sf::IntRect(0, 0, eyesSize.x, eyesSize.y));
+    eyes.setTexture(eyesTex);
+    eyes.setScale(scale);
+    eyes.setOrigin(sf::Vector2f((float)eyesSize.x / 2.0f, (float)eyesSize.y / 2.0f) + Vector2f(0,50));
 
-	virtual void update(float elapsedTime) {
-
-		body_mouth_timer += elapsedTime;
-		if (body_mouth_timer > 0.2f) {
-			body_mouth_timer -= 0.2f;
-			body_pos++;
-			if (body_pos >= 6) {
-				body_pos = 0;
-			}
-			body.setTextureRect(sf::IntRect(bodySize.x * body_pos, 0, bodySize.x, bodySize.y));
-		}
+    mouth.setTextureRect(sf::IntRect(0, 0, mouthSize.x, mouthSize.y));
+    mouth.setTexture(mouthTex);
+    mouth.setScale(scale);
+    mouth.setOrigin(sf::Vector2f((float)mouthSize.x / 2.0f, (float)mouthSize.y / 2.0f) + Vector2f(0,-190));
 
 
+    body.setColor(color);
+    mouth.setColor(Color(200, 100, 100));
+  }
 
-		mouth_timer += elapsedTime;
-		if (yawning) {
-			if (mouth_timer > 0.1f) {
+  virtual ~Clumsy() {}
 
-				mouth_timer -= 0.1f;
+  virtual void update(float elapsedTime) {
 
-				if (mouth_dir == 0) {
-					mouth_index++;
-					if (mouth_index >= 8) {
-						mouth_dir = 1;
-						mouth_index -= 2;
-					}
-				} else {
-					mouth_index--;
-					if (mouth_index < 0) {
-						mouth_dir = 0;
-						mouth_index = 0;
-						yawning = false;
-						mouth_timer = - (3 + RANDOM * 25);
-					}
-				}
-				mouth.setTextureRect(sf::IntRect(mouthSize.x * mouth_index, 0, mouthSize.x, mouthSize.y));
-			}
-		} else if (mouth_timer > 0) {
-			mouth_timer = 0;
-			yawning = true;
-		}
+    body_mouth_timer += elapsedTime;
+    if (body_mouth_timer > 0.2f) {
+      body_mouth_timer -= 0.2f;
+      body_pos++;
+      if (body_pos >= 6) {
+        body_pos = 0;
+      }
+      body.setTextureRect(sf::IntRect(bodySize.x * body_pos, 0, bodySize.x, bodySize.y));
+    }
 
-		eyes_index += elapsedTime;
-		if (eyes_index >= 0) eyes_index += .2;
-		if (eyes_index >= 9) eyes_index = - (3 + RANDOM * 3);
 
-		if (eyes_index >= 3) {
-			eyes.setTextureRect(sf::IntRect(eyesSize.x * (eyes_index >= 6.0f ? (6 + (int)(6 - eyes_index)) : (int)(eyes_index)), 0, eyesSize.x, eyesSize.y));
-		} else {
-			eyes.setTextureRect(sf::IntRect((int)(frac(aabs(eyes_index)) * 3), 0, eyesSize.x, eyesSize.y));
-		}
-	}
 
-	virtual void draw(RenderWindow *window) {
+    mouth_timer += elapsedTime;
+    if (yawning) {
+      if (mouth_timer > 0.1f) {
 
-		body.setRotation(direction);
-		body.setPosition(pos);
-		window->draw(body);
-		eyes.setRotation(direction);
-		eyes.setPosition(pos);
-		window->draw(eyes);
-		mouth.setRotation(direction);
-		mouth.setPosition(pos);
-		window->draw(mouth);
-	}
+        mouth_timer -= 0.1f;
+
+        if (mouth_dir == 0) {
+          mouth_index++;
+          if (mouth_index >= 8) {
+            mouth_dir = 1;
+            mouth_index -= 2;
+          }
+        } else {
+          mouth_index--;
+          if (mouth_index < 0) {
+            mouth_dir = 0;
+            mouth_index = 0;
+            yawning = false;
+            mouth_timer = - (3 + RANDOM * 25);
+          }
+        }
+        mouth.setTextureRect(sf::IntRect(mouthSize.x * mouth_index, 0, mouthSize.x, mouthSize.y));
+      }
+    } else if (mouth_timer > 0) {
+      mouth_timer = 0;
+      yawning = true;
+    }
+
+    eyes_index += elapsedTime;
+    if (eyes_index >= 0) eyes_index += .2;
+    if (eyes_index >= 9) eyes_index = - (3 + RANDOM * 3);
+
+    if (eyes_index >= 3) {
+      eyes.setTextureRect(sf::IntRect(eyesSize.x * (eyes_index >= 6.0f ? (6 + (int)(6 - eyes_index)) : (int)(eyes_index)), 0, eyesSize.x, eyesSize.y));
+    } else {
+      eyes.setTextureRect(sf::IntRect((int)(frac(aabs(eyes_index)) * 3), 0, eyesSize.x, eyesSize.y));
+    }
+  }
+
+  virtual void draw(RenderWindow *window) {
+    direction = periodValueBetween(direction, angle(pos - boll->pos) + 90, (boll->connected)?(size(vel)/1500):0.008);
+    body.setRotation(direction);
+    body.setPosition(pos);
+    window->draw(body);
+    eyes.setRotation(direction);
+    eyes.setPosition(pos);
+    window->draw(eyes);
+    mouth.setRotation(direction);
+    mouth.setPosition(pos);
+    window->draw(mouth);
+  }
 };
 
 #endif

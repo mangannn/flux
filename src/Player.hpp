@@ -4,6 +4,9 @@
 #include "Object.hpp"
 #include "Controls.hpp"
 
+#define DASH_LOADING_TIME 2.0f
+#define DASH_STARTVELOCITY 700.0f
+
 class Player: public Object {
 
 public:
@@ -14,7 +17,11 @@ public:
 
 	sf::Sprite sprite;
 
+	Vector2f dashVel;
+	Vector2f dashPos;
+
 	bool running;
+	float dashBegin;
 
 	float sprite_pos;
 	int sprite_dir;
@@ -29,7 +36,11 @@ public:
 
 		input_handle(input_handleParam),
 
+		dashVel(Vector2f(0.0f, 0.0f)),
+		dashPos(pos),
+
 		running(false),
+		dashBegin(0),
 		sprite_pos(0),
 		sprite_dir(0),
 		timer(0.0f),
@@ -73,10 +84,8 @@ public:
 	}
 
 	void handleInput(float elapsedTime) {
+		vel -= dashVel;
 
-		if (controls->action(0)) {
-			cout << "BAM!" << endl;
-		}
 		if (controls->action(1)) {
 			cout << "PUH!" << endl;
 		}
@@ -89,18 +98,40 @@ public:
 		Vector2f v = controls->movement();
 
 		vel += (v * a) * elapsedTime;
+
+		dashVel *= 0.8f;
+		if (sqrSize(dashVel) < 40 * 40) dashVel = Vector2f(0, 0);
+		if (controls->action(0)) {
+			if (dashBegin >= 0) {
+				dashPos = pos;
+				float vSize = size(v);
+				if (vSize > 0) dashVel = v / vSize * DASH_STARTVELOCITY;
+				dashBegin = - DASH_LOADING_TIME / 2;
+			}
+		}
+		if (sqrSize(dashVel) < .2f) dashVel = Vector2f(0.0f, 0.0f);
+		//if (input_handle == -1) cout << "Dash: " << dashVel.x << ", " << dashVel.y << endl;
 	}
 
 	virtual void collision_callback(float impulse) {
 		health -= impulse * 0.00001f;
 		if (health < 0.0f) {
-			cout << "DEAD: " << endl;
+			cout << "DEAD: " << -input_handle << endl;
 			health = 1.0f;
 		}
 	}
 
 	virtual void update(float elapsedTime) {
 
+		if (dashBegin < 0){
+			dashBegin += elapsedTime;
+		}
+
+		if (sqrSize(dashVel) > 0) {
+
+			if (dashedIntersection(dashPos, pos))
+				cout << "CUT OFF ROPE!!!" << endl;
+		}
 
 		float current_velocity = size(vel);
 
@@ -149,6 +180,12 @@ public:
 				sprite.setTextureRect(sf::IntRect(playerSpriteSize.x * (int)sprite_pos, 0, playerSpriteSize.x, playerSpriteSize.y));
 			}
 		}
+		vel += dashVel;
+		/*if (input_handle == -1 && size(dashVel) > 0.0f) {
+			cout << "Added " << size(dashVel) << "from velocity" << endl;
+			cout << "Velocity is now " << size(vel) << endl << endl;
+		}*/
+
 	}
 
 	virtual void draw(RenderWindow *window) {

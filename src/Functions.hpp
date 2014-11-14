@@ -1,7 +1,6 @@
 #ifndef _FUNCTIONS_H_
 #define _FUNCTIONS_H_
 
-
 float aabs(float a) {
 	return (a < 0.0 ? -a : a);
 }
@@ -12,6 +11,10 @@ float frac(float x) {
 
 float size(sf::Vector2f v) {
 	return sqrt((v.x * v.x) + (v.y * v.y));
+}
+
+float sqrSize(sf::Vector2f v) {
+	return (v.x * v.x) + (v.y * v.y);
 }
 
 float dot(sf::Vector2f a, sf::Vector2f b) {
@@ -34,7 +37,13 @@ float periodValueBetween(float angle, float target, float percent, float period 
 	return cutToPeriod(target * percent + angle, 0, period);
 }
 
+bool lineCollision(Vector2f a, Vector2f b, Vector2f c, Vector2f d) {
+	return true;
+}
 
+bool dashedIntersection(Vector2f a, Vector2f b) {
+	return true;
+}
 
 #define RANDOM_COLOR sf::Color(rand()%0xff,rand()%0xff,rand()%0xff)
 

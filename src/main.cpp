@@ -19,20 +19,21 @@ using namespace std;
 #include "Physics.hpp"
 
 
-#include "Player.hpp"
-#include "Clumsy.hpp"
 #include "Boll.hpp"
+#include "Clumsy.hpp"
+#include "Player.hpp"
 #include "Battleground.hpp"
 
 
 
 std::vector<Object *> *objects;
+std::vector<Object *> *followedObjects;
 std::vector<Constraint *> *constraints;
 
 World *world;
 
 std::vector<Player *> *players;
-
+std::vector<Clumsy *> *clumsys;
 
 
 bool collision_callback(Object *a, Object *b) {
@@ -110,9 +111,13 @@ int main() {
 
 
 	objects = new std::vector<Object *>();
+	followedObjects = new std::vector<Object *>();
+
+
 	constraints = new std::vector<Constraint *>();
 
 	players = new std::vector<Player *>();
+	clumsys = new std::vector<Clumsy *>();
 
 
 
@@ -131,23 +136,27 @@ int main() {
 		players->push_back(new Player(Vector2f(0.0f, (i + 1)), RANDOM_COLOR, -3));
 		players->push_back(new Player(Vector2f(0.0f, -(i + 1)), RANDOM_COLOR, -4));
 	}*/
-	
+
 	players->push_back(new Player(Vector2f(25.0f, 0.0f), Vector2f(RANDOM2 * 100.0f, RANDOM2 * 100.0f), Color(200, 160, 80), -1));
-	players->push_back(new Player(Vector2f(-25.0f, 0.0f), Vector2f(RANDOM2 * 100.0f, RANDOM2 * 100.0f), Color(0, 100, 200), -2));
-	//players->push_back(new Player(Vector2f(25.0f, 25.0f), Vector2f(RANDOM2 * 100.0f, RANDOM2 * 100.0f), Color(150, 100, 200), -3));
-	//players->push_back(new Player(Vector2f(-25.0f, 25.0f), Color(40, 40, 40), -4));
+	players->push_back(new Player(Vector2f(-25.0f, 0.0f), Vector2f(RANDOM2 * 100.0f, RANDOM2 * 100.0f), Color(255, 120, 230), -2));
+	players->push_back(new Player(Vector2f(25.0f, 25.0f), Vector2f(RANDOM2 * 100.0f, RANDOM2 * 100.0f), Color(150, 100, 200), -3));
+	//players->push_back(new Player(Vector2f(-25.0f, 25.0f), Vector2f(RANDOM2 * 100.0f, RANDOM2 * 100.0f), Color(40, 40, 40), -4));
+
 
 	for (unsigned int i = 0; i < players->size(); i++) {
 		objects->push_back(players->at(i));
+		followedObjects->push_back(players->at(i));
 	}
 
-	Clumsy *clumsy = new Clumsy(Vector2f(0.0f, 25.0f), Color(160, 200, 80));
-	Boll *boll = new Boll(Vector2f(0.0f, -25.0f), Color(200, 80, 160, 50), clumsy);
-	objects->push_back(clumsy);
+	Boll *boll = new Boll(Vector2f(0.0f, -25.0f), Color(200, 80, 160, 50));
 	objects->push_back(boll);
 
-	constraints->push_back(new ElasticDistanceConstraint(clumsy, boll, 70.0f, 4.0f));
+	Clumsy *clumsy = new Clumsy(Vector2f(0.0f, 25.0f), Color(160, 200, 80), boll);
+	objects->push_back(clumsy);
+	followedObjects->push_back(clumsy);
 
+
+	constraints->push_back(new ElasticDistanceConstraint(clumsy, boll, 120.0f, 4.0f));
 
 
 
@@ -246,6 +255,13 @@ int main() {
 								boll->connected = false;
 							}
 						} break;
+
+												case sf::Keyboard::Return: {
+
+															for (unsigned int i = 0; i < players->size(); i++) {
+																players->at(i)->health = 1.0f;
+															}
+												} break;
 						default: break;
 					}
 				} break;
@@ -401,10 +417,10 @@ int main() {
 		*/
 
 
-		Vector2f smalest_most = objects->at(0)->pos;
-		Vector2f largest_most = objects->at(0)->pos;
-		for (unsigned int i = 1; i < objects->size(); i++) {
-			Vector2f v = objects->at(i)->pos;
+		Vector2f smalest_most = followedObjects->at(0)->pos;
+		Vector2f largest_most = followedObjects->at(0)->pos;
+		for (unsigned int i = 1; i < followedObjects->size(); i++) {
+			Vector2f v = followedObjects->at(i)->pos;
 			if (v.x > largest_most.x) {
 				largest_most.x = v.x;
 			} else if (v.x < smalest_most.x) {
@@ -428,9 +444,11 @@ int main() {
 		if (scale_multiply < 200.0f) {
 			scale_multiply = 200.0f;
 		}
-
-		game_view.setSize(Vector2f((float)window->getSize().x / (float)window->getSize().y, 1.0f) * scale_multiply);
-		game_view.setCenter(center_position);
+		Vector2f newSize = Vector2f((float)window->getSize().x / (float)window->getSize().y, 1.0f) * scale_multiply;
+		Vector2f currentSize = game_view.getSize();
+		Vector2f currentPosition = game_view.getCenter();
+		game_view.setSize((newSize - currentSize) / 4.0f + currentSize);
+		game_view.setCenter((center_position - currentPosition) / 4.0f + currentPosition);
 		window->setView(game_view);
 
 		world->draw(window);
@@ -526,6 +544,9 @@ int main() {
 
 	// dont delete the objects i the player vector because they are also a part och the objects vector
 	delete players;
+	delete clumsys;
+
+	delete followedObjects;
 
 	{
 		Constraint *temp;
