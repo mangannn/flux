@@ -7,13 +7,9 @@
 #define DASH_LOADING_TIME 2.0f
 #define DASH_STARTVELOCITY 700.0f
 
-class Player: public Object {
+class Player: public Object, public Controlled {
 
 public:
-
-	int input_handle;
-
-	Controls *controls;
 
 	sf::Sprite sprite;
 
@@ -31,10 +27,9 @@ public:
 
 	float health;
 
-	Player(Vector2f pos, Vector2f vel, Color color, int input_handleParam):
+	Player(Vector2f pos, Vector2f vel, Color color, int input_handle):
 		Object(pos, vel, 5.0f, 50.0f, 100.0f, color),
-
-		input_handle(input_handleParam),
+		Controlled(input_handle),
 
 		dashVel(Vector2f(0.0f, 0.0f)),
 		dashPos(pos),
@@ -49,25 +44,6 @@ public:
 		health(1.0f)
 	{
 
-		if (input_handle >= 0) {
-			controls = new JoystickControls(input_handle);
-		} else {
-			controls = new KeyboardControls((-input_handle) - 1);
-		}
-
-		/*
-
-		if ((input_handle >= 0 && input_handle < 8) && sf::Joystick::isConnected(input_handle)) {
-
-			cout << "Joystick: " << input_handle << endl;
-			cout << "Button Count: " << sf::Joystick::getButtonCount(input_handle) << endl;
-			cout << "X Axis: " << (sf::Joystick::hasAxis(input_handle, sf::Joystick::X) ? "yes" : "no") << endl;
-			cout << "Y Axis: " << (sf::Joystick::hasAxis(input_handle, sf::Joystick::Y) ? "yes" : "no") << endl;
-			cout << "Z Axis: " << (sf::Joystick::hasAxis(input_handle, sf::Joystick::Z) ? "yes" : "no") << endl;
-		}
-
-		*/
-
 		playerSpriteSize = Vector2i(200, 300);
 
 		sprite.setTextureRect(sf::IntRect(0, 0, playerSpriteSize.x, playerSpriteSize.y));
@@ -79,19 +55,19 @@ public:
 		sprite.setScale(sf::Vector2f((radius * 2.0f) / (float)playerSpriteSize.x, (radius * 2.0f) / (float)playerSpriteSize.x));
 	}
 
-	virtual ~Player() {
-		delete controls;
+	virtual ~Player() {}
+
+	virtual void event_callback(int id) {
+		switch (id) {
+			case 0: {
+				cout << "IVAANNN, FIXA SÅ DASHEN GÖRS HÄR!!! MÖÖÖÖPPPP!!!! KOLLA PÅ MIG!!!!! JAG ÄR UNIVERSUMS CENTRUM!!!!" << endl;
+			} break;
+			default: cout << "Action button pressed: " << id << endl;
+		}
 	}
 
-	void handleInput(float elapsedTime) {
+	virtual void handleInput(float elapsedTime) {
 		vel -= dashVel;
-
-		if (controls->action(1)) {
-			cout << "PUH!" << endl;
-		}
-		if (controls->action(2)) {
-			cout << "KLONK!" << endl;
-		}
 
 		const float a = 700.0;
 
@@ -116,7 +92,7 @@ public:
 	virtual void collision_callback(float impulse) {
 		health -= impulse * 0.00001f;
 		if (health < 0.0f) {
-			cout << "DEAD: " << -input_handle << endl;
+			cout << "DEAD" << endl;
 			health = 1.0f;
 		}
 	}
@@ -153,9 +129,6 @@ public:
 			if (post != pre) {
 
 				sprite.setTexture(runningTex);
-
-		//sprite.setPosition(pos);
-		//sprite.setRotation(spriteDirection + 90);
 
 				if (post >= 8.0f) {
 					post = 0;

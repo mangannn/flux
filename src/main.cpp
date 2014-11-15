@@ -84,6 +84,7 @@ int main() {
 
 	window = new RenderWindow(VideoMode(800, 620), "FLUX", sf::Style::Resize, settings);
 	window->setMouseCursorVisible(true);
+	window->setKeyRepeatEnabled(false);
 	window->setFramerateLimit(50);
 
 
@@ -189,6 +190,12 @@ int main() {
 		float elapsedTime = clock.restart().asSeconds();
 
 		while (window->pollEvent(event)) {
+
+			for (unsigned int i = 0; i < players->size(); i++) {
+				players->at(i)->controls->event_handle(event);
+			}
+
+
 			switch (event.type) {
 				case sf::Event::Closed: {
 					window->close();
@@ -221,6 +228,7 @@ int main() {
 							}
 
 							window->setMouseCursorVisible(!fullscreen);
+							window->setKeyRepeatEnabled(false);
 
 							fullscreen = !fullscreen;
 
@@ -256,12 +264,11 @@ int main() {
 							}
 						} break;
 
-												case sf::Keyboard::Return: {
-
-															for (unsigned int i = 0; i < players->size(); i++) {
-																players->at(i)->health = 1.0f;
-															}
-												} break;
+						case sf::Keyboard::Return: {
+							for (unsigned int i = 0; i < players->size(); i++) {
+								players->at(i)->health = 1.0f;
+							}
+						} break;
 						default: break;
 					}
 				} break;
@@ -288,7 +295,14 @@ int main() {
 				} break;*/
 
 				case sf::Event::JoystickConnected: {
-					std::cout << "Joystick connected: " << event.joystickConnect.joystickId << std::endl;
+
+					int id = event.joystickConnect.joystickId;
+
+					cout << "Joystick connected: " << id << endl;
+					cout << "Button Count: " << sf::Joystick::getButtonCount(id) << endl;
+					cout << "X Axis: " << (sf::Joystick::hasAxis(id, sf::Joystick::X) ? "yes" : "no") << endl;
+					cout << "Y Axis: " << (sf::Joystick::hasAxis(id, sf::Joystick::Y) ? "yes" : "no") << endl;
+					cout << "Z Axis: " << (sf::Joystick::hasAxis(id, sf::Joystick::Z) ? "yes" : "no") << endl;
 				} break;
 				case sf::Event::JoystickDisconnected: {
 					std::cout << "Joystick disconnected: " << event.joystickConnect.joystickId << std::endl;
@@ -303,44 +317,6 @@ int main() {
 
 
 
-
-
-
-
-
-
-
-
-		if (boll->connected) {
-			if (RANDOM < 0.001) {
-
-				Constraint *c = boll->constraint;
-
-				Object *o;
-
-				if (c->a == boll) {
-					o = c->b;
-				} else {
-					o = c->a;
-				}
-
-				for (unsigned int i = 0; i < constraints->size(); i++) {
-					if (c == constraints->at(i)) {
-						constraints->erase(constraints->begin() + i);
-					}
-				}
-
-
-				Vector2f diffrence = (clumsy->pos - boll->pos);
-				Vector2f normal = (diffrence / size(diffrence));
-
-				boll->vel += normal * 200.0f;
-				boll->pos += normal * (o->radius + boll->radius);
-
-				delete c;
-				boll->connected = false;
-			}
-		}
 
 
 
@@ -381,41 +357,6 @@ int main() {
 
 
 
-		/*Vector2f center_position(0.0f,0.0f);
-		for (unsigned int i = 0; i < players->size(); i++) {
-			center_position += players->at(i)->pos;
-		}
-		center_position /= (float)players->size();*/
-
-		/*float largers_dist = 0.0f;
-		for (unsigned int i = 0; i < players->size(); i++) {
-			float dist = size(players->at(i)->pos - center_position);
-			if (dist > largers_dist) {
-				largers_dist = dist;
-			}
-		}
-
-		float scale_multiply = 2.0f * (largers_dist + 20.0f);
-		*/
-
-		/*Vector2f outermost(0.0f, 0.0f);
-		for (unsigned int i = 0; i < players->size(); i++) {
-			Vector2f v = players->at(i)->pos - center_position;
-			if (fabs(v.x) > outermost.x) {
-				outermost.x = fabs(v.x);
-			}
-			if (fabs(v.y) > outermost.y) {
-				outermost.y = fabs(v.y);
-			}
-		}
-
-		Vector2f thing(outermost.x / ((float)window->getSize().x / (float)window->getSize().y), outermost.y);
-
-
-		//float scale_multiply = 2.0f * ((thing.x > thing.y ? thing.x : thing.y) + 20.0f);
-		float scale_multiply = 2.0f * (size(thing) + 20.0f);
-		*/
-
 
 		Vector2f smalest_most = followedObjects->at(0)->pos;
 		Vector2f largest_most = followedObjects->at(0)->pos;
@@ -433,10 +374,10 @@ int main() {
 			}
 		}
 
-		Vector2f center_position = (smalest_most + largest_most) / 2.0f;
+		float aspect = ((float)window->getSize().x / (float)window->getSize().y);
 
-		smalest_most.x /= ((float)window->getSize().x / (float)window->getSize().y);
-		largest_most.x /= ((float)window->getSize().x / (float)window->getSize().y);
+		smalest_most.x /= aspect;
+		largest_most.x /= aspect;
 
 
 		float scale_multiply = size(smalest_most - largest_most) + 40.0f;
@@ -444,11 +385,16 @@ int main() {
 		if (scale_multiply < 200.0f) {
 			scale_multiply = 200.0f;
 		}
-		Vector2f newSize = Vector2f((float)window->getSize().x / (float)window->getSize().y, 1.0f) * scale_multiply;
+
+		Vector2f newPosition = (smalest_most + largest_most) / 2.0f;
+		Vector2f newSize = Vector2f(aspect, 1.0f) * scale_multiply;
+
 		Vector2f currentSize = game_view.getSize();
 		Vector2f currentPosition = game_view.getCenter();
+
 		game_view.setSize((newSize - currentSize) / 4.0f + currentSize);
-		game_view.setCenter((center_position - currentPosition) / 4.0f + currentPosition);
+		game_view.setCenter((newPosition - currentPosition) / 4.0f + currentPosition);
+		
 		window->setView(game_view);
 
 		world->draw(window);
