@@ -51,47 +51,64 @@ class KeyboardControls : public Controls {
 
 public:
 
+	int num_action_keys;
+
 	sf::Keyboard::Key UP, DOWN, LEFT, RIGHT;
 	sf::Keyboard::Key action_button[10];
 
 	KeyboardControls(Controlled *controlled, int keyboard_type) :
 		Controls(controlled)
 	{
+
+
+		// this are temporary settings, they should not be hardcoded
+
 		if (keyboard_type == 0) {
 			UP = sf::Keyboard::Up;
 			DOWN = sf::Keyboard::Down;
 			LEFT = sf::Keyboard::Left;
 			RIGHT = sf::Keyboard::Right;
+
+			num_action_keys = 5;
 			action_button[0] = sf::Keyboard::M;
+			action_button[1] = sf::Keyboard::Z;
+			action_button[2] = sf::Keyboard::X;
+			action_button[3] = sf::Keyboard::C;
+			action_button[4] = sf::Keyboard::V;
+
 		} else if (keyboard_type == 1) {
 			UP = sf::Keyboard::W;
 			DOWN = sf::Keyboard::S;
 			LEFT = sf::Keyboard::A;
 			RIGHT = sf::Keyboard::D;
+
+			num_action_keys = 1;
 			action_button[0] = sf::Keyboard::Q;
+
 		} else if (keyboard_type == 2) {
 			UP = sf::Keyboard::T;
 			DOWN = sf::Keyboard::G;
 			LEFT = sf::Keyboard::F;
 			RIGHT = sf::Keyboard::H;
+
+			num_action_keys = 1;
 			action_button[0] = sf::Keyboard::R;
+
 		} else {
 			UP = sf::Keyboard::I;
 			DOWN = sf::Keyboard::K;
 			LEFT = sf::Keyboard::J;
 			RIGHT = sf::Keyboard::L;
+
+			num_action_keys = 1;
 			action_button[0] = sf::Keyboard::U;
 		}
-
-
-		action_button[1] = sf::Keyboard::X;
-		action_button[2] = sf::Keyboard::C;
 	}
 	virtual ~KeyboardControls() {}
 
 	virtual void event_handle(sf::Event event) {
 		if (event.type == sf::Event::KeyPressed) {
-			for (int i = 0; i < 3; i++) {
+			for (int i = 0; i < num_action_keys; i++) {
 				if (event.key.code == action_button[i]) {
 					controlled->event_callback(i);
 				}
@@ -139,8 +156,8 @@ public:
 
 	int num_buttons;
 
-	sf::Joystick::Axis HORIZONTAL, VERTICAL;
-	unsigned int action_button[10];
+	sf::Joystick::Axis axis_x, axis_y;
+	unsigned int action_button[32]; // 32 i max number of buttons sfml can handle
 
 	JoystickControls(Controlled *controlled, int handle_IDParam) :
 		Controls(controlled),
@@ -163,15 +180,23 @@ public:
 			cout << "Joystick number ivalid: " << handle_ID << endl;
 		}
 
-		action_button[0] = 0;
-		action_button[1] = 1;
-		action_button[2] = 2;
+
+
+		// this are temporary settings, they should not be hardcoded
+		{
+			axis_x = sf::Joystick::X;
+			axis_y = sf::Joystick::Y;
+
+			for (int i = 0; i < num_buttons; i++) {
+				action_button[i] = i;
+			}
+		}
 	}
 	virtual ~JoystickControls() {}
 
 	virtual void event_handle(sf::Event event) {
 		if (event.type == sf::Event::JoystickButtonPressed) {
-			for (int i = 0; i < 3; i++) {
+			for (int i = 0; i < num_buttons; i++) {
 				if (event.joystickButton.button == action_button[i]) {
 					controlled->event_callback(i);
 				}
@@ -184,8 +209,8 @@ public:
 	}
 	virtual Vector2f movement() {
 
-		float x = sf::Joystick::getAxisPosition(handle_ID, sf::Joystick::X);
-		float y = sf::Joystick::getAxisPosition(handle_ID, sf::Joystick::Y);
+		float x = sf::Joystick::getAxisPosition(handle_ID, axis_x);
+		float y = sf::Joystick::getAxisPosition(handle_ID, axis_y);
 
 		return Vector2f(x, y);
 	};
