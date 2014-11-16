@@ -1,0 +1,10 @@
+# Player list
+# Format: pos: %f %f color: %d %d %d input: %s
+# input is either k%d for keyboard or j%d for joystick
+
+
+pos: 25.0 0.0 color: 200 160 80 input: k0
+#pos: -25.0 0.0 color: 255 120 230 input: k1
+#pos: 25.0 25.0 color: 150 100 200 input: k2
+#pos: -25.0 25.0 color: 80 80 80 input: k3
+#pos: -25.0 27.0 color: 80 160 200 input: k3

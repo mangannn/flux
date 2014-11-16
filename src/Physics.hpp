@@ -49,6 +49,13 @@ void handle_collisions(float elapsedTime) {
 				if (distance < a->radius + b->radius) {
 					if (collision_callback(a, b)) {
 
+
+						// needed when creating object with the same position
+						if (distance == 0.0f) {
+							difference.x = 1.0f;
+							distance = 1.0f;
+						}
+
 						//cout << "Rörelsemängd: " << ((size(a->vel) * a->mass) + (size(b->vel) * b->mass));
 
 						Vector2f normal = (difference / distance);

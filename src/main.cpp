@@ -5,6 +5,7 @@
 
 #include <math.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <time.h>
 
 using namespace sf;
@@ -24,6 +25,8 @@ using namespace std;
 #include "Player.hpp"
 #include "Battleground.hpp"
 
+#define WINDOW_TITLE ("FLUX: MÖÖP!")
+
 
 
 std::vector<Object *> *objects;
@@ -34,6 +37,50 @@ World *world;
 
 std::vector<Player *> *players;
 std::vector<Clumsy *> *clumsys;
+
+void load_player_list(const char* path, std::vector<Player *> *list) {
+
+	FILE *file;
+
+	if (!(file = fopen(path, "r"))) {
+		cout << "Failed to open file: " << path << endl;
+		exit(-1);
+	}
+
+	const int MAXSTR = 256;
+	char buffer[MAXSTR];
+
+	float x = 0.0, y = 0.0;
+	int r = 0, g = 0, b = 0;
+
+	char input_type = 'k';
+	int input_handle = 0;
+
+	int num_back;
+
+	while (fgets(buffer, MAXSTR, file)) {
+
+		num_back = sscanf(buffer, 
+			"pos: %f %f color: %d %d %d input: %c%d", 
+			&x, &y, &r, &g, &b, &input_type, &input_handle);
+
+		if (num_back != 7) {
+			continue;
+		}
+
+		if (input_type == 'k') {
+			input_handle += 1;
+			input_handle = -input_handle;
+		}
+
+		players->push_back(new Player(
+			Vector2f(x, y), 
+			Vector2f(0,0),//Vector2f(RANDOM2 * 100.0f, RANDOM2 * 100.0f), 
+			Color(r, g, b), 
+			input_handle));
+	}
+	fclose(file);
+}
 
 
 bool collision_callback(Object *a, Object *b) {
@@ -82,7 +129,7 @@ int main() {
 	sf::RenderWindow *window;
 	bool fullscreen = false;
 
-	window = new RenderWindow(VideoMode(800, 620), "FLUX", sf::Style::Resize, settings);
+	window = new RenderWindow(VideoMode(800, 620), WINDOW_TITLE, sf::Style::Resize, settings);
 	window->setMouseCursorVisible(true);
 	window->setKeyRepeatEnabled(false);
 	window->setFramerateLimit(50);
@@ -138,10 +185,7 @@ int main() {
 		players->push_back(new Player(Vector2f(0.0f, -(i + 1)), RANDOM_COLOR, -4));
 	}*/
 
-	players->push_back(new Player(Vector2f(25.0f, 0.0f), Vector2f(RANDOM2 * 100.0f, RANDOM2 * 100.0f), Color(200, 160, 80), -1));
-	players->push_back(new Player(Vector2f(-25.0f, 0.0f), Vector2f(RANDOM2 * 100.0f, RANDOM2 * 100.0f), Color(255, 120, 230), -2));
-	players->push_back(new Player(Vector2f(25.0f, 25.0f), Vector2f(RANDOM2 * 100.0f, RANDOM2 * 100.0f), Color(150, 100, 200), -3));
-	//players->push_back(new Player(Vector2f(-25.0f, 25.0f), Vector2f(RANDOM2 * 100.0f, RANDOM2 * 100.0f), Color(40, 40, 40), -4));
+	load_player_list("media/player_list.txt", players);
 
 
 	for (unsigned int i = 0; i < players->size(); i++) {
@@ -149,10 +193,10 @@ int main() {
 		followedObjects->push_back(players->at(i));
 	}
 
-	Boll *boll = new Boll(Vector2f(0.0f, -25.0f), Color(200, 80, 160, 50));
+	Boll *boll = new Boll(Vector2f(0.0f, 0.0f), Color(200, 80, 160, 50));
 	objects->push_back(boll);
 
-	Clumsy *clumsy = new Clumsy(Vector2f(0.0f, 25.0f), Color(160, 200, 80), boll);
+	Clumsy *clumsy = new Clumsy(Vector2f(0.0f, 80.0f), Color(160, 200, 80), boll);
 	objects->push_back(clumsy);
 	followedObjects->push_back(clumsy);
 
@@ -221,16 +265,16 @@ int main() {
 							window->close();
 							delete window;
 
+							fullscreen = !fullscreen;
+
 							if (fullscreen) {
-								window = new RenderWindow(VideoMode(800, 620), "FLUX", sf::Style::Resize, settings);
+								window = new RenderWindow(VideoMode(), WINDOW_TITLE, sf::Style::Fullscreen, settings);
 							} else {
-								window = new RenderWindow(VideoMode(), "FLUX", sf::Style::Fullscreen, settings);
+								window = new RenderWindow(VideoMode(800, 620), WINDOW_TITLE, sf::Style::Resize, settings);
 							}
 
 							window->setMouseCursorVisible(!fullscreen);
 							window->setKeyRepeatEnabled(false);
-
-							fullscreen = !fullscreen;
 
 						} break;
 
