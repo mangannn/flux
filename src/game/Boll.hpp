@@ -1,8 +1,8 @@
 #ifndef _BOll_H_
 #define _BOll_H_
 
-#include "Object.hpp"
-#include "Constraint.hpp"
+#include "../physics/Object.hpp"
+#include "../physics/Constraint.hpp"
 
 class Boll: public Object {
 
@@ -120,7 +120,7 @@ public:
 		if (eyes_index >= 3) {
 			eyes.setTextureRect(sf::IntRect(bollSize.x * (eyes_index >= 6.0f ? (6 + (int)(6 - eyes_index)) : (int)(eyes_index)), 0, bollSize.x, bollSize.y));
 		} else {
-			eyes.setTextureRect(sf::IntRect((int)(frac(aabs(eyes_index)) * 3), 0, bollSize.x, bollSize.y));
+			eyes.setTextureRect(sf::IntRect((int)(frac(fabs(eyes_index)) * 3), 0, bollSize.x, bollSize.y));
 		}
 	}
 

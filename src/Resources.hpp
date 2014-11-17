@@ -2,52 +2,22 @@
 #define _RESOURCES_H_
 
 
-sf::Texture standingTex, runningTex;
-sf::Texture bodyTex, eyesTex, mouthTex;
-sf::Texture bollTex;
-
-sf::Vector2i playerSpriteSize(200, 300);
-
-sf::Vector2i bodySize(745, 745);
-sf::Vector2i eyesSize(455, 35);
-sf::Vector2i mouthSize(130, 50);
-
-sf::Vector2i bollSize(125, 125);
-
-sf::Font font;
-
-bool load_resources() {
-
-	std::cout << "Loading textures..." << std::endl;
-	if (!standingTex.loadFromFile("media/images/player/standing.png") ||
-		!runningTex.loadFromFile("media/images/player/running.png") ||
-		!bodyTex.loadFromFile("media/images/clumsy/body.png") ||
-		!eyesTex.loadFromFile("media/images/clumsy/eyes.png") ||
-		!mouthTex.loadFromFile("media/images/clumsy/mouth.png") ||
-		!bollTex.loadFromFile("media/images/boll/strip.png")) {
-		
-		return false;
-	}
-	std::cout << "Done!" << std::endl;
-
-	standingTex.setSmooth(true);
-	runningTex.setSmooth(true);
-	bodyTex.setSmooth(true);
-	eyesTex.setSmooth(true);
-	mouthTex.setSmooth(true);
-	bollTex.setSmooth(true);
+extern sf::Texture startScreenTex;
+extern sf::Vector2i startScreenTexSize;
 
 
+extern sf::Texture standingTex, runningTex;
+extern sf::Texture bodyTex, eyesTex, mouthTex;
+extern sf::Texture bollTex;
 
-	std::cout << "Loading font..." << std::endl;
-	if (!font.loadFromFile("media/fonts/8bitlimo.ttf")) {
-	    return false;
-	}
-	std::cout << "Done!" << std::endl;
+extern sf::Vector2i playerSpriteSize;
 
-	bollTex.setSmooth(false);
+extern sf::Vector2i bodySize;
+extern sf::Vector2i eyesSize;
+extern sf::Vector2i mouthSize;
 
-	return true;
-}
+extern sf::Vector2i bollSize;
+
+extern sf::Font font;
 
 #endif

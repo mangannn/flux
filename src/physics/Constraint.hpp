@@ -2,6 +2,13 @@
 #define _CONSTRAINT_H_
 
 #include "Object.hpp"
+#include "../Functions.hpp"
+
+#include <SFML/Graphics.hpp>
+#include <iostream>
+
+using namespace sf;
+using namespace std;
 
 class Constraint {
 

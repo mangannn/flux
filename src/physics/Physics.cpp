@@ -1,23 +1,11 @@
-#ifndef _PHYSICS_H_
-#define _PHYSICS_H_
+#include "Physics.hpp"
+#include <SFML/System.hpp>
+
+#include <math.h>
 
 using namespace sf;
-using namespace std;
 
-#include "Object.hpp"
-#include "Constraint.hpp"
-#include "World.hpp"
-
-
-extern std::vector<Object *> *objects;
-extern std::vector<Constraint *> *constraints;
-
-extern World *world;
-
-
-bool collision_callback(Object *a, Object *b);
-
-bool can_collide(Object *a, Object *b) {
+bool Physics::can_collide(Object *a, Object *b) {
 
 	/*for (unsigned int i = 0; i < constraints->size(); i++) {
 		Constraint *c = constraints->at(i);
@@ -28,7 +16,7 @@ bool can_collide(Object *a, Object *b) {
 	return true;
 }
 
-void handle_collisions(float elapsedTime) {
+void Physics::handle_collisions(float elapsedTime) {
 	for (unsigned int i = 0; i < objects->size(); i++) {
 
 		Object *a = objects->at(i);
@@ -69,8 +57,8 @@ void handle_collisions(float elapsedTime) {
 
 
 						// impulse
-						a->collision_callback(aabs(a->mass * (a_v - a_u)));
-						b->collision_callback(aabs(b->mass * (b_v - b_u)));
+						a->collision_callback(fabs(a->mass * (a_v - a_u)));
+						b->collision_callback(fabs(b->mass * (b_v - b_u)));
 
 
 						a->vel += (normal * (a_v - a_u));
@@ -99,13 +87,13 @@ void handle_collisions(float elapsedTime) {
 	}
 }
 
-void solve_constraints() {
+void Physics::solve_constraints() {
 	for (unsigned int i = 0; i < constraints->size(); i++) {
 		constraints->at(i)->solve();
 	}
 }
 
-void update_positions(float elapsedTime) {
+void Physics::update_positions(float elapsedTime) {
 
 	for (unsigned int i = 0; i < objects->size(); i++) {
 		Object *a = objects->at(i);
@@ -118,7 +106,7 @@ void update_positions(float elapsedTime) {
 	}
 }
 
-void step(float elapsedTime) {
+void Physics::step(float elapsedTime) {
 
 
 	handle_collisions(elapsedTime);
@@ -127,5 +115,3 @@ void step(float elapsedTime) {
 
 	update_positions(elapsedTime);
 }
-
-#endif

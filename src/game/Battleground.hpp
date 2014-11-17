@@ -1,7 +1,7 @@
 #ifndef _BATTLEGROUND_H_
 #define _BATTLEGROUND_H_
 
-#include "World.hpp"
+#include "../physics/World.hpp"
 
 class Battleground : public ElasticCircleWorld {
 

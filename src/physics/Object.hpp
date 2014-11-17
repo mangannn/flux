@@ -1,6 +1,10 @@
 #ifndef _OBJECT_H_
 #define _OBJECT_H_
 
+#include <SFML/Graphics.hpp>
+
+using namespace sf;
+
 class Object {
 
 public:

@@ -1,8 +1,8 @@
 #ifndef _PLAYER_H_
 #define _PLAYER_H_
 
-#include "Object.hpp"
-#include "Controls.hpp"
+#include "../physics/Object.hpp"
+#include "../Controls.hpp"
 
 #define DASH_LOADING_TIME 2.0f
 #define DASH_STARTVELOCITY 700.0f
@@ -20,7 +20,6 @@ public:
 	float dashBegin;
 
 	float sprite_pos;
-	int sprite_dir;
 	float timer;
 
 	float spriteDirection;
@@ -37,14 +36,11 @@ public:
 		running(false),
 		dashBegin(0),
 		sprite_pos(0),
-		sprite_dir(0),
 		timer(0.0f),
 		spriteDirection(0.0f),
 
 		health(1.0f)
 	{
-
-		playerSpriteSize = Vector2i(200, 300);
 
 		sprite.setTextureRect(sf::IntRect(0, 0, playerSpriteSize.x, playerSpriteSize.y));
 		sprite.setTexture(standingTex);
