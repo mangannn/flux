@@ -1,7 +1,10 @@
 #include "Game.hpp"
 #include "../CharacterSelect.hpp"
 
-Game::Game() {
+Game::Game(std::vector<Player *> *playersParam):
+	players(playersParam)
+
+{
 
 	objects = new std::vector<Object *>();
 	constraints = new std::vector<Constraint *>();
@@ -12,18 +15,7 @@ Game::Game() {
 
 
 	followedObjects = new std::vector<Object *>();
-	players = new std::vector<Player *>();
 	clumsys = new std::vector<Clumsy *>();
-
-
-	/*for (int i = 0; i < 2; i++) {
-		players->push_back(new Player(Vector2f((i + 1), 0.0f), RANDOM_COLOR, -1));
-		players->push_back(new Player(Vector2f(-(i + 1), 0.0f), RANDOM_COLOR, -2));
-		players->push_back(new Player(Vector2f(0.0f, (i + 1)), RANDOM_COLOR, -3));
-		players->push_back(new Player(Vector2f(0.0f, -(i + 1)), RANDOM_COLOR, -4));
-	}*/
-
-	load_player_list("media/player_list.txt", players);
 
 
 	for (unsigned int i = 0; i < players->size(); i++) {
@@ -312,59 +304,3 @@ void Game::draw(RenderWindow *window) {
 	}
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-void Game::load_player_list(const char* path, std::vector<Player *> *list) {
-
-	FILE *file;
-
-	if (!(file = fopen(path, "r"))) {
-		cout << "Failed to open file: " << path << endl;
-		exit(-1);
-	}
-
-	const int MAXSTR = 256;
-	char buffer[MAXSTR];
-
-	float x = 0.0, y = 0.0;
-	int r = 0, g = 0, b = 0;
-
-	char input_type = 'k';
-	int input_handle = 0;
-
-	int num_back;
-
-	while (fgets(buffer, MAXSTR, file)) {
-
-		num_back = sscanf(buffer, 
-			"pos: %f %f color: %d %d %d input: %c%d", 
-			&x, &y, &r, &g, &b, &input_type, &input_handle);
-
-		if (num_back != 7) {
-			continue;
-		}
-
-		if (input_type == 'k') {
-			input_handle += 1;
-			input_handle = -input_handle;
-		}
-
-		list->push_back(new Player(
-			Vector2f(x, y), 
-			Vector2f(0,0),//Vector2f(RANDOM2 * 100.0f, RANDOM2 * 100.0f), 
-			Color(r, g, b), 
-			input_handle));
-	}
-	fclose(file);
-}

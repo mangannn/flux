@@ -20,10 +20,6 @@
 
 class Game : public EventPass, public Physics {
 
-private:
-
-	void load_player_list(const char* path, std::vector<Player *> *list);
-
 public:
 
 	sf::View game_view;
@@ -36,7 +32,7 @@ public:
 	Boll *boll;
 	Clumsy *clumsy;
 
-	Game();
+	Game(std::vector<Player *> *playersParam);
 	virtual ~Game();
 
 

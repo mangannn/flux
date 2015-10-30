@@ -88,7 +88,8 @@ int main() {
 
 
 
-	EventPass *eventPass = new Startup(3);
+	//EventPass *eventPass = new Startup(3);
+	EventPass *eventPass = new CharacterSelect();
 
 
 	/*sf::Text text;

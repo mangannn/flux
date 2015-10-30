@@ -28,6 +28,19 @@ public:
 
 
 	virtual EventPass *event_handle(sf::Event event) {
+
+		switch (event.type) {
+			case sf::Event::KeyPressed: {
+				switch (event.key.code) {
+					case sf::Keyboard::Return: {
+						return new CharacterSelect();
+					} break;
+					default: break;
+				}
+			} break;
+			default: break;
+		}
+
 		return NULL;
 	}
 

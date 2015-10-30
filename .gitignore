@@ -1,7 +1,8 @@
 # BIN file
 
 BIN
-./build/*
+build/*
+*.d
 
 # Compiled Object files
 *.slo
