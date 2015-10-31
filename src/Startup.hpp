@@ -63,9 +63,7 @@ public:
 	virtual void draw(RenderWindow *window) {
 		window->clear(sf::Color(0,0,0));
 
-
 		view.setSize(Vector2f(((float)window->getSize().x / (float)window->getSize().y), 1.0f) * 5.0f);
-
 		window->setView(view);
 		window->draw(sprite);
 	}

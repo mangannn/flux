@@ -81,31 +81,14 @@ int main() {
 	sf::RenderWindow *window;
 	bool fullscreen = false;
 
-	window = new RenderWindow(VideoMode(800, 620), WINDOW_TITLE, sf::Style::Resize, settings);
+	window = new RenderWindow(VideoMode(800, 620), WINDOW_TITLE, sf::Style::Resize | sf::Style::Close, settings);
 	window->setMouseCursorVisible(true);
 	window->setKeyRepeatEnabled(false);
 	window->setFramerateLimit(50);
 
 
 
-	//EventPass *eventPass = new Startup(3);
-	EventPass *eventPass = new CharacterSelect();
-
-
-	/*sf::Text text;
-	text.setFont(font);
-	text.setString("");
-	text.setCharacterSize(64);
-	text.setColor(sf::Color::Blue);
-	//text.setStyle(sf::Text::Bold | sf::Text::Underlined);
-
-	text.setPosition(Vector2f(0,0));
-	text.setScale(Vector2f(0.002,0.002));*/
-
-
-
-
-
+	EventPass *eventPass = new Startup(3);
 
 
 
@@ -150,9 +133,9 @@ int main() {
 							fullscreen = !fullscreen;
 
 							if (fullscreen) {
-								window = new RenderWindow(VideoMode(), WINDOW_TITLE, sf::Style::Fullscreen, settings);
+								window = new RenderWindow(VideoMode(), WINDOW_TITLE, sf::Style::Fullscreen | sf::Style::Close, settings);
 							} else {
-								window = new RenderWindow(VideoMode(800, 620), WINDOW_TITLE, sf::Style::Resize, settings);
+								window = new RenderWindow(VideoMode(800, 620), WINDOW_TITLE, sf::Style::Resize | sf::Style::Close, settings);
 							}
 
 							window->setMouseCursorVisible(!fullscreen);
@@ -162,27 +145,6 @@ int main() {
 						default: break;
 					}
 				} break;
-
-				/*case sf::Event::TextEntered: {
-					if (event.text.unicode < 128) {
-						if (event.text.unicode == '\b') {
-							sf::String str = text.getString();
-							if (str.getSize() > 0) {
-								str.erase(str.getSize() - 1);
-								text.setString(str);
-							}
-						} else if (event.text.unicode == '\r') {
-							text.move(0,0.1);
-						} else {
-							sf::String str(static_cast<char>(event.text.unicode));
-							std::cout << "ASCII character typed: " << static_cast<char>(event.text.unicode) << std::endl;
-
-							text.setString(text.getString() + str);
-						}
-					} else {
-						std::cout << "character typed: " << (char)(event.text.unicode) << std::endl;
-					}
-				} break;*/
 
 				case sf::Event::JoystickConnected: {
 

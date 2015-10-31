@@ -4,8 +4,12 @@
 #include "../physics/Object.hpp"
 #include "../Controls.hpp"
 
-#define DASH_LOADING_TIME 2.0f
-#define DASH_STARTVELOCITY 700.0f
+#define DASH_LOADING_TIME 1.0f
+#define DASH_STARTVELOCITY 15000.0f
+
+#include <iostream>
+
+using namespace std;
 
 class Player: public Object, public Controlled {
 
@@ -56,33 +60,30 @@ public:
 	virtual void event_callback(int id) {
 		switch (id) {
 			case 0: {
-				cout << "IVAANNN, FIXA SÅ DASHEN GÖRS HÄR!!! MÖÖÖÖPPPP!!!! KOLLA PÅ MIG!!!!! JAG ÄR UNIVERSUMS CENTRUM!!!!" << endl;
+				if (dashBegin >= 0) {
+
+					Vector2f v = controls->movement();
+					float vSize = size(v);
+					if (vSize > 0) {
+						dashVel = (v / vSize) * DASH_STARTVELOCITY;
+						dashBegin = -DASH_LOADING_TIME;
+						dashPos = pos;
+
+						cout << "Dash!\n";
+					}
+				}
 			} break;
 			default: cout << "Action button pressed: " << id << endl;
 		}
 	}
 
 	virtual void handleInput(float elapsedTime) {
-		vel -= dashVel;
 
 		const float a = 700.0;
 
 		Vector2f v = controls->movement();
 
 		vel += (v * a) * elapsedTime;
-
-		dashVel *= 0.8f;
-		if (sqrSize(dashVel) < 40 * 40) dashVel = Vector2f(0, 0);
-		if (controls->action(0)) {
-			if (dashBegin >= 0) {
-				dashPos = pos;
-				float vSize = size(v);
-				if (vSize > 0) dashVel = v / vSize * DASH_STARTVELOCITY;
-				dashBegin = - DASH_LOADING_TIME / 2;
-			}
-		}
-		if (sqrSize(dashVel) < .2f) dashVel = Vector2f(0.0f, 0.0f);
-		//if (input_handle == -1) cout << "Dash: " << dashVel.x << ", " << dashVel.y << endl;
 	}
 
 	virtual void collision_callback(float impulse) {
@@ -95,15 +96,29 @@ public:
 
 	virtual void update(float elapsedTime) {
 
+		dashPos = pos;
+
+		// Dash update
+
 		if (dashBegin < 0){
 			dashBegin += elapsedTime;
 		}
 
-		if (sqrSize(dashVel) > 0) {
+		dashVel *= 0.8f;
 
-			if (dashedIntersection(dashPos, pos))
-				cout << "CUT OFF ROPE!!!" << endl;
+		const float dashEndVel = 5000;
+
+		if (sqrSize(dashVel) < dashEndVel * dashEndVel) {
+			dashVel = Vector2f(0.0f, 0.0f);
+		} else {
+			vel += dashVel * elapsedTime;
 		}
+
+
+
+
+
+		// Sprite update
 
 		float current_velocity = size(vel);
 
@@ -149,12 +164,6 @@ public:
 				sprite.setTextureRect(sf::IntRect(playerSpriteSize.x * (int)sprite_pos, 0, playerSpriteSize.x, playerSpriteSize.y));
 			}
 		}
-		vel += dashVel;
-		/*if (input_handle == -1 && size(dashVel) > 0.0f) {
-			cout << "Added " << size(dashVel) << "from velocity" << endl;
-			cout << "Velocity is now " << size(vel) << endl << endl;
-		}*/
-
 	}
 
 	virtual void draw(RenderWindow *window) {

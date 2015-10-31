@@ -1,9 +1,11 @@
 #ifndef _PHYSICS_H_
 #define _PHYSICS_H_
 
-#include "Object.hpp"
-#include "Constraint.hpp"
-#include "World.hpp"
+#include <vector>
+
+class Object;
+class Constraint;
+class World;
 
 class Physics {
 

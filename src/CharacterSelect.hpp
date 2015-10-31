@@ -1,4 +1,12 @@
+#include <math.h>
+
 #include "EventPass.hpp"
+#include "game/Game.hpp"
+
+#include "Functions.hpp"
+#include "Resources.hpp"
+
+#include "game/Player.hpp"
 
 class PlayerDummy {
 
@@ -125,7 +133,6 @@ public:
 		text.setFont(font);
 		text.setCharacterSize(64);
 		text.setColor(sf::Color::Blue);
-		//text.setStyle(sf::Text::Bold | sf::Text::Underlined);
 		text.setScale(Vector2f(0.002,0.002));
 
 	}

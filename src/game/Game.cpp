@@ -1,5 +1,16 @@
+#include <math.h>
+
 #include "Game.hpp"
 #include "../CharacterSelect.hpp"
+
+#include "../Functions.hpp"
+#include "../Resources.hpp"
+
+#include "Boll.hpp"
+#include "Clumsy.hpp"
+#include "Player.hpp"
+#include "Battleground.hpp"
+
 
 Game::Game(std::vector<Player *> *playersParam):
 	players(playersParam)
@@ -10,12 +21,10 @@ Game::Game(std::vector<Player *> *playersParam):
 	constraints = new std::vector<Constraint *>();
 
 	//world = new RectWorld(Vector2f(100.0f, 100.0f));
-	//world = new ElasticCircleWorld(150.0f, 40.0f);
 	world = new Battleground(200.0f, 40.0f);
 
 
 	followedObjects = new std::vector<Object *>();
-	clumsys = new std::vector<Clumsy *>();
 
 
 	for (unsigned int i = 0; i < players->size(); i++) {
@@ -41,7 +50,6 @@ Game::~Game() {
 
 	// dont delete the objects i the player vector because they are also a part och the objects vector
 	delete players;
-	delete clumsys;
 
 	delete followedObjects;
 
@@ -81,40 +89,7 @@ EventPass *Game::event_handle(sf::Event event) {
 		case sf::Event::KeyPressed: {
 
 			switch (event.key.code) {
-				case sf::Keyboard::Space: {
-					if (boll->connected) {
-						Constraint *c = boll->constraint;
-
-						Object *o;
-
-						if (c->a == boll) {
-							o = c->b;
-						} else {
-							o = c->a;
-						}
-
-						for (unsigned int i = 0; i < constraints->size(); i++) {
-							if (c == constraints->at(i)) {
-								constraints->erase(constraints->begin() + i);
-							}
-						}
-
-
-						Vector2f diffrence = (clumsy->pos - boll->pos);
-						Vector2f normal = (diffrence / size(diffrence));
-
-						boll->vel += normal * 200.0f;
-						boll->pos += normal * (o->radius + boll->radius);
-
-						delete c;
-						boll->connected = false;
-					}
-				} break;
-
 				case sf::Keyboard::Return: {
-					/*for (unsigned int i = 0; i < players->size(); i++) {
-						players->at(i)->health = 1.0f;
-					}*/
 					return new CharacterSelect();
 				} break;
 				default: break;
@@ -142,6 +117,53 @@ EventPass *Game::update(float elapsedTime) {
 	}
 
 	step(elapsedTime);
+
+
+
+	if (boll->connected) {
+		Constraint *c = boll->constraint;
+		Player *pl;
+
+		if (c->a == boll) {
+			pl = dynamic_cast<Player *>(c->b);
+		} else {
+			pl = dynamic_cast<Player *>(c->a);
+		}
+
+		for (unsigned int i = 0; i < players->size(); i++) {
+			if (players->at(i) != pl) {
+			//if (sqrSize(players->at(i)->dashVel) > 0.0f) {
+				if (lineIntersection(players->at(i)->dashPos, players->at(i)->pos, clumsy->pos, boll->pos)) {
+
+					Object *o;
+
+					if (c->a == boll) {
+						o = c->b;
+					} else {
+						o = c->a;
+					}
+
+					for (unsigned int i = 0; i < constraints->size(); i++) {
+						if (c == constraints->at(i)) {
+							constraints->erase(constraints->begin() + i);
+						}
+					}
+
+
+					Vector2f diffrence = (clumsy->pos - boll->pos);
+					Vector2f normal = (diffrence / size(diffrence));
+
+					boll->vel += normal * 10.0f;
+					boll->pos += normal * (o->radius + boll->radius);
+
+					delete c;
+					boll->connected = false;
+					
+				}
+			//}
+			}
+		}
+	}
 
 	return NULL;
 }

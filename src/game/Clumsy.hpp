@@ -116,12 +116,13 @@ public:
 		} else {
 			eyes.setTextureRect(sf::IntRect((int)(frac(fabs(eyes_index)) * 3), 0, eyesSize.x, eyesSize.y));
 		}
+
+
+
+		direction = periodValueBetween(direction, angle(pos - boll->pos) + 90.0f, ((boll->connected) ? (size(vel) / 1500.0f) : 0.008));
 	}
 
 	virtual void draw(RenderWindow *window) {
-		// ###### nothing is suposed to be calculated in draw!?
-		direction = periodValueBetween(direction, angle(pos - boll->pos) + 90.0f, ((boll->connected) ? (size(vel) / 1500.0f) : 0.008));
-
 		body.setRotation(direction);
 		body.setPosition(pos);
 		window->draw(body);

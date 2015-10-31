@@ -1,6 +1,10 @@
 #ifndef _FUNCTIONS_H_
 #define _FUNCTIONS_H_
 
+#include <SFML/System.hpp>
+
+using namespace sf;
+
 float frac(float x);
 
 float size(sf::Vector2f v);
@@ -13,8 +17,8 @@ float angle(sf::Vector2f v);
 float cutToPeriod(float v, float periodStart, float periodEnd);
 float periodValueBetween(float angle, float target, float percent, float period = 3600.f);
 
-bool lineCollision(Vector2f a, Vector2f b, Vector2f c, Vector2f d);
-bool dashedIntersection(Vector2f a, Vector2f b);
+bool lineIntersection(Vector2f a, Vector2f b, Vector2f c, Vector2f d);
+bool lineIntersectionDebug();
 
 #define RANDOM_COLOR sf::Color(rand()%0x100,rand()%0x100,rand()%0x100)
 

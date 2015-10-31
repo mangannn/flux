@@ -1,4 +1,9 @@
 #include "Physics.hpp"
+
+#include "Object.hpp"
+#include "Constraint.hpp"
+#include "World.hpp"
+
 #include <SFML/System.hpp>
 
 #include <math.h>

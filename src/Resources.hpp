@@ -1,6 +1,9 @@
 #ifndef _RESOURCES_H_
 #define _RESOURCES_H_
 
+#include <SFML/System.hpp>
+
+using namespace sf;
 
 extern sf::Texture startScreenTex;
 extern sf::Vector2i startScreenTexSize;

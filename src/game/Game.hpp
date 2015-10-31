@@ -1,21 +1,13 @@
+#ifndef _GAME_H_
+#define _GAME_H_
+
 #include "../EventPass.hpp"
 #include "../physics/Physics.hpp"
 
-#include "../Functions.hpp"
-#include "../Resources.hpp"
 
-
-#include <math.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <time.h>
-
-#include "Boll.hpp"
-#include "Clumsy.hpp"
-#include "Player.hpp"
-#include "Battleground.hpp"
-
-
+class Boll;
+class Clumsy;
+class Player;
 
 
 class Game : public EventPass, public Physics {
@@ -27,7 +19,6 @@ public:
 
 	std::vector<Object *> *followedObjects;
 	std::vector<Player *> *players;
-	std::vector<Clumsy *> *clumsys;
 
 	Boll *boll;
 	Clumsy *clumsy;
@@ -41,5 +32,7 @@ public:
 
 	virtual bool collision_callback(Object *a, Object *b);
 
-	virtual void draw(RenderWindow *window);
+	virtual void draw(sf::RenderWindow *window);
 };
+
+#endif
