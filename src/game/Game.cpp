@@ -1,6 +1,5 @@
 #include <math.h>
 
-#include "Game.hpp"
 #include "../CharacterSelect.hpp"
 
 #include "../Functions.hpp"
@@ -10,6 +9,8 @@
 #include "Clumsy.hpp"
 #include "Player.hpp"
 #include "Battleground.hpp"
+
+#include "Game.hpp"
 
 
 Game::Game(std::vector<Player *> *playersParam):
@@ -79,10 +80,10 @@ Game::~Game() {
 
 
 
-EventPass *Game::event_handle(sf::Event event) {
+EventPass *Game::eventHandle(sf::Event event) {
 
 	for (unsigned int i = 0; i < players->size(); i++) {
-		players->at(i)->controls->event_handle(event);
+		players->at(i)->controls->eventHandle(event);
 	}
 
 	switch (event.type) {

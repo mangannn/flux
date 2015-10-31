@@ -103,7 +103,7 @@ int main() {
 
 		while (window->pollEvent(event)) {
 
-			if ((temp_eventPass = eventPass->event_handle(event)) != NULL) {
+			if ((temp_eventPass = eventPass->eventHandle(event)) != NULL) {
 				delete eventPass;
 				eventPass = temp_eventPass;
 				temp_eventPass = NULL;

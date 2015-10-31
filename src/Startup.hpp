@@ -1,5 +1,9 @@
 #include "EventPass.hpp"
 
+#include "Resources.hpp"
+
+#include <math.h>
+
 class Startup : public EventPass {
 
 public:
@@ -27,7 +31,7 @@ public:
 	virtual ~Startup() {}
 
 
-	virtual EventPass *event_handle(sf::Event event) {
+	virtual EventPass *eventHandle(sf::Event event) {
 
 		switch (event.type) {
 			case sf::Event::KeyPressed: {

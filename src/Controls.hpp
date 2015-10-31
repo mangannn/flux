@@ -15,7 +15,7 @@ public:
 	Controlled(int input_handle);
 	virtual ~Controlled();
 
-	virtual void event_callback(int id) = 0;
+	virtual void eventCallback(int id) = 0;
 
 	virtual void handleInput(float elapsedTime) = 0;
 };
@@ -32,7 +32,7 @@ public:
 	{}
 	virtual ~Controls() {}
 
-	virtual void event_handle(sf::Event event) = 0;
+	virtual void eventHandle(sf::Event event) = 0;
 
 	virtual bool action(int num) = 0;
 	virtual Vector2f movement() = 0;
@@ -62,7 +62,7 @@ public:
 	KeyboardControls(Controlled *controlled, int keyboard_type);
 	virtual ~KeyboardControls();
 
-	virtual void event_handle(sf::Event event);
+	virtual void eventHandle(sf::Event event);
 
 	virtual bool action(int num);
 
@@ -86,7 +86,7 @@ public:
 	JoystickControls(Controlled *controlled, int handle_IDParam);
 	virtual ~JoystickControls();
 
-	virtual void event_handle(sf::Event event);
+	virtual void eventHandle(sf::Event event);
 
 	virtual bool action(int num);
 	virtual Vector2f movement();

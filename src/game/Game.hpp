@@ -27,7 +27,7 @@ public:
 	virtual ~Game();
 
 
-	virtual EventPass *event_handle(sf::Event event);
+	virtual EventPass *eventHandle(sf::Event event);
 	virtual EventPass *update(float elapsedTime);
 
 	virtual bool collision_callback(Object *a, Object *b);

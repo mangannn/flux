@@ -55,11 +55,11 @@ KeyboardControls::KeyboardControls(Controlled *controlled, int keyboard_type) :
 }
 KeyboardControls::~KeyboardControls() {}
 
-void KeyboardControls::event_handle(sf::Event event) {
+void KeyboardControls::eventHandle(sf::Event event) {
 	if (event.type == sf::Event::KeyPressed) {
 		for (int i = 0; i < num_action_keys; i++) {
 			if (event.key.code == action_button[i]) {
-				controlled->event_callback(i);
+				controlled->eventCallback(i);
 			}
 		}
 	}
@@ -140,11 +140,11 @@ JoystickControls::JoystickControls(Controlled *controlled, int handle_IDParam) :
 }
 JoystickControls::~JoystickControls() {}
 
-void JoystickControls::event_handle(sf::Event event) {
+void JoystickControls::eventHandle(sf::Event event) {
 	if (event.type == sf::Event::JoystickButtonPressed) {
 		for (int i = 0; i < num_buttons; i++) {
 			if (event.joystickButton.button == action_button[i]) {
-				controlled->event_callback(i);
+				controlled->eventCallback(i);
 			}
 		}
 	}

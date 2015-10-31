@@ -57,7 +57,7 @@ public:
 
 	virtual ~Player() {}
 
-	virtual void event_callback(int id) {
+	virtual void eventCallback(int id) {
 		switch (id) {
 			case 0: {
 				if (dashBegin >= 0) {

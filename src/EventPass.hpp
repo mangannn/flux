@@ -10,7 +10,7 @@ public:
 	EventPass() {}
 	virtual ~EventPass() {}
 
-	virtual EventPass *event_handle(sf::Event event) = 0;
+	virtual EventPass *eventHandle(sf::Event event) = 0;
 
 	virtual EventPass *update(float elapsedTime) = 0;
 
