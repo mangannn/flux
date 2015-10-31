@@ -16,12 +16,12 @@ public:
 
 	sf::Sprite characterSprite;
 	sf::Text text;
-
 	sf::Color backgroundColor;
 
 	float timer;
 
 	std::vector<PlayerDummy *> *playerDummys;
+
 
 	CharacterSelect();
 	virtual ~CharacterSelect();

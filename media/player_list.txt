@@ -1,4 +1,2 @@
 pos: 25.000000 0.000000 color: 200 160 80 input: k0
-pos: 0.000000 0.000000 color: 194 31 222 input: k1
-pos: 0.000000 0.000000 color: 161 25 41 input: k2
-pos: 0.000000 0.000000 color: 50 48 26 input: k3
+pos: 0.000000 0.000000 color: 112 227 226 input: k1
