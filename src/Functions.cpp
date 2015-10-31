@@ -36,11 +36,15 @@ float periodValueBetween(float angle, float target, float percent, float period)
 	return cutToPeriod(target * percent + angle, 0, period);
 }
 
-bool lineIntersection(Vector2f a1, Vector2f a2, Vector2f b1, Vector2f b2) {
+bool lineIntersect(Vector2f a1, Vector2f a2, Vector2f b1, Vector2f b2) {
+	
+	float intersection;
+	float maxI, minI;
 
 	Vector2f av = a1 - a2;
 	Vector2f bv = b1 - b2;
 
+	// if one is vertikal, then transform the lines so that new x =  old y
 	if (av.x == 0.0f || bv.x == 0.0f) {
 		a1 = Vector2f(a1.y, a1.x);
 		a2 = Vector2f(a2.y, a2.x);
@@ -56,14 +60,13 @@ bool lineIntersection(Vector2f a1, Vector2f a2, Vector2f b1, Vector2f b2) {
 		float ak = av.y / av.x;
 		float bk = bv.y / bv.x;
 
+		// check if they are parallel
 		if (ak != bk) {
 
 			float am = a1.y - (ak * a1.x);
 			float bm = b1.y - (bk * b1.x);
 
-			float intersection = (am - bm) / (bk - ak);
-
-			float maxI, minI;
+			intersection = (am - bm) / (bk - ak);
 
 			if (a1.x < a2.x) {
 				maxI = a2.x;
@@ -80,85 +83,111 @@ bool lineIntersection(Vector2f a1, Vector2f a2, Vector2f b1, Vector2f b2) {
 				maxI = fmin(maxI, b1.x);
 				minI = fmax(minI, b2.x);
 			}
+		}
+	} else {
 
-			if (intersection >= minI && intersection <= maxI) {
-				return true;
+		// this is a rare case when the lines are horizontal and vertikal
+		if (av.x == 0) {
+
+			intersection = a1.x;
+
+			if (b1.x < b2.x) {
+				maxI = b2.x;
+				minI = b1.x;
+			} else {
+				maxI = b1.x;
+				minI = b2.x;
+			}
+		} else {
+
+			intersection = b1.x;
+
+			if (a1.x < a2.x) {
+				maxI = a2.x;
+				minI = a1.x;
+			} else {
+				maxI = a1.x;
+				minI = a2.x;
 			}
 		}
+	}
+
+	if (intersection >= minI && intersection <= maxI) {
+		return true;
 	}
 
 	return false;
 }
 
 
-void lineIntersectionDebug() {
+void lineIntersectDebug() {
 
 	std::cout << "true" << std::endl;
 
-	std::cout << "intersection: " << lineIntersection(
+	std::cout << "intersection: " << lineIntersect(
 		Vector2f(1,0), Vector2f(-1,0),
 		Vector2f(0,1), Vector2f(0,-1) 
 		) << std::endl;
-	std::cout << "intersection: " << lineIntersection(
+	std::cout << "intersection: " << lineIntersect(
 		Vector2f(-1,0), Vector2f(1,0),
 		Vector2f(0,1), Vector2f(0,-1) 
 		) << std::endl;
-	std::cout << "intersection: " << lineIntersection(
+	std::cout << "intersection: " << lineIntersect(
 		Vector2f(0,1), Vector2f(0,-1),
 		Vector2f(1,0), Vector2f(-1,0)
 		) << std::endl;
-	std::cout << "intersection: " << lineIntersection(
+	std::cout << "intersection: " << lineIntersect(
 		Vector2f(0,1), Vector2f(0,-1), 
 		Vector2f(-1,0), Vector2f(1,0)
 		) << std::endl;
 
-	std::cout << "intersection: " << lineIntersection(
+	std::cout << "intersection: " << lineIntersect(
 		Vector2f(1,0), Vector2f(-1,0),
 		Vector2f(0,1), Vector2f(1,-1) 
 		) << std::endl;
-	std::cout << "intersection: " << lineIntersection(
+	std::cout << "intersection: " << lineIntersect(
 		Vector2f(-1,0), Vector2f(1,0),
 		Vector2f(0,1), Vector2f(1,-1) 
 		) << std::endl;
-	std::cout << "intersection: " << lineIntersection(
+	std::cout << "intersection: " << lineIntersect(
 		Vector2f(0,1), Vector2f(1,-1),
 		Vector2f(1,0), Vector2f(-1,0)
 		) << std::endl;
-	std::cout << "intersection: " << lineIntersection(
+	std::cout << "intersection: " << lineIntersect(
 		Vector2f(0,1), Vector2f(1,-1), 
 		Vector2f(-1,0), Vector2f(1,0)
 		) << std::endl;
 
-	std::cout << "intersection: " << lineIntersection(
+	std::cout << "intersection: " << lineIntersect(
 		Vector2f(1,0), Vector2f(-1,1),
 		Vector2f(0,1), Vector2f(0,-1) 
 		) << std::endl;
-	std::cout << "intersection: " << lineIntersection(
+	std::cout << "intersection: " << lineIntersect(
 		Vector2f(-1,0), Vector2f(1,1),
 		Vector2f(0,1), Vector2f(0,-1) 
 		) << std::endl;
-	std::cout << "intersection: " << lineIntersection(
+	std::cout << "intersection: " << lineIntersect(
 		Vector2f(0,1), Vector2f(0,-1),
 		Vector2f(1,0), Vector2f(-1,1)
 		) << std::endl;
-	std::cout << "intersection: " << lineIntersection(
+	std::cout << "intersection: " << lineIntersect(
 		Vector2f(0,1), Vector2f(0,-1), 
 		Vector2f(-1,0), Vector2f(1,1)
 		) << std::endl;
 
-	std::cout << "intersection: " << lineIntersection(
+	std::cout << "intersection: " << lineIntersect(
 		Vector2f(1,0), Vector2f(0,1),
 		Vector2f(0,0), Vector2f(1,1) 
 		) << std::endl;
-	std::cout << "intersection: " << lineIntersection(
+	std::cout << "intersection: " << lineIntersect(
 		Vector2f(0,1), Vector2f(1,0),
 		Vector2f(0,0), Vector2f(1,1) 
 		) << std::endl;
-	std::cout << "intersection: " << lineIntersection(
+	std::cout << "intersection: " << lineIntersect(
 		Vector2f(0,0), Vector2f(1,1), 
 		Vector2f(1,0), Vector2f(0,1)
 		) << std::endl;
-	std::cout << "intersection: " << lineIntersection(
+	std::cout << "intersection: " << lineIntersect(
 		Vector2f(0,0), Vector2f(1,1), 
 		Vector2f(0,1), Vector2f(1,0)
 		) << std::endl;
@@ -166,19 +195,19 @@ void lineIntersectionDebug() {
 
 	std::cout << "false" << std::endl;
 
-	std::cout << "intersection: " << lineIntersection(
+	std::cout << "intersection: " << lineIntersect(
 		Vector2f(2,3), Vector2f(3,2),
 		Vector2f(0,0), Vector2f(1,1) 
 		) << std::endl;
-	std::cout << "intersection: " << lineIntersection(
+	std::cout << "intersection: " << lineIntersect(
 		Vector2f(3,2), Vector2f(2,3),
 		Vector2f(0,0), Vector2f(1,1) 
 		) << std::endl;
-	std::cout << "intersection: " << lineIntersection(
+	std::cout << "intersection: " << lineIntersect(
 		Vector2f(0,0), Vector2f(1,1),
 		Vector2f(2,3), Vector2f(3,2)
 		) << std::endl;
-	std::cout << "intersection: " << lineIntersection(
+	std::cout << "intersection: " << lineIntersect(
 		Vector2f(0,0), Vector2f(1,1),
 		Vector2f(3,2), Vector2f(2,3)
 		) << std::endl;		

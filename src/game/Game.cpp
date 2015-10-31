@@ -133,7 +133,7 @@ EventPass *Game::update(float elapsedTime) {
 		for (unsigned int i = 0; i < players->size(); i++) {
 			if (players->at(i) != pl) {
 			//if (sqrSize(players->at(i)->dashVel) > 0.0f) {
-				if (lineIntersection(players->at(i)->dashPos, players->at(i)->pos, clumsy->pos, boll->pos)) {
+				if (lineIntersect(players->at(i)->dashPos, players->at(i)->pos, clumsy->pos, boll->pos)) {
 
 					Object *o;
 

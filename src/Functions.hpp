@@ -17,8 +17,8 @@ float angle(sf::Vector2f v);
 float cutToPeriod(float v, float periodStart, float periodEnd);
 float periodValueBetween(float angle, float target, float percent, float period = 3600.f);
 
-bool lineIntersection(Vector2f a, Vector2f b, Vector2f c, Vector2f d);
-bool lineIntersectionDebug();
+bool lineIntersect(Vector2f a, Vector2f b, Vector2f c, Vector2f d);
+bool lineIntersectDebug();
 
 #define RANDOM_COLOR sf::Color(rand()%0x100,rand()%0x100,rand()%0x100)
 
