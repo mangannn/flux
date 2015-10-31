@@ -159,6 +159,8 @@ EventPass *Game::update(float elapsedTime) {
 
 					delete c;
 					boll->connected = false;
+
+					cout << "Cut!\n";
 					
 				}
 			//}
