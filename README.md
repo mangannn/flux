@@ -1,5 +1,5 @@
 
-##### FLUX
+### FLUX
 
 # THIS AWESOME GAME IS AWESOME! Puhhh!
 
@@ -17,11 +17,11 @@ All that witch is are ours to give, we give for free to those who need! (WTFPL)
 - gcc
 - SFML
 
-# Compile
+# Compile:
 
 - mkdir ./build
 - make
 
-# Run
+# Run:
 
 - ./flux
