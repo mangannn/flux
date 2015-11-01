@@ -6,7 +6,7 @@ CFLAGS		= -Wall -MMD $(DEBUG) $(NOT_DEBUG)
 #CFLAGS		= -Wall $(DEBUG) $(NOT_DEBUG)
 LFLAGS		= -Wall $(DEBUG) $(NOT_DEBUG)
 
-TARGET		= BIN
+TARGET		= flux
 
 SRCS		= \
 $(wildcard src/*.cpp src/*/*.cpp)
