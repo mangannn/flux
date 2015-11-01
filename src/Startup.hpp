@@ -57,7 +57,6 @@ public:
 		sprite.setColor(color);
 
 		if (timer > duration) {
-			timer = 0.0f;
 			return new CharacterSelect();
 		} else {
 			return NULL;

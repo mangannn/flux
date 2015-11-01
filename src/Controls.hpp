@@ -16,8 +16,6 @@ public:
 	virtual ~Controlled();
 
 	virtual void eventCallback(int id) = 0;
-
-	virtual void handleInput(float elapsedTime) = 0;
 };
 
 

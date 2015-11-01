@@ -35,7 +35,7 @@ public:
 	}
 	virtual ~Object() {}
 
-	virtual void collision_callback(float impulse) {}
+	virtual void collision_callback(Object *a, float impulse) {}
 
 	virtual void update(float elapsedTime) {}
 

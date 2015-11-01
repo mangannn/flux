@@ -14,8 +14,8 @@ class Game : public EventPass, public Physics {
 
 public:
 
-	sf::View game_view;
-	sf::View gui_view;
+	sf::View gameView;
+	sf::View guiView;
 
 	std::vector<Object *> *followedObjects;
 	std::vector<Player *> *players;
@@ -33,6 +33,8 @@ public:
 	virtual bool collision_callback(Object *a, Object *b);
 
 	virtual void draw(sf::RenderWindow *window);
+
+	void cutOffRope();
 };
 
 #endif

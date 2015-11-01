@@ -62,8 +62,8 @@ void Physics::handle_collisions(float elapsedTime) {
 
 
 						// impulse
-						a->collision_callback(fabs(a->mass * (a_v - a_u)));
-						b->collision_callback(fabs(b->mass * (b_v - b_u)));
+						a->collision_callback(b, fabs(a->mass * (a_v - a_u)));
+						b->collision_callback(a, fabs(b->mass * (b_v - b_u)));
 
 
 						a->vel += (normal * (a_v - a_u));

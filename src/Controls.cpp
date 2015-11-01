@@ -18,12 +18,9 @@ KeyboardControls::KeyboardControls(Controlled *controlled, int keyboard_type) :
 		LEFT = sf::Keyboard::Left;
 		RIGHT = sf::Keyboard::Right;
 
-		num_action_keys = 5;
-		action_button[0] = sf::Keyboard::M;
-		action_button[1] = sf::Keyboard::Z;
-		action_button[2] = sf::Keyboard::X;
-		action_button[3] = sf::Keyboard::C;
-		action_button[4] = sf::Keyboard::V;
+		num_action_keys = 2;
+		action_button[0] = sf::Keyboard::N;
+		action_button[1] = sf::Keyboard::M;
 
 	} else if (keyboard_type == 1) {
 		UP = sf::Keyboard::W;
@@ -31,8 +28,9 @@ KeyboardControls::KeyboardControls(Controlled *controlled, int keyboard_type) :
 		LEFT = sf::Keyboard::A;
 		RIGHT = sf::Keyboard::D;
 
-		num_action_keys = 1;
-		action_button[0] = sf::Keyboard::Q;
+		num_action_keys = 2;
+		action_button[0] = sf::Keyboard::Z;
+		action_button[1] = sf::Keyboard::X;
 
 	} else if (keyboard_type == 2) {
 		UP = sf::Keyboard::T;
@@ -40,8 +38,9 @@ KeyboardControls::KeyboardControls(Controlled *controlled, int keyboard_type) :
 		LEFT = sf::Keyboard::F;
 		RIGHT = sf::Keyboard::H;
 
-		num_action_keys = 1;
-		action_button[0] = sf::Keyboard::R;
+		num_action_keys = 2;
+		action_button[0] = sf::Keyboard::V;
+		action_button[1] = sf::Keyboard::B;
 
 	} else {
 		UP = sf::Keyboard::I;
@@ -49,8 +48,9 @@ KeyboardControls::KeyboardControls(Controlled *controlled, int keyboard_type) :
 		LEFT = sf::Keyboard::J;
 		RIGHT = sf::Keyboard::L;
 
-		num_action_keys = 1;
-		action_button[0] = sf::Keyboard::U;
+		num_action_keys = 2;
+		action_button[0] = sf::Keyboard::O;
+		action_button[1] = sf::Keyboard::P;
 	}
 }
 KeyboardControls::~KeyboardControls() {}

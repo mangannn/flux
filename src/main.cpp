@@ -61,8 +61,6 @@ bool load_resources() {
 	}
 	std::cout << "Done!" << std::endl;
 
-	bollTex.setSmooth(false);
-
 	return true;
 }
 

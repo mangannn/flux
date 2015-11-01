@@ -15,7 +15,7 @@ float dot(sf::Vector2f a, sf::Vector2f b);
 float angle(sf::Vector2f v);
 
 float cutToPeriod(float v, float periodStart, float periodEnd);
-float periodValueBetween(float angle, float target, float percent, float period = 3600.f);
+float periodValueBetween(float angle, float target, float percent, float period = 360.f);
 
 bool lineIntersect(Vector2f a, Vector2f b, Vector2f c, Vector2f d);
 bool lineIntersectDebug();

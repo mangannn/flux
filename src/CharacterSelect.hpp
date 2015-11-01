@@ -35,7 +35,7 @@ public:
 
 private:
 
-	void addDummy(sf::Vector2f pos, sf::Color color, int input_handle);
+	void addDummy(sf::Color color, int input_handle);
 	void loadPlayerList(const char* path);
 	void savePlayerList(const char* path);
 

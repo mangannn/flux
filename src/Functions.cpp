@@ -34,9 +34,9 @@ float cutToPeriod(float v, float periodStart, float periodEnd) {
 }
 
 float periodValueBetween(float angle, float target, float percent, float period) {
-	target = cutToPeriod(target - angle, - period / 2, period / 2);
 	angle = cutToPeriod(angle, - period / 2, period / 2);
-	return cutToPeriod(target * percent + angle, 0, period);
+	float diffrence = cutToPeriod(target - angle, - period / 2, period / 2);
+	return cutToPeriod(diffrence * percent + angle, 0, period);
 }
 
 bool lineIntersect(Vector2f a1, Vector2f a2, Vector2f b1, Vector2f b2) {
