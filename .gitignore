@@ -1,6 +1,6 @@
 # BIN file
 
-BIN
+flux
 build/*
 *.d
 
