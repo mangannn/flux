@@ -144,9 +144,9 @@ EventPass *Game::update(float elapsedTime) {
 						o = c->a;
 					}
 
-					for (unsigned int i = 0; i < constraints->size(); i++) {
-						if (c == constraints->at(i)) {
-							constraints->erase(constraints->begin() + i);
+					for (unsigned int j = 0; j < constraints->size(); j++) {
+						if (c == constraints->at(j)) {
+							constraints->erase(constraints->begin() + j);
 						}
 					}
 
@@ -160,7 +160,7 @@ EventPass *Game::update(float elapsedTime) {
 					delete c;
 					boll->connected = false;
 
-					cout << "Cut!\n";
+					cout << i << "Cut!\n";
 					
 				}
 			//}
