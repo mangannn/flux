@@ -2,9 +2,8 @@ CC			= g++
 
 #DEBUG		= -g -D DEBUG
 
-CFLAGS		= -Wall -MMD $(DEBUG) $(NOT_DEBUG)
-#CFLAGS		= -Wall $(DEBUG) $(NOT_DEBUG)
-LFLAGS		= -Wall $(DEBUG) $(NOT_DEBUG)
+LFLAGS		= -Wall $(DEBUG) $(LIBS) $(LINKS)
+CFLAGS		= -Wall -MMD $(DEBUG) $(INCLUDES) $(DEFINES)
 
 TARGET		= flux
 
@@ -26,12 +25,12 @@ LINKS		= -lsfml-window -lsfml-audio -lsfml-graphics -lsfml-system
 build: $(TARGET)
 
 $(TARGET): $(OBJS)
-	$(CC) $(LFLAGS) -o $(TARGET) $(OBJS) $(LIBS) $(LINKS) 
+	$(CC) $(LFLAGS) -o $(TARGET) $(OBJS)
 
 build/%.o: src/%.cpp
-	$(CC) $(CFLAGS) -c $< -o $@ $(INCLUDES) $(DEFINES)
+	$(CC) $(CFLAGS) -c $< -o $@ 
 build/%.o: src/*/%.cpp
-	$(CC) $(CFLAGS) -c $< -o $@ $(INCLUDES) $(DEFINES)
+	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
 	rm -fv $(OBJS) $(OBJS:.o=.d) $(TARGET)
@@ -43,9 +42,6 @@ valgrind: $(TARGET)
 
 run:
 	./$(TARGET)
-
-depend: $(SRCS)
-	....
 
 cleandepend:
 	rm -fv $(OBJS:.o=.d)
