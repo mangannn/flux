@@ -2,7 +2,11 @@
 #define _CLUMSY_H_
 
 #include "Boll.hpp"
+
 #include "../physics/Object.hpp"
+
+#include "../Functions.hpp"
+#include "../Resources.hpp"
 
 class Clumsy: public Object {
 
@@ -72,7 +76,6 @@ public:
 	virtual void update(float elapsedTime) {
 
 		body_timer += elapsedTime;
-
 		if (body_timer > 0.2f) {
 			body_timer -= 0.2f;
 			body_index++;

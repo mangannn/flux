@@ -1,4 +1,2 @@
-color: 198 244 73 input: k0
-color: 182 91 167 input: k1
-color: 197 90 131 input: k2
-color: 86 37 9 input: k3
+color: 156 15 38 input: k0
+color: 11 179 113 input: k1

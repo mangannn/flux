@@ -3,7 +3,6 @@
 #include "../CharacterSelect.hpp"
 
 #include "../Functions.hpp"
-#include "../Resources.hpp"
 
 #include "Boll.hpp"
 #include "Clumsy.hpp"
@@ -11,6 +10,8 @@
 #include "Battleground.hpp"
 
 #include "../GameEnd.hpp"
+
+#include "../physics/Constraint.hpp"
 
 #include "Game.hpp"
 
@@ -22,7 +23,6 @@ Game::Game(std::vector<Player *> *playersParam):
 	objects = new std::vector<Object *>();
 	constraints = new std::vector<Constraint *>();
 
-	//world = new RectWorld(Vector2f(100.0f, 100.0f));
 	world = new Battleground(200.0f, 40.0f);
 
 
@@ -35,7 +35,7 @@ Game::Game(std::vector<Player *> *playersParam):
 	}
 
 	clumsy = new Clumsy(Vector2f(0.0f, -80.0f), Color(160, 200, 80));
-	boll = new Boll(Vector2f(0.0f, 0.0f), Color(200, 80, 160), clumsy);
+	boll = new Boll(Vector2f(0.0f, 0.0f), Color(140, 40, 200), clumsy);
 
 
 	objects->push_back(boll);
@@ -252,16 +252,13 @@ void Game::draw(RenderWindow *window) {
 		Vector2f diffrence = (boll->pos - clumsy->pos);
 
 		sf::RectangleShape line(sf::Vector2f(size(diffrence), 1));
+		line.setOrigin(sf::Vector2f(0, 0.5f));
 		line.rotate(angle(diffrence));
 		line.setPosition(clumsy->pos);
 		line.setFillColor(sf::Color(0, 0, 0));
 
 		window->draw(line);
 	}
-
-	/*for (unsigned int i = 0; i < constraints->size(); i++) {
-		constraints->at(i)->draw(window);
-	}*/
 
 	for (unsigned int i = 0; i < objects->size(); i++) {
 		objects->at(i)->draw(window);
