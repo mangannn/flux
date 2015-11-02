@@ -25,7 +25,7 @@ public:
 
 	Boll *boll;
 
-	Clumsy(Vector2f pos, Color color, Boll *bollParam):
+	Clumsy(Vector2f pos, Color color):
 		Object(pos, Vector2f(0,0), 40.0f, 50.0f, 1.0f),
 
 		body_index(0),
@@ -41,7 +41,7 @@ public:
 
 		direction(0.0f),
 
-		boll(bollParam)
+		boll(NULL)
 	{
 
 		sf::Vector2f scale((radius * 2.0f) / (float)bodySize.x, (radius * 2.0f) / (float)bodySize.y);

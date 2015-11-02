@@ -23,7 +23,9 @@ public:
 
 	Constraint *constraint;
 
-	Boll(Vector2f pos, Color color):
+	Clumsy *clumsy;
+
+	Boll(Vector2f pos, Color color, Clumsy *clumsyParam):
 		Object(pos, Vector2f(0,0), 5.0f, 10.0f, 4.0f),
 
 		body_index(0),
@@ -37,8 +39,13 @@ public:
 
 		connected(false),
 
-		constraint(NULL)
+		constraint(NULL),
+
+		clumsy(clumsyParam)
 	{
+
+		clumsy->boll = this;
+
 
 		sf::Vector2f scale((radius * 2.0f) / (float)bollSize.x, (radius * 2.0f) / (float)bollSize.y);
 		sf::Vector2f origin((float)bollSize.x / 2.0f, (float)bollSize.y / 2.0f);
@@ -53,6 +60,11 @@ public:
 		eyes.setTexture(bollTex);
 		eyes.setScale(scale * 0.9f);
 		eyes.setOrigin(origin);
+
+		mouth.setTextureRect(sf::IntRect(bollSize.x * 5, 0, bollSize.x, bollSize.y));
+		mouth.setTexture(bollTex);
+		mouth.setScale(scale * 0.9f);
+		mouth.setOrigin(origin);
 
 
 		body.setColor(color);
@@ -103,9 +115,15 @@ public:
 		body.setRotation(direction);
 		eyes.setPosition(pos);
 		eyes.setRotation(direction);
+		mouth.setPosition(pos);
+		mouth.setRotation(direction);
 
 		window->draw(body);
 		window->draw(eyes);
+
+		if (connected) {
+			window->draw(mouth);
+		}
 	}
 };
 

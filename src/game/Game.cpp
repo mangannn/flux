@@ -34,10 +34,12 @@ Game::Game(std::vector<Player *> *playersParam):
 		followedObjects->push_back(players->at(i));
 	}
 
-	boll = new Boll(Vector2f(0.0f, 0.0f), Color(200, 80, 160));
+	clumsy = new Clumsy(Vector2f(0.0f, -80.0f), Color(160, 200, 80));
+	boll = new Boll(Vector2f(0.0f, 0.0f), Color(200, 80, 160), clumsy);
+
+
 	objects->push_back(boll);
 
-	clumsy = new Clumsy(Vector2f(0.0f, -80.0f), Color(160, 200, 80), boll);
 	objects->push_back(clumsy);
 	followedObjects->push_back(clumsy);
 
