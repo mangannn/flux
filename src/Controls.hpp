@@ -4,20 +4,7 @@
 #include <SFML/Graphics.hpp>
 using namespace sf;
 
-class Controls;
-
-class Controlled {
-
-public:
-
-	Controls *controls;
-
-	Controlled(int input_handle);
-	virtual ~Controlled();
-
-	virtual void eventCallback(int id) = 0;
-};
-
+class Controlled;
 
 class Controls {
 
@@ -25,8 +12,8 @@ public:
 
 	Controlled *controlled;
 
-	Controls(Controlled *controlledParam) :
-		controlled(controlledParam)
+	Controls() :
+		controlled(NULL)
 	{}
 	virtual ~Controls() {}
 
@@ -36,6 +23,20 @@ public:
 	virtual Vector2f movement() = 0;
 };
 
+
+class Controlled {
+
+public:
+
+	Controls *controls;
+
+	Controlled(Controls *controlsParam);
+	Controlled(int input_handle);
+
+	virtual ~Controlled();
+
+	virtual void eventCallback(int id) = 0;
+};
 
 
 
@@ -57,8 +58,9 @@ public:
 	sf::Keyboard::Key UP, DOWN, LEFT, RIGHT;
 	sf::Keyboard::Key action_button[10];
 
-	KeyboardControls(Controlled *controlled, int keyboard_type);
-	virtual ~KeyboardControls();
+	KeyboardControls(int keyboard_type);
+	KeyboardControls(int k_up, int k_down, int k_left, int k_right, int *in_buttons, int num_in_buttons);
+	virtual ~KeyboardControls() {}
 
 	virtual void eventHandle(sf::Event event);
 
@@ -78,11 +80,12 @@ public:
 
 	int num_buttons;
 
-	sf::Joystick::Axis axis_x, axis_y;
+	sf::Joystick::Axis axisX, axisY;
 	unsigned int action_button[32]; // 32 i max number of buttons sfml can handle
 
-	JoystickControls(Controlled *controlled, int handle_IDParam);
-	virtual ~JoystickControls();
+	JoystickControls(int handle_IDParam);
+	JoystickControls(int handle_IDParam, int axisXParam, int axisYParam, int *in_buttons, int num_in_buttons);
+	virtual ~JoystickControls() {}
 
 	virtual void eventHandle(sf::Event event);
 

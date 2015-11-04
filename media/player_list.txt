@@ -1,4 +1,8 @@
-color: 13 140 211 input: k0
-color: 145 253 154 input: k1
-color: 38 57 179 input: k2
-color: 42 122 203 input: k3
+color{34, 232, 208} input{k4}
+color{237, 245, 133} input{k0}
+color{50, 105, 204} input{k1}
+color{16, 133, 247} input{k2}
+color{176, 117, 179} input{k5}
+color{167, 190, 126} input{k3}
+color{45, 26, 15} input{k6}
+color{20, 206, 127} input{k7}

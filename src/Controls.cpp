@@ -5,10 +5,7 @@ using namespace std;
 
 #include <math.h>
 
-KeyboardControls::KeyboardControls(Controlled *controlled, int keyboard_type) :
-	Controls(controlled)
-{
-
+KeyboardControls::KeyboardControls(int keyboard_type) {
 
 	// this are temporary settings, they should not be hardcoded
 
@@ -53,7 +50,17 @@ KeyboardControls::KeyboardControls(Controlled *controlled, int keyboard_type) :
 		action_button[1] = sf::Keyboard::P;
 	}
 }
-KeyboardControls::~KeyboardControls() {}
+KeyboardControls::KeyboardControls(int k_up, int k_down, int k_left, int k_right, int *in_buttons, int num_in_buttons) {
+	UP = (sf::Keyboard::Key)k_up;
+	DOWN = (sf::Keyboard::Key)k_down;
+	LEFT = (sf::Keyboard::Key)k_left;
+	RIGHT = (sf::Keyboard::Key)k_right;
+
+	num_action_keys = num_in_buttons;
+	for (int i = 0; i < num_action_keys; i++) {
+		action_button[i] = (sf::Keyboard::Key)in_buttons[i];
+	}
+}
 
 void KeyboardControls::eventHandle(sf::Event event) {
 	if (event.type == sf::Event::KeyPressed) {
@@ -105,8 +112,7 @@ Vector2f KeyboardControls::movement() {
 
 
 
-JoystickControls::JoystickControls(Controlled *controlled, int handle_IDParam) :
-	Controls(controlled),
+JoystickControls::JoystickControls(int handle_IDParam) :
 	handle_ID(handle_IDParam)
 {
 	if (handle_ID >= 0 && handle_ID < 8) {
@@ -130,15 +136,51 @@ JoystickControls::JoystickControls(Controlled *controlled, int handle_IDParam) :
 
 	// this are temporary settings, they should not be hardcoded
 	{
-		axis_x = sf::Joystick::X;
-		axis_y = sf::Joystick::Y;
+		axisX = sf::Joystick::X;
+		axisY = sf::Joystick::Y;
+
+		num_buttons = 2;
 
 		for (int i = 0; i < num_buttons; i++) {
 			action_button[i] = i;
 		}
 	}
 }
-JoystickControls::~JoystickControls() {}
+JoystickControls::JoystickControls(int handle_IDParam, int axisXParam, int axisYParam, int *in_buttons, int num_in_buttons) :
+	handle_ID(handle_IDParam),
+	axisX((sf::Joystick::Axis)axisXParam),
+	axisY((sf::Joystick::Axis)axisYParam)
+{
+	if (handle_ID >= 0 && handle_ID < 8) {
+		if (sf::Joystick::isConnected(handle_ID)) {
+
+			if (!sf::Joystick::hasAxis(handle_ID, axisX)) {
+				cout << "Joystick " << handle_ID << " doesn't have axis " << axisX << endl;
+			}
+			if (!sf::Joystick::hasAxis(handle_ID, axisY)) {
+				cout << "Joystick " << handle_ID << " doesn't have axis " << axisY << endl;
+			}
+
+			num_buttons = sf::Joystick::getButtonCount(handle_ID);
+
+			if (num_in_buttons > num_buttons) {
+				cout << "Joystick " << handle_ID << " doesn't have enought buttons" << endl;
+			} else {
+				for (int i = 0; i < num_in_buttons; i++) {
+					if (in_buttons[i] >= 0 && in_buttons[i] < num_buttons) {
+						action_button[i] = in_buttons[i];
+					} else {
+						cout << "Joystick " << handle_ID << " doesn't have button " << in_buttons[i] << endl;
+					}
+				}
+			}
+		} else {
+			cout << "Joystick not conected:" << handle_ID << endl;
+		}
+	} else {
+		cout << "Joystick number ivalid: " << handle_ID << endl;
+	}
+}
 
 void JoystickControls::eventHandle(sf::Event event) {
 	if (event.type == sf::Event::JoystickButtonPressed) {
@@ -155,8 +197,8 @@ bool JoystickControls::action(int num) {
 }
 Vector2f JoystickControls::movement() {
 
-	float x = sf::Joystick::getAxisPosition(handle_ID, axis_x);
-	float y = sf::Joystick::getAxisPosition(handle_ID, axis_y);
+	float x = sf::Joystick::getAxisPosition(handle_ID, axisX);
+	float y = sf::Joystick::getAxisPosition(handle_ID, axisY);
 
 	return Vector2f(x, y);
 }
@@ -171,13 +213,21 @@ Vector2f JoystickControls::movement() {
 
 
 
+Controlled::Controlled(Controls *controlsParam):
+	controls(controlsParam)
+{
+	controls->controlled = this;
+}
 Controlled::Controlled(int input_handle) {
 	if (input_handle >= 0) {
-		controls = new JoystickControls(this, input_handle);
+		controls = new JoystickControls(input_handle);
 	} else {
-		controls = new KeyboardControls(this, (-input_handle) - 1);
+		controls = new KeyboardControls((-input_handle) - 1);
 	}
+
+	controls->controlled = this;
 }
+
 Controlled::~Controlled() {
 	delete controls;
 }

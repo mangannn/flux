@@ -42,6 +42,14 @@ public:
 					default: break;
 				}
 			} break;
+			case sf::Event::MouseButtonPressed: {
+				switch (event.mouseButton.button) {
+					case sf::Mouse::Left: {
+						return new CharacterSelect();
+					} break;
+					default: break;
+				}
+			} break;
 			default: break;
 		}
 

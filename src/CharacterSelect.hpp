@@ -7,6 +7,8 @@ class Game;
 class Player;
 class PlayerDummy;
 
+class Button;
+
 
 class CharacterSelect : public EventPass {
 
@@ -21,6 +23,11 @@ public:
 	float timer;
 
 	std::vector<PlayerDummy *> *playerDummys;
+
+	// #### this should be fixed
+	sf::RenderWindow *win;
+
+	Button *startButton;
 
 
 	CharacterSelect();
