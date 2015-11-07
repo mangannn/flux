@@ -30,10 +30,14 @@ public:
 
 	Controls *controls;
 
-	Controlled(Controls *controlsParam);
-	Controlled(int input_handle);
-
-	virtual ~Controlled();
+	Controlled(Controls *controlsParam):
+		controls(controlsParam)
+	{
+		controls->controlled = this;
+	}
+	virtual ~Controlled() {
+		delete controls;
+	}
 
 	virtual void eventCallback(int id) = 0;
 };
@@ -58,7 +62,6 @@ public:
 	sf::Keyboard::Key UP, DOWN, LEFT, RIGHT;
 	sf::Keyboard::Key action_button[10];
 
-	KeyboardControls(int keyboard_type);
 	KeyboardControls(int k_up, int k_down, int k_left, int k_right, int *in_buttons, int num_in_buttons);
 	virtual ~KeyboardControls() {}
 
@@ -83,7 +86,6 @@ public:
 	sf::Joystick::Axis axisX, axisY;
 	unsigned int action_button[32]; // 32 i max number of buttons sfml can handle
 
-	JoystickControls(int handle_IDParam);
 	JoystickControls(int handle_IDParam, int axisXParam, int axisYParam, int *in_buttons, int num_in_buttons);
 	virtual ~JoystickControls() {}
 
