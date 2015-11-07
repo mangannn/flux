@@ -43,6 +43,7 @@ public:
 					default: break;
 				}
 			} break;
+			default: break;
 		}
 
 		return NULL;
