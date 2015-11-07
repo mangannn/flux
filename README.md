@@ -25,3 +25,25 @@ All that witch is are ours to give, we give for free to those who need! (WTFPL)
 # Run:
 
 - ./flux
+
+## Controls
+
+# Always
+
+- Esc: 			exit game
+- F11 & F?:		toggle fullscreen
+
+# Character Selection
+
+- Q: 			add player
+- W: 			remove player
+- R: 			reload playerlist
+- K: 			set keyboard controls
+- C: 			randomize playercolor
+- Left & Right:	move the marker
+- Enter:		LETS GO!
+
+# Game
+
+- Enter:		back to character selection
+

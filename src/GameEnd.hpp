@@ -25,21 +25,13 @@ public:
 		switch (event.type) {
 			case sf::Event::KeyPressed: {
 				switch (event.key.code) {
+					case sf::Keyboard::Space:
 					case sf::Keyboard::Return: {
 						return new CharacterSelect();
 					} break;
 					default: break;
 				}
 			} break;
-			case sf::Event::MouseButtonPressed: {
-				switch (event.mouseButton.button) {
-					case sf::Mouse::Left: {
-						return new CharacterSelect();
-					} break;
-					default: break;
-				}
-			} break;
-			default: break;
 		}
 
 		return NULL;
