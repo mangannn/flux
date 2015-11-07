@@ -197,7 +197,7 @@ EventPass *CharacterSelect::eventHandle(sf::Event event) {
 				sprintf(str, "%d", event.joystickMove.axis);
 			} break;
 			default: {
-				std::cout << "Not valid waitEvent" << std::endl;
+				std::cout << "Not valid catchEvent" << std::endl;
 			} break;
 		}
 

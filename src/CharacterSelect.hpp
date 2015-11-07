@@ -14,6 +14,18 @@ class CharacterSelect : public EventPass {
 
 public:
 
+	CharacterSelect();
+	virtual ~CharacterSelect();
+
+
+	virtual EventPass *eventHandle(sf::Event event);
+
+	virtual EventPass *update(float elapsedTime);
+
+	virtual void draw(sf::RenderWindow *window);
+
+private:
+
 	sf::View view;
 
 	sf::Sprite characterSprite;
@@ -29,19 +41,7 @@ public:
 
 	float markPosition, markDirection;
 	int markedIndex;
-
-
-	CharacterSelect();
-	virtual ~CharacterSelect();
-
-
-	virtual EventPass *eventHandle(sf::Event event);
-
-	virtual EventPass *update(float elapsedTime);
-
-	virtual void draw(sf::RenderWindow *window);
-
-private:
+	
 
 	void loadPlayerList(const char* path);
 	void savePlayerList(const char* path);

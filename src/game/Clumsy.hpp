@@ -10,7 +10,7 @@
 
 class Clumsy: public Object {
 
-public:
+private:
 
 	sf::Sprite body, eyes, mouth;
 
@@ -26,6 +26,8 @@ public:
 	float eyes_timer;
 
 	float direction;
+
+public:
 
 	Boll *boll;
 
