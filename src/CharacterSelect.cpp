@@ -425,7 +425,7 @@ void CharacterSelect::loadPlayerList(const char* path) {
 
 	char input_type = 'k';
 	int joystickId = 0;
-	int u = 0, d = 0, l = 0, r = 0, a1 = 0, a2 = 0, ax1 = 0, ax2 = 0;
+	int k_up = 0, k_down = 0, k_left = 0, k_right = 0, a1 = 0, a2 = 0, axis1 = 0, axis2 = 0;
 
 	int num_back;
 
@@ -445,7 +445,7 @@ void CharacterSelect::loadPlayerList(const char* path) {
 
 			num_back = sscanf(str, 
 			"%d,%d,%d,%d,%d,%d", 
-			&u, &d, &l, &r, &a1, &a2);
+			&k_up, &k_down, &k_left, &k_right, &a1, &a2);
 
 			if (num_back < 1) {
 				continue;
@@ -455,10 +455,10 @@ void CharacterSelect::loadPlayerList(const char* path) {
 
 			if (num_back == 7) {
 
-				pl->UP = u;
-				pl->DOWN = d;
-				pl->LEFT = l;
-				pl->RIGHT = r;
+				pl->UP = k_up;
+				pl->DOWN = k_down;
+				pl->LEFT = k_left;
+				pl->RIGHT = k_right;
 
 				pl->action_button[0] = a1;
 				pl->action_button[1] = a2;
@@ -469,7 +469,7 @@ void CharacterSelect::loadPlayerList(const char* path) {
 		} else {
 			num_back = sscanf(str, 
 			"%d,%d,%d,%d",
-			&ax1, &ax2, &a1, &a2);
+			&axis1, &axis2, &a1, &a2);
 
 			if (num_back < 1) {
 				continue;
@@ -481,8 +481,8 @@ void CharacterSelect::loadPlayerList(const char* path) {
 
 			if (num_back == 5) {
 
-				pl->axis[0] = ax1;
-				pl->axis[1] = ax2;
+				pl->axis[0] = axis1;
+				pl->axis[1] = axis2;
 
 				pl->action_button[0] = a1;
 				pl->action_button[1] = a2;
