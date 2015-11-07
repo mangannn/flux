@@ -29,6 +29,9 @@ public:
 
 	Button *startButton;
 
+	sf::Event::EventType catchEvent;
+	int catchIndex;
+
 
 	CharacterSelect();
 	virtual ~CharacterSelect();

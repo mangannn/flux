@@ -27,7 +27,7 @@ public:
 
 	bool releaseRope;
 
-	Player(Vector2f pos, Color color, int input_handle);
+	Player(Vector2f pos, Color color, Controls *con);
 
 	virtual ~Player() {}
 

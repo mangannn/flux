@@ -13,6 +13,10 @@
 
 #include <iostream>
 
+
+#include "KeyCodeString.hpp"
+
+
 class PlayerDummy {
 
 public:
@@ -60,7 +64,7 @@ public:
 				action_button[0] = sf::Keyboard::V;
 				action_button[1] = sf::Keyboard::B;
 
-			} else {
+			} else if (keyboard_type == 3) {
 				UP = sf::Keyboard::I;
 				DOWN = sf::Keyboard::K;
 				LEFT = sf::Keyboard::J;
@@ -68,6 +72,14 @@ public:
 
 				action_button[0] = sf::Keyboard::O;
 				action_button[1] = sf::Keyboard::P;
+			} else {
+				UP = sf::Keyboard::Unknown;
+				DOWN = sf::Keyboard::Unknown;
+				LEFT = sf::Keyboard::Unknown;
+				RIGHT = sf::Keyboard::Unknown;
+
+				action_button[0] = sf::Keyboard::Unknown;
+				action_button[1] = sf::Keyboard::Unknown;
 			}
 		} else {
 
@@ -135,6 +147,64 @@ CharacterSelect::~CharacterSelect() {
 
 EventPass *CharacterSelect::eventHandle(sf::Event event) {
 
+	if (event.type == catchEvent) {
+
+		char str[10];
+
+		switch (event.type) {
+			case sf::Event::KeyPressed: {
+
+				int key = event.key.code;
+
+				PlayerDummy *pl = playerDummys->back();
+
+				switch (catchIndex) {
+					case 0: {
+						pl->UP = key;
+					} break;
+					case 1: {
+						pl->DOWN = key;
+					} break;
+					case 2: {
+						pl->LEFT = key;
+					} break;
+					case 3: {
+						pl->RIGHT = key;
+					} break;
+					case 4: {
+						pl->action_button[0] = key;
+					} break;
+					case 5: {
+						pl->action_button[1] = key;
+					} break;
+				}
+
+				catchIndex++;
+				if (catchIndex < 6) {
+					return NULL;
+				} else {
+					catchIndex = 0;
+				}
+
+			} break;
+			case sf::Event::JoystickButtonPressed: {
+				sprintf(str, "%d", event.joystickButton.button);
+			} break;
+			case sf::Event::JoystickMoved: {
+				//sprintf(str, "%d", event.joystickMove.joystickId);
+				sprintf(str, "%d", event.joystickMove.axis);
+			} break;
+			default: {
+				std::cout << "Not valid waitEvent" << std::endl;
+			} break;
+		}
+
+		startButton->text.setString(str);
+		catchEvent = (sf::Event::EventType)0;
+		
+		return NULL;
+	}
+
 	switch (event.type) {
 		case sf::Event::KeyPressed: {
 			switch (event.key.code) {
@@ -190,6 +260,12 @@ EventPass *CharacterSelect::eventHandle(sf::Event event) {
 					loadPlayerList("media/player_list.txt");
 
 				} break;
+				case sf::Keyboard::T: {
+
+					catchEvent = sf::Event::KeyPressed;
+
+				} break;
+
 				case sf::Keyboard::Return: {
 					return createGame();
 				} break;
@@ -271,33 +347,37 @@ void CharacterSelect::draw(RenderWindow *window) {
 		sf::RectangleShape box(Vector2f(size, size));
 
 		Vector2f centerArrows = offset + Vector2f(0, 0.1);
-
 		const float arrowPlacement = size;
 
+		Vector2f centerButton = centerArrows + Vector2f(0, 0.15);
+		const float buttonPlacement = size;
+
 		if (playerDummys->at(i)->input_handle < 0) {
-			sprintf(str, "%d", playerDummys->at(i)->UP);
-			Button(centerArrows + Vector2f(0, -arrowPlacement), Vector2f(size, size), Color(60, 60, 160), str).draw(window);
-			sprintf(str, "%d", playerDummys->at(i)->DOWN);
-			Button(centerArrows + Vector2f(0, arrowPlacement), Vector2f(size, size), Color(60, 160, 60), str).draw(window);
-			sprintf(str, "%d", playerDummys->at(i)->LEFT);
-			Button(centerArrows + Vector2f(-arrowPlacement, 0), Vector2f(size, size), Color(160, 60, 160), str).draw(window);
-			sprintf(str, "%d", playerDummys->at(i)->RIGHT);
-			Button(centerArrows + Vector2f(arrowPlacement, 0), Vector2f(size, size), Color(160, 160, 60), str).draw(window);
+			Button(centerArrows + Vector2f(0, -arrowPlacement), Vector2f(size, size), Color(60, 60, 160), 
+				keyCodeToString(playerDummys->at(i)->UP)).draw(window);
+			Button(centerArrows + Vector2f(0, arrowPlacement), Vector2f(size, size), Color(60, 160, 60), 
+				keyCodeToString(playerDummys->at(i)->DOWN)).draw(window);
+			Button(centerArrows + Vector2f(-arrowPlacement, 0), Vector2f(size, size), Color(160, 60, 160), 
+				keyCodeToString(playerDummys->at(i)->LEFT)).draw(window);
+			Button(centerArrows + Vector2f(arrowPlacement, 0), Vector2f(size, size), Color(160, 160, 60), 
+				keyCodeToString(playerDummys->at(i)->RIGHT)).draw(window);
+
+			Button(centerButton + Vector2f(-buttonPlacement, 0), Vector2f(size, size), Color(160, 60, 60), 
+				keyCodeToString(playerDummys->at(i)->action_button[0])).draw(window);
+			Button(centerButton + Vector2f(buttonPlacement, 0), Vector2f(size, size), Color(60, 160, 160), 
+				keyCodeToString(playerDummys->at(i)->action_button[1])).draw(window);
+
 		} else {
 			sprintf(str, "%d", playerDummys->at(i)->axis[0]);
 			Button(centerArrows, Vector2f(size * 3, size), Color(60, 60, 160), str).draw(window);
 			sprintf(str, "%d", playerDummys->at(i)->axis[1]);
 			Button(centerArrows, Vector2f(size, size * 3), Color(60, 160, 60), str).draw(window);
+
+			sprintf(str, "%d", playerDummys->at(i)->action_button[0]);
+			Button(centerButton + Vector2f(-buttonPlacement, 0), Vector2f(size, size), Color(160, 60, 60), str).draw(window);
+			sprintf(str, "%d", playerDummys->at(i)->action_button[1]);
+			Button(centerButton + Vector2f(buttonPlacement, 0), Vector2f(size, size), Color(60, 160, 160), str).draw(window);
 		}
-
-		Vector2f centerButton = centerArrows + Vector2f(0, 0.15);
-		const float buttonPlacement = size;
-
-		sprintf(str, "%d", playerDummys->at(i)->action_button[0]);
-		Button(centerButton + Vector2f(-buttonPlacement, 0), Vector2f(size, size), Color(160, 60, 60), str).draw(window);
-		sprintf(str, "%d", playerDummys->at(i)->action_button[1]);
-		Button(centerButton + Vector2f(buttonPlacement, 0), Vector2f(size, size), Color(60, 160, 160), str).draw(window);
-
 	}
 }
 
@@ -324,31 +404,77 @@ void CharacterSelect::loadPlayerList(const char* path) {
 	const int MAXSTR = 256;
 	char buffer[MAXSTR];
 
-	int r = 0, g = 0, b = 0;
+	char str[MAXSTR];
+
+	int cr = 0, cg = 0, cb = 0;
 
 	char input_type = 'k';
 	int input_handle = 0;
+	int u = 0, d = 0, l = 0, r = 0, a1 = 0, a2 = 0, ax1 = 0, ax2 = 0;
 
 	int num_back;
 
 	while (fgets(buffer, MAXSTR, file)) {
 
+		// %[^}\n] saves all characters until a } or \n
+
 		num_back = sscanf(buffer, 
-			"color{%d,%d,%d} input{%c%d}", 
-			&r, &g, &b, &input_type, &input_handle);
+			"color{%d,%d,%d} input{%c,%[^}\n]}", 
+			&cr, &cg, &cb, &input_type, str);
 
 		if (num_back != 5) {
 			continue;
 		}
 
 		if (input_type == 'k') {
-			input_handle += 1;
-			input_handle = -input_handle;
-		}
 
-		addDummy(
-			Color(r, g, b), 
-			input_handle);
+			num_back = sscanf(str, 
+			"%d,%d,%d,%d,%d,%d,%d", 
+			&input_handle, &u, &d, &l, &r, &a1, &a2);
+
+			if (num_back < 1) {
+				continue;
+			}
+
+			input_handle = -(input_handle + 1);
+
+			PlayerDummy *pl = new PlayerDummy(sf::Color(cr, cg, cb), input_handle);
+
+			if (num_back == 7) {
+
+				pl->UP = u;
+				pl->DOWN = d;
+				pl->LEFT = l;
+				pl->RIGHT = r;
+
+				pl->action_button[0] = a1;
+				pl->action_button[1] = a2;
+			}
+
+			playerDummys->push_back(pl);
+
+		} else {
+			num_back = sscanf(str, 
+			"%d,%d,%d,%d,%d",
+			&input_handle, &ax1, &ax2, &a1, &a2);
+
+			if (num_back < 1) {
+				continue;
+			}
+
+			PlayerDummy *pl = new PlayerDummy(sf::Color(cr, cg, cb), input_handle);
+
+			if (num_back == 5) {
+
+				pl->axis[0] = ax1;
+				pl->axis[1] = ax2;
+
+				pl->action_button[0] = a1;
+				pl->action_button[1] = a2;
+			}
+
+			playerDummys->push_back(pl);
+		}
 	}
 	fclose(file);
 }
@@ -363,19 +489,22 @@ void CharacterSelect::savePlayerList(const char* path) {
 
 	for (unsigned int i = 0; i < playerDummys->size(); i++) {
 
-		PlayerDummy *d = playerDummys->at(i);
+		PlayerDummy *pl = playerDummys->at(i);
 
-		char input_type;
-		int input_handle;
+		const int MAXSTR = 256;
+		char str[MAXSTR];
 
-		if (d->input_handle < 0) {
-			input_type = 'k';
-			input_handle = (-d->input_handle) - 1;
+		if (pl->input_handle < 0) {
+			sprintf(str, "%c, %d, %d, %d, %d, %d, %d, %d", 
+				'k', (-pl->input_handle) - 1, pl->UP, pl->DOWN, pl->LEFT, pl->RIGHT, pl->action_button[0], pl->action_button[1]);
+		} else {
+			sprintf(str, "%c, %d, %d, %d, %d, %d", 
+				'j', pl->input_handle, pl->axis[0], pl->axis[1], pl->action_button[0], pl->action_button[1]);
 		}
 
 		if (fprintf(file, 
-			"color{%d, %d, %d} input{%c%d}\n", 
-			d->color.r, d->color.g, d->color.b, input_type, input_handle) < 1) {
+			"color{%d, %d, %d} input{%s}\n", 
+			pl->color.r, pl->color.g, pl->color.b, str) < 1) {
 
 			std::cout << "Error writeing to file: " << path << std::endl;
 			exit(-1);
@@ -411,10 +540,19 @@ EventPass *CharacterSelect::createGame() {
 
 		float t = (-startx + i * spacing) + M_PI / 2.0;
 
+		PlayerDummy *pl = playerDummys->at(i);
+		Controls *con;
+
+		if (pl->input_handle < 0) {
+			con = new KeyboardControls(pl->UP, pl->DOWN, pl->LEFT, pl->RIGHT, pl->action_button, 2);
+		} else {
+			con = new JoystickControls(pl->input_handle, pl->axis[0], pl->axis[1], pl->action_button, 2);
+		}
+
 		players->push_back(new Player(
 			Vector2f(cos(t), sin(t)) * 40.0f,
-			playerDummys->at(i)->color, 
-			playerDummys->at(i)->input_handle));
+			pl->color, 
+			con));
 	}
 
 	return new Game(players);

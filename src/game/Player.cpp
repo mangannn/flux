@@ -19,9 +19,9 @@ using namespace std;
 
 
 
-Player::Player(Vector2f pos, Color color, int input_handle):
+Player::Player(Vector2f pos, Color color, Controls *con):
 	Object(pos, Vector2f(0,0), 6.0f, 50.0f, 100.0f, color),
-	Controlled(input_handle),
+	Controlled(con),
 
 	dashVel(Vector2f(0.0f, 0.0f)),
 

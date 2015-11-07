@@ -1,8 +1,5 @@
-color{34, 232, 208} input{k4}
-color{237, 245, 133} input{k0}
-color{50, 105, 204} input{k1}
-color{16, 133, 247} input{k2}
-color{176, 117, 179} input{k5}
-color{167, 190, 126} input{k3}
-color{45, 26, 15} input{k6}
-color{20, 206, 127} input{k7}
+color{52, 148, 195} input{k, 0, 73, 74, 71, 72, 13, 12}
+color{204, 130, 17} input{k, 1, 22, 18, 0, 3, 25, 23}
+color{69, 104, 178} input{k, 2, 19, 6, 5, 7, 21, 1}
+color{211, 119, 42} input{k, 3, 8, 10, 9, 11, 14, 15}
+color{31, 159, 148} input{k, 4, -1, -1, -1, -1, -1, -1}
