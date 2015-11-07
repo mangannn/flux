@@ -105,9 +105,9 @@ CharacterSelect::CharacterSelect() :
 	loadPlayerList("media/player_list.txt");
 
 	if (playerDummys->size() < 1) {
-		addDummy(
-				RANDOM_COLOR, 
-				-1);
+		playerDummys->push_back(new PlayerDummy(
+			RANDOM_COLOR, 
+			-1));
 	}
 
 	float radius = 0.1f;
@@ -219,9 +219,9 @@ EventPass *CharacterSelect::eventHandle(sf::Event event) {
 						}
 					}
 
-					addDummy(
-						RANDOM_COLOR, 
-						input_handle);
+					playerDummys->push_back(new PlayerDummy(
+						RANDOM_COLOR,
+						input_handle));
 
 				} break;
 				case sf::Keyboard::W: {
@@ -385,12 +385,6 @@ void CharacterSelect::draw(RenderWindow *window) {
 
 
 
-
-void CharacterSelect::addDummy(Color color, int input_handle) {
-	playerDummys->push_back(new PlayerDummy(
-			color, 
-			input_handle));
-}
 
 void CharacterSelect::loadPlayerList(const char* path) {
 
