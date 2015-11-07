@@ -22,20 +22,23 @@ class PlayerDummy {
 public:
 
 	Color color;
-	int input_handle;
 
 	int UP, DOWN, LEFT, RIGHT;
-	int action_button[2];
-	int axis[2];
 
-	PlayerDummy(Color colorParam, int input_handleParam):
-		color(colorParam),
-		input_handle(input_handleParam)
+	int axisX, axisY;
+	int joystickId;
+
+	int actionButton[2];
+
+	PlayerDummy(Color colorParam, int inputParam):
+		color(colorParam)
 	{
 
-		if (input_handle < 0) {
+		if (inputParam < 0) {
 
-			int keyboard_type = -(1 + input_handle);
+			joystickId = -1;
+
+			int keyboard_type = -(1 + inputParam);
 
 			if (keyboard_type == 0) {
 				UP = sf::Keyboard::Up;
@@ -43,8 +46,8 @@ public:
 				LEFT = sf::Keyboard::Left;
 				RIGHT = sf::Keyboard::Right;
 
-				action_button[0] = sf::Keyboard::N;
-				action_button[1] = sf::Keyboard::M;
+				actionButton[0] = sf::Keyboard::N;
+				actionButton[1] = sf::Keyboard::M;
 
 			} else if (keyboard_type == 1) {
 				UP = sf::Keyboard::W;
@@ -52,8 +55,8 @@ public:
 				LEFT = sf::Keyboard::A;
 				RIGHT = sf::Keyboard::D;
 
-				action_button[0] = sf::Keyboard::Z;
-				action_button[1] = sf::Keyboard::X;
+				actionButton[0] = sf::Keyboard::Z;
+				actionButton[1] = sf::Keyboard::X;
 
 			} else if (keyboard_type == 2) {
 				UP = sf::Keyboard::T;
@@ -61,8 +64,8 @@ public:
 				LEFT = sf::Keyboard::F;
 				RIGHT = sf::Keyboard::H;
 
-				action_button[0] = sf::Keyboard::V;
-				action_button[1] = sf::Keyboard::B;
+				actionButton[0] = sf::Keyboard::V;
+				actionButton[1] = sf::Keyboard::B;
 
 			} else if (keyboard_type == 3) {
 				UP = sf::Keyboard::I;
@@ -70,24 +73,26 @@ public:
 				LEFT = sf::Keyboard::J;
 				RIGHT = sf::Keyboard::L;
 
-				action_button[0] = sf::Keyboard::O;
-				action_button[1] = sf::Keyboard::P;
+				actionButton[0] = sf::Keyboard::O;
+				actionButton[1] = sf::Keyboard::P;
 			} else {
 				UP = sf::Keyboard::Unknown;
 				DOWN = sf::Keyboard::Unknown;
 				LEFT = sf::Keyboard::Unknown;
 				RIGHT = sf::Keyboard::Unknown;
 
-				action_button[0] = sf::Keyboard::Unknown;
-				action_button[1] = sf::Keyboard::Unknown;
+				actionButton[0] = sf::Keyboard::Unknown;
+				actionButton[1] = sf::Keyboard::Unknown;
 			}
 		} else {
 
-			axis[0] = sf::Joystick::Y;
-			axis[1] = sf::Joystick::X;
+			joystickId = inputParam;
 
-			action_button[0] = 0;
-			action_button[1] = 1;
+			axisX = sf::Joystick::X;
+			axisY = sf::Joystick::Y;
+
+			actionButton[0] = 0;
+			actionButton[1] = 1;
 		}
 	}
 };
@@ -151,8 +156,6 @@ EventPass *CharacterSelect::eventHandle(sf::Event event) {
 
 	if (event.type == catchEvent) {
 
-		char str[10];
-
 		switch (event.type) {
 			case sf::Event::KeyPressed: {
 
@@ -174,34 +177,74 @@ EventPass *CharacterSelect::eventHandle(sf::Event event) {
 						pl->RIGHT = key;
 					} break;
 					case 4: {
-						pl->action_button[0] = key;
+						pl->actionButton[0] = key;
 					} break;
 					case 5: {
-						pl->action_button[1] = key;
+						pl->actionButton[1] = key;
 					} break;
 				}
 
-				catchIndex++;
-				if (catchIndex < 6) {
-					return NULL;
-				} else {
+				catchIndex += 1;
+				if (catchIndex >= 6) {
+					catchEvent = (sf::Event::EventType)0;
 					catchIndex = 0;
 				}
 
 			} break;
 			case sf::Event::JoystickButtonPressed: {
-				sprintf(str, "%d", event.joystickButton.button);
+				if (catchIndex == 0) {
+					playerDummys->at(markedIndex)->joystickId = event.joystickButton.joystickId;
+					catchEvent = sf::Event::JoystickMoved;
+					catchIndex += 1;
+				} else {
+
+					PlayerDummy *pl = playerDummys->at(markedIndex);
+
+					if (pl->joystickId == (int)event.joystickButton.joystickId) {
+
+						int key = event.joystickButton.button;
+
+						switch (catchIndex) {
+							case 3: {
+								pl->actionButton[0] = key;
+							} break;
+							case 4: {
+								pl->actionButton[1] = key;
+							} break;
+						}
+
+						catchIndex += 1;
+						if (catchIndex >= 5) {
+							catchEvent = (sf::Event::EventType)0;
+							catchIndex = 0;
+						}
+					}
+				}
 			} break;
 			case sf::Event::JoystickMoved: {
-				//sprintf(str, "%d", event.joystickMove.joystickId);
-				sprintf(str, "%d", event.joystickMove.axis);
+				PlayerDummy *pl = playerDummys->at(markedIndex);
+
+				if (pl->joystickId == (int)event.joystickMove.joystickId) {
+
+					int axis = event.joystickMove.axis;
+
+					switch (catchIndex) {
+						case 1: {
+							pl->axisX = axis;
+						} break;
+						default: {
+							pl->axisY = axis;
+							catchEvent = sf::Event::JoystickButtonPressed;
+						} break;
+					}
+					
+					catchIndex += 1;
+				}
 			} break;
 			default: {
 				std::cout << "Not valid catchEvent" << std::endl;
 			} break;
 		}
-
-		catchEvent = (sf::Event::EventType)0;
 		
 		return NULL;
 	}
@@ -260,12 +303,14 @@ EventPass *CharacterSelect::eventHandle(sf::Event event) {
 				} break;
 				case sf::Keyboard::K: {
 
+					catchIndex = 0;
 					catchEvent = sf::Event::KeyPressed;
 
 				} break;
 				case sf::Keyboard::J: {
 
-					catchEvent = sf::Event::KeyPressed;
+					catchIndex = 0;
+					catchEvent = sf::Event::JoystickButtonPressed;
 
 				} break;
 				case sf::Keyboard::Left: {
@@ -371,9 +416,9 @@ void CharacterSelect::draw(RenderWindow *window) {
 		const float arrowPlacement = size;
 
 		Vector2f centerButton = centerArrows + Vector2f(0, 0.15);
-		const float buttonPlacement = size;
+		const float buttonPlacement = size * 0.7f;
 
-		if (playerDummys->at(i)->input_handle < 0) {
+		if (playerDummys->at(i)->joystickId < 0) {
 			Button(centerArrows + Vector2f(0, -arrowPlacement), Vector2f(size, size), Color(60, 60, 160), 
 				keyCodeToString(playerDummys->at(i)->UP)).draw(window);
 			Button(centerArrows + Vector2f(0, arrowPlacement), Vector2f(size, size), Color(60, 160, 60), 
@@ -384,19 +429,23 @@ void CharacterSelect::draw(RenderWindow *window) {
 				keyCodeToString(playerDummys->at(i)->RIGHT)).draw(window);
 
 			Button(centerButton + Vector2f(-buttonPlacement, 0), Vector2f(size, size), Color(160, 60, 60), 
-				keyCodeToString(playerDummys->at(i)->action_button[0])).draw(window);
+				keyCodeToString(playerDummys->at(i)->actionButton[0])).draw(window);
 			Button(centerButton + Vector2f(buttonPlacement, 0), Vector2f(size, size), Color(60, 160, 160), 
-				keyCodeToString(playerDummys->at(i)->action_button[1])).draw(window);
+				keyCodeToString(playerDummys->at(i)->actionButton[1])).draw(window);
 
 		} else {
-			sprintf(str, "%d", playerDummys->at(i)->axis[0]);
-			Button(centerArrows, Vector2f(size * 3, size), Color(60, 60, 160), str).draw(window);
-			sprintf(str, "%d", playerDummys->at(i)->axis[1]);
-			Button(centerArrows, Vector2f(size, size * 3), Color(60, 160, 60), str).draw(window);
 
-			sprintf(str, "%d", playerDummys->at(i)->action_button[0]);
+			sprintf(str, "%d", playerDummys->at(i)->axisX);
+			Button(centerArrows + Vector2f(-arrowPlacement / 2.0f, 0), Vector2f(size * 2, size), Color(60, 60, 160), str).draw(window);
+			sprintf(str, "%d", playerDummys->at(i)->axisY);
+			Button(centerArrows + Vector2f(arrowPlacement, -arrowPlacement / 2.0f), Vector2f(size, size * 2), Color(60, 160, 60), str).draw(window);
+
+			sprintf(str, "%d", playerDummys->at(i)->joystickId);
+			Button(centerArrows + Vector2f(0, arrowPlacement), Vector2f(size, size), Color(60, 60, 60), str).draw(window);
+
+			sprintf(str, "%d", playerDummys->at(i)->actionButton[0]);
 			Button(centerButton + Vector2f(-buttonPlacement, 0), Vector2f(size, size), Color(160, 60, 60), str).draw(window);
-			sprintf(str, "%d", playerDummys->at(i)->action_button[1]);
+			sprintf(str, "%d", playerDummys->at(i)->actionButton[1]);
 			Button(centerButton + Vector2f(buttonPlacement, 0), Vector2f(size, size), Color(60, 160, 160), str).draw(window);
 		}
 	}
@@ -425,7 +474,7 @@ void CharacterSelect::loadPlayerList(const char* path) {
 
 	char input_type = 'k';
 	int joystickId = 0;
-	int k_up = 0, k_down = 0, k_left = 0, k_right = 0, a1 = 0, a2 = 0, axis1 = 0, axis2 = 0;
+	int k_up = 0, k_down = 0, k_left = 0, k_right = 0, a1 = 0, a2 = 0, axisX = 0, axisY = 0;
 
 	int num_back;
 
@@ -460,8 +509,8 @@ void CharacterSelect::loadPlayerList(const char* path) {
 				pl->LEFT = k_left;
 				pl->RIGHT = k_right;
 
-				pl->action_button[0] = a1;
-				pl->action_button[1] = a2;
+				pl->actionButton[0] = a1;
+				pl->actionButton[1] = a2;
 			}
 
 			playerDummys->push_back(pl);
@@ -469,7 +518,7 @@ void CharacterSelect::loadPlayerList(const char* path) {
 		} else {
 			num_back = sscanf(str, 
 			"%d,%d,%d,%d",
-			&axis1, &axis2, &a1, &a2);
+			&axisX, &axisY, &a1, &a2);
 
 			if (num_back < 1) {
 				continue;
@@ -481,11 +530,11 @@ void CharacterSelect::loadPlayerList(const char* path) {
 
 			if (num_back == 5) {
 
-				pl->axis[0] = axis1;
-				pl->axis[1] = axis2;
+				pl->axisX = axisX;
+				pl->axisY = axisY;
 
-				pl->action_button[0] = a1;
-				pl->action_button[1] = a2;
+				pl->actionButton[0] = a1;
+				pl->actionButton[1] = a2;
 			}
 
 			playerDummys->push_back(pl);
@@ -509,12 +558,12 @@ void CharacterSelect::savePlayerList(const char* path) {
 		const int MAXSTR = 256;
 		char str[MAXSTR];
 
-		if (pl->input_handle < 0) {
+		if (pl->joystickId < 0) {
 			sprintf(str, "%c, %d, %d, %d, %d, %d, %d", 
-				'k', pl->UP, pl->DOWN, pl->LEFT, pl->RIGHT, pl->action_button[0], pl->action_button[1]);
+				'k', pl->UP, pl->DOWN, pl->LEFT, pl->RIGHT, pl->actionButton[0], pl->actionButton[1]);
 		} else {
 			sprintf(str, "%c, %d, %d, %d, %d", 
-				'j', pl->axis[0], pl->axis[1], pl->action_button[0], pl->action_button[1]);
+				'j', pl->axisX, pl->axisY, pl->actionButton[0], pl->actionButton[1]);
 		}
 
 		if (fprintf(file, 
@@ -549,10 +598,10 @@ EventPass *CharacterSelect::createGame() {
 		PlayerDummy *pl = playerDummys->at(i);
 		Controls *con;
 
-		if (pl->input_handle < 0) {
-			con = new KeyboardControls(pl->UP, pl->DOWN, pl->LEFT, pl->RIGHT, pl->action_button, 2);
+		if (pl->joystickId < 0) {
+			con = new KeyboardControls(pl->UP, pl->DOWN, pl->LEFT, pl->RIGHT, pl->actionButton, 2);
 		} else {
-			con = new JoystickControls(pl->input_handle, pl->axis[0], pl->axis[1], pl->action_button, 2);
+			con = new JoystickControls(pl->joystickId, pl->axisX, pl->axisY, pl->actionButton, 2);
 		}
 
 		players->push_back(new Player(

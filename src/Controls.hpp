@@ -60,7 +60,7 @@ public:
 	int num_action_keys;
 
 	sf::Keyboard::Key UP, DOWN, LEFT, RIGHT;
-	sf::Keyboard::Key action_button[10];
+	sf::Keyboard::Key actionButton[10];
 
 	KeyboardControls(int k_up, int k_down, int k_left, int k_right, int *in_buttons, int num_in_buttons);
 	virtual ~KeyboardControls() {}
@@ -79,14 +79,14 @@ class JoystickControls : public Controls {
 
 public:
 
-	int handle_ID;
+	int joystickId;
 
 	int num_buttons;
 
 	sf::Joystick::Axis axisX, axisY;
-	unsigned int action_button[32]; // 32 i max number of buttons sfml can handle
+	unsigned int actionButton[32]; // 32 i max number of buttons sfml can handle
 
-	JoystickControls(int handle_IDParam, int axisXParam, int axisYParam, int *in_buttons, int num_in_buttons);
+	JoystickControls(int joystickIdParam, int axisXParam, int axisYParam, int *in_buttons, int num_in_buttons);
 	virtual ~JoystickControls() {}
 
 	virtual void eventHandle(sf::Event event);

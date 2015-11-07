@@ -47,6 +47,8 @@ Game::Game(std::vector<Player *> *playersParam):
 	constraints->push_back(new ElasticDistanceConstraint(clumsy, boll, 120.0f, 2.0f));
 
 
+	gameView.setSize(Vector2f(1000, 1000));
+	gameView.setCenter(Vector2f(0,0));;
 }
 Game::~Game() {
 

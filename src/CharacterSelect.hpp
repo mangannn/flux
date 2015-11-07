@@ -7,8 +7,6 @@ class Game;
 class Player;
 class PlayerDummy;
 
-class Button;
-
 
 class CharacterSelect : public EventPass {
 
@@ -16,7 +14,6 @@ public:
 
 	CharacterSelect();
 	virtual ~CharacterSelect();
-
 
 	virtual EventPass *eventHandle(sf::Event event);
 
@@ -41,7 +38,7 @@ private:
 
 	float markPosition, markDirection;
 	int markedIndex;
-	
+
 
 	void loadPlayerList(const char* path);
 	void savePlayerList(const char* path);

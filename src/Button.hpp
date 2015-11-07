@@ -19,7 +19,7 @@ public:
 		text.setFont(font);
 		text.setCharacterSize(64);
 		float s = fmin(size.x, size.y);
-		text.setScale(0.014f * s, 0.014f * s);
+		text.setScale(0.012f * s, 0.012f * s);
 
 		text.setString(str);
 		text.setPosition(pos - 0.5f * Vector2f(text.getGlobalBounds().width, text.getGlobalBounds().height * 1.3));
