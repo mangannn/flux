@@ -32,6 +32,8 @@ public:
 	sf::Event::EventType catchEvent;
 	int catchIndex;
 
+	int markedIndex;
+
 
 	CharacterSelect();
 	virtual ~CharacterSelect();

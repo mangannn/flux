@@ -330,6 +330,19 @@ void CharacterSelect::draw(RenderWindow *window) {
 	float startx = (aspect * 0.45) * (1.0 - (1.0 / playerDummys->size()));
 	float spacing = ((startx * 2) / (playerDummys->size() < 2 ? 1 : playerDummys->size() - 1));
 
+
+	const float markSize = 0.2;
+
+	Vector2f markV(markSize, markSize);
+
+	sf::RectangleShape box;
+	box.setSize(markV);
+	box.setOrigin(markV * 0.5f);
+	box.setPosition(-startx + markedIndex * spacing, 0);
+	box.setFillColor(Color::Red);
+	box.setRotation(sin((timer + markedIndex) * 2.0f) * 20);
+	window->draw(box);
+
 	char str[10];
 
 	for (unsigned int i = 0; i < playerDummys->size(); i++) {
