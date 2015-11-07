@@ -24,14 +24,10 @@ public:
 
 	std::vector<PlayerDummy *> *playerDummys;
 
-	// #### this should be fixed
-	sf::RenderWindow *win;
-
-	Button *startButton;
-
 	sf::Event::EventType catchEvent;
 	int catchIndex;
 
+	float markPosition, markDirection;
 	int markedIndex;
 
 
