@@ -306,6 +306,8 @@ EventPass *CharacterSelect::eventHandle(sf::Event event) {
 					catchIndex = 0;
 					catchEvent = sf::Event::KeyPressed;
 
+					playerDummys->at(markedIndex)->joystickId = -1;
+
 				} break;
 				case sf::Keyboard::J: {
 
