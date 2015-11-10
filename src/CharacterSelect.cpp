@@ -498,12 +498,9 @@ void CharacterSelect::loadPlayerList(const char* path) {
 			"%d,%d,%d,%d,%d,%d", 
 			&k_up, &k_down, &k_left, &k_right, &a1, &a2);
 
-			if (num_back < 1) {
-				continue;
-			}
-
 			PlayerDummy *pl = new PlayerDummy(sf::Color(cr, cg, cb), -(1 + playerDummys->size()));
 
+			// if input settings in file is ok, use them, otherwise use preset
 			if (num_back == 7) {
 
 				pl->UP = k_up;
@@ -522,14 +519,11 @@ void CharacterSelect::loadPlayerList(const char* path) {
 			"%d,%d,%d,%d",
 			&axisX, &axisY, &a1, &a2);
 
-			if (num_back < 1) {
-				continue;
-			}
-
 			PlayerDummy *pl = new PlayerDummy(sf::Color(cr, cg, cb), joystickId);
 
 			joystickId += 1;
 
+			// if input settings in file is ok, use them, otherwise use preset
 			if (num_back == 5) {
 
 				pl->axisX = axisX;

@@ -1,4 +1,9 @@
-color{240, 196, 165} input{k, 73, 74, 71, 72, 13, 12}
-color{174, 221, 9} input{k, 22, 18, 0, 3, 25, 23}
-color{23, 2, 220} input{k, 19, 6, 5, 7, 21, 1}
-color{237, 8, 94} input{k, -1, -1, -1, -1, -1, -1}
+# Player list
+# Format: color{%d, %d, %d} input{%c, %d ... %d}
+# input is either k for keyboard or j for joystick
+
+color{200, 160, 80} input{k, no}
+color{255, 120, 230} input{k, no}
+color{150, 100, 200} input{k, no}
+color{80, 80, 80} input{k, no}
+color{80, 160, 200} input{k, no}
