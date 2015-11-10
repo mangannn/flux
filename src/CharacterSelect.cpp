@@ -14,7 +14,7 @@
 #include <iostream>
 
 
-#include "KeyCodeString.hpp"
+#include "InputCodeString.hpp"
 
 
 class PlayerDummy {
@@ -437,10 +437,10 @@ void CharacterSelect::draw(RenderWindow *window) {
 
 		} else {
 
-			sprintf(str, "%d", playerDummys->at(i)->axisX);
-			Button(centerArrows + Vector2f(-arrowPlacement / 2.0f, 0), Vector2f(size * 2, size), Color(60, 60, 160), str).draw(window);
-			sprintf(str, "%d", playerDummys->at(i)->axisY);
-			Button(centerArrows + Vector2f(arrowPlacement, -arrowPlacement / 2.0f), Vector2f(size, size * 2), Color(60, 160, 60), str).draw(window);
+			Button(centerArrows + Vector2f(-arrowPlacement / 2.0f, 0), Vector2f(size * 2, size), Color(60, 60, 160), 
+				joystickAxisToString(playerDummys->at(i)->axisX)).draw(window);
+			Button(centerArrows + Vector2f(arrowPlacement, -arrowPlacement / 2.0f), Vector2f(size, size * 2), Color(60, 160, 60), 
+				joystickAxisToString(playerDummys->at(i)->axisY)).draw(window);
 
 			sprintf(str, "%d", playerDummys->at(i)->joystickId);
 			Button(centerArrows + Vector2f(0, arrowPlacement), Vector2f(size, size), Color(60, 60, 60), str).draw(window);
@@ -590,26 +590,29 @@ EventPass *CharacterSelect::createGame() {
 
 	std::vector<Player *> *players = new std::vector<Player *>();
 
-	float startx = (2.0 / 3.0) * M_PI * (1.0 - (1.0 / playerDummys->size()));
-	float spacing = ((startx * 2) / (playerDummys->size() < 2 ? 1 : playerDummys->size() - 1));
+	float startAngle = (2.0 / 3.0) * M_PI * (1.0 - (1.0 / playerDummys->size()));
+	float spacing = ((startAngle * 2) / (playerDummys->size() < 2 ? 1 : playerDummys->size() - 1));
+
+	const float startRadius = 40.0f;
 
 	for (unsigned int i = 0; i < playerDummys->size(); i++) {
 
-		float t = (-startx + i * spacing) + M_PI / 2.0;
+		float angle = (-startAngle + i * spacing) + (M_PI / 2.0);
 
 		PlayerDummy *pl = playerDummys->at(i);
-		Controls *con;
+		Controls *controls;
 
 		if (pl->joystickId < 0) {
-			con = new KeyboardControls(pl->UP, pl->DOWN, pl->LEFT, pl->RIGHT, pl->actionButton, 2);
+			controls = new KeyboardControls(pl->UP, pl->DOWN, pl->LEFT, pl->RIGHT, pl->actionButton, 2);
 		} else {
-			con = new JoystickControls(pl->joystickId, pl->axisX, pl->axisY, pl->actionButton, 2);
+			controls = new JoystickControls(pl->joystickId, pl->axisX, pl->axisY, pl->actionButton, 2);
 		}
 
 		players->push_back(new Player(
-			Vector2f(cos(t), sin(t)) * 40.0f,
+			Vector2f(cos(angle), sin(angle)) * startRadius,
+			angle * (180.0f / M_PI),
 			pl->color, 
-			con));
+			controls));
 	}
 
 	return new Game(players);

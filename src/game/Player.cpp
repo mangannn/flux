@@ -19,8 +19,8 @@ using namespace std;
 
 
 
-Player::Player(Vector2f pos, Color color, Controls *con):
-	Object(pos, Vector2f(0,0), 6.0f, 50.0f, 100.0f, color),
+Player::Player(Vector2f position, float direction, Color color, Controls *con):
+	Object(position, Vector2f(0,0), 6.0f, 50.0f, 100.0f, color),
 	Controlled(con),
 
 	dashVel(Vector2f(0.0f, 0.0f)),
@@ -31,7 +31,7 @@ Player::Player(Vector2f pos, Color color, Controls *con):
 	dashBegin(0),
 	sprite_pos(0),
 	timer(0.0f),
-	spriteDirection(0.0f),
+	spriteDirection(direction),
 
 	health(1.0f),
 	releaseRope(false)

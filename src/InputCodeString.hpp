@@ -116,4 +116,36 @@ const sf::String keyCodeToString(int code) {
 	}
 }
 
+const sf::String joystickAxisToString(int code) {
+	switch (code) {
+		case sf::Joystick::X: {
+			return "X";
+		} break;
+		case sf::Joystick::Y: {
+			return "Y";
+		} break;
+		case sf::Joystick::Z: {
+			return "Z";
+		} break;
+		case sf::Joystick::R: {
+			return "R";
+		} break;
+		case sf::Joystick::U: {
+			return "U";
+		} break;
+		case sf::Joystick::V: {
+			return "V";
+		} break;
+		case sf::Joystick::PovX: {
+			return "PovX";
+		} break;
+		case sf::Joystick::PovY: {
+			return "PovY";
+		} break;
+		default:
+			return "Unknown";
+	}
+}
+
+
 #endif
