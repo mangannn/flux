@@ -377,18 +377,20 @@ void CharacterSelect::draw(RenderWindow *window) {
 	window->draw(text);
 
 
-	float startx = (aspect * 0.45) * (1.0 - (1.0 / playerDummys->size()));
-	float spacing = ((startx * 2) / (playerDummys->size() < 2 ? 1 : playerDummys->size() - 1));
+	const float startx = (aspect * 0.45) * (1.0 - (1.0 / playerDummys->size()));
+	const float spacing = ((startx * 2) / (playerDummys->size() < 2 ? 1 : playerDummys->size() - 1));
+
+
+	// Update mark position
+	const float markGoalPosition = -startx + (markedIndex * spacing);
+	const float markGoalDirection = sin((timer + markedIndex) * 2.0f) * 20;
+
+	markPosition = (markGoalPosition - markPosition) / 5.0f + markPosition;
+	markDirection = (markGoalDirection - markDirection) / 5.0f + markDirection;
 
 
 	const float markSize = 0.3;
-
-	Vector2f markV(markSize, markSize);
-
-	const float pr = 0.2;
-
-	markPosition = ((1 - pr) * markPosition) + (pr * (-startx + (markedIndex * spacing)));
-	markDirection = ((1 - pr) * markDirection) + (pr * (sin((timer + markedIndex) * 2.0f) * 20));
+	const Vector2f markV(markSize, markSize);
 
 	sf::RectangleShape box;
 	box.setSize(markV);
@@ -414,10 +416,10 @@ void CharacterSelect::draw(RenderWindow *window) {
 
 		sf::RectangleShape box(Vector2f(size, size));
 
-		Vector2f centerArrows = offset + Vector2f(0, 0.1);
+		const Vector2f centerArrows = offset + Vector2f(0, 0.1);
 		const float arrowPlacement = size;
 
-		Vector2f centerButton = centerArrows + Vector2f(0, 0.15);
+		const Vector2f centerButton = centerArrows + Vector2f(0, 0.15);
 		const float buttonPlacement = size * 0.7f;
 
 		if (playerDummys->at(i)->joystickId < 0) {
