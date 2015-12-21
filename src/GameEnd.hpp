@@ -9,14 +9,22 @@ public:
 	float timer;
 	float duration;
 
+	sf::Text text;
 	sf::Color color;
 
-	GameEnd(float durationParam = 1.0f) :
+	GameEnd(sf::String message, float durationParam = 1.0f) :
 		timer(0.0f),
 		duration(durationParam),
 
 		color(0xff, 0, 0, 0)
-	{}
+	{
+
+		text.setFont(font);
+		text.setCharacterSize(40);
+		text.setScale(Vector2f(0.003,0.003));
+
+		text.setString(message);
+	}
 	virtual ~GameEnd() {}
 
 
@@ -43,11 +51,9 @@ public:
 		timer += elapsedTime;
 
 		float x = (timer / duration);
-
 		float y = (-2.0 * (x * x * x)) + (3.0 * (x * x));
 
 		color.a = 0xff * y;
-
 		color.r = 200 * (1 - y);
 
 		if (timer > duration) {
@@ -59,13 +65,12 @@ public:
 
 	virtual void draw(RenderWindow *window) {
 
-
 		sf::RectangleShape box(window->getView().getSize());
 		box.setFillColor(color);
 
+		text.setPosition((window->getView().getSize() - Vector2f(text.getGlobalBounds().width, text.getGlobalBounds().height)) * 0.5f);
+
+		window->draw(text);
 		window->draw(box);
-
-
-		//window->clear(color);
 	}
 };

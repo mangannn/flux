@@ -225,20 +225,22 @@ EventPass *CharacterSelect::eventHandle(sf::Event event) {
 				PlayerDummy *pl = playerDummys->at(markedIndex);
 
 				if (pl->joystickId == (int)event.joystickMove.joystickId) {
+					if (fabs(event.joystickMove.position) > 50.0f) { // catch twitch events
 
-					int axis = event.joystickMove.axis;
+						int axis = event.joystickMove.axis;
 
-					switch (catchIndex) {
-						case 1: {
-							pl->axisX = axis;
-						} break;
-						default: {
-							pl->axisY = axis;
-							catchEvent = sf::Event::JoystickButtonPressed;
-						} break;
+						switch (catchIndex) {
+							case 1: {
+								pl->axisX = axis;
+							} break;
+							default: {
+								pl->axisY = axis;
+								catchEvent = sf::Event::JoystickButtonPressed;
+							} break;
+						}
+						
+						catchIndex += 1;
 					}
-					
-					catchIndex += 1;
 				}
 			} break;
 			default: {

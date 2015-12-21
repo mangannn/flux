@@ -118,8 +118,8 @@ bool JoystickControls::action(int num) {
 }
 Vector2f JoystickControls::movement() {
 
-	float x = sf::Joystick::getAxisPosition(joystickId, axisX);
-	float y = sf::Joystick::getAxisPosition(joystickId, axisY);
+	float x = sf::Joystick::getAxisPosition(joystickId, axisX) / 100.0f;
+	float y = sf::Joystick::getAxisPosition(joystickId, axisY) / 100.0f;
 
 	return Vector2f(x, y);
 }

@@ -100,12 +100,6 @@ EventPass *Game::eventHandle(sf::Event event) {
 				} break;
 				default: break;
 			}
-			switch (event.key.code) {
-				case sf::Keyboard::P: {
-					return new GameEnd(1);
-				} break;
-				default: break;
-			}
 		} break;
 		default: break;
 	}
@@ -158,7 +152,9 @@ EventPass *Game::update(float elapsedTime) {
 
 	for (unsigned int i = 0; i < players->size(); i++) {
 		if (players->at(i)->health <= 0) {
-			return new GameEnd(2);
+			char buffer[20];
+			sprintf(buffer, "Player %u dead!", i + 1);
+			return new GameEnd(buffer, 4);
 		}
 	}
 
