@@ -39,6 +39,7 @@ private:
 	float markPosition, markDirection;
 	int markedIndex;
 
+	void drawButton(sf::RectangleShape box, sf::Text text, sf::Vector2f pos, sf::Vector2f size, sf::Color color, sf::String str, bool marked, sf::RenderWindow *window);
 
 	void loadPlayerList(const char* path);
 	void savePlayerList(const char* path);

@@ -9,12 +9,12 @@
 #include "game/Player.hpp"
 
 #include "CharacterSelect.hpp"
-#include "Button.hpp"
 
 #include <iostream>
 
 
 #include "InputCodeString.hpp"
+
 
 
 class PlayerDummy {
@@ -105,7 +105,7 @@ CharacterSelect::CharacterSelect() :
 	timer(0.0f),
 
 	catchEvent((sf::Event::EventType)0),
-	catchIndex(0),
+	catchIndex(-1),
 
 	markPosition(0),
 	markDirection(0),
@@ -187,7 +187,7 @@ EventPass *CharacterSelect::eventHandle(sf::Event event) {
 				catchIndex += 1;
 				if (catchIndex >= 6) {
 					catchEvent = (sf::Event::EventType)0;
-					catchIndex = 0;
+					catchIndex = -1;
 				}
 
 			} break;
@@ -216,7 +216,7 @@ EventPass *CharacterSelect::eventHandle(sf::Event event) {
 						catchIndex += 1;
 						if (catchIndex >= 5) {
 							catchEvent = (sf::Event::EventType)0;
-							catchIndex = 0;
+							catchIndex = -1;
 						}
 					}
 				}
@@ -416,7 +416,13 @@ void CharacterSelect::draw(RenderWindow *window) {
 
 		const float size = 0.06f;
 
-		sf::RectangleShape box(Vector2f(size, size));
+		sf::RectangleShape box;
+		sf::Text text;
+
+		text.setFont(font);
+		text.setCharacterSize(64);
+		text.setScale(0.012f * size, 0.012f * size);
+
 
 		const Vector2f centerArrows = offset + Vector2f(0, 0.1);
 		const float arrowPlacement = size;
@@ -425,41 +431,91 @@ void CharacterSelect::draw(RenderWindow *window) {
 		const float buttonPlacement = size * 0.7f;
 
 		if (playerDummys->at(i)->joystickId < 0) {
-			Button(centerArrows + Vector2f(0, -arrowPlacement), Vector2f(size, size), Color(60, 60, 160), 
-				keyCodeToString(playerDummys->at(i)->UP)).draw(window);
-			Button(centerArrows + Vector2f(0, arrowPlacement), Vector2f(size, size), Color(60, 160, 60), 
-				keyCodeToString(playerDummys->at(i)->DOWN)).draw(window);
-			Button(centerArrows + Vector2f(-arrowPlacement, 0), Vector2f(size, size), Color(160, 60, 160), 
-				keyCodeToString(playerDummys->at(i)->LEFT)).draw(window);
-			Button(centerArrows + Vector2f(arrowPlacement, 0), Vector2f(size, size), Color(160, 160, 60), 
-				keyCodeToString(playerDummys->at(i)->RIGHT)).draw(window);
 
-			Button(centerButton + Vector2f(-buttonPlacement, 0), Vector2f(size, size), Color(160, 60, 60), 
-				keyCodeToString(playerDummys->at(i)->actionButton[0])).draw(window);
-			Button(centerButton + Vector2f(buttonPlacement, 0), Vector2f(size, size), Color(60, 160, 160), 
-				keyCodeToString(playerDummys->at(i)->actionButton[1])).draw(window);
+			drawButton(box, text, 
+				centerArrows + Vector2f(0, -arrowPlacement), Vector2f(size, size), 
+				Color(60, 60, 160), keyCodeToString(playerDummys->at(i)->UP),
+				(markedIndex == (int)i && catchIndex == 0), window);
+			drawButton(box, text, 
+				centerArrows + Vector2f(0, arrowPlacement), Vector2f(size, size),
+				Color(60, 160, 60), keyCodeToString(playerDummys->at(i)->DOWN),
+				(markedIndex == (int)i && catchIndex == 1), window);
+			drawButton(box, text, 
+				centerArrows + Vector2f(-arrowPlacement, 0), Vector2f(size, size), 
+				Color(160, 60, 160), keyCodeToString(playerDummys->at(i)->LEFT), 
+				(markedIndex == (int)i && catchIndex == 2), window);
+			drawButton(box, text, 
+				centerArrows + Vector2f(arrowPlacement, 0), Vector2f(size, size), 
+				Color(160, 160, 60), keyCodeToString(playerDummys->at(i)->RIGHT),
+				(markedIndex == (int)i && catchIndex == 3), window);
+
+			drawButton(box, text, 
+				centerButton + Vector2f(-buttonPlacement, 0), Vector2f(size, size), 
+				Color(160, 60, 60), keyCodeToString(playerDummys->at(i)->actionButton[0]),
+				(markedIndex == (int)i && catchIndex == 4), window);
+			drawButton(box, text, 
+				centerButton + Vector2f(buttonPlacement, 0), Vector2f(size, size), 
+				Color(60, 160, 160), keyCodeToString(playerDummys->at(i)->actionButton[1]),
+				(markedIndex == (int)i && catchIndex == 5), window);
 
 		} else {
 
-			Button(centerArrows + Vector2f(-arrowPlacement / 2.0f, 0), Vector2f(size * 2, size), Color(60, 60, 160), 
-				joystickAxisToString(playerDummys->at(i)->axisX)).draw(window);
-			Button(centerArrows + Vector2f(arrowPlacement, -arrowPlacement / 2.0f), Vector2f(size, size * 2), Color(60, 160, 60), 
-				joystickAxisToString(playerDummys->at(i)->axisY)).draw(window);
-
 			sprintf(str, "%d", playerDummys->at(i)->joystickId);
-			Button(centerArrows + Vector2f(0, arrowPlacement), Vector2f(size, size), Color(60, 60, 60), str).draw(window);
+			drawButton(box, text, 
+				centerArrows + Vector2f(0, arrowPlacement), Vector2f(size, size), 
+				Color(60, 60, 60), str,
+				(markedIndex == (int)i && catchIndex == 0), window);
+
+			drawButton(box, text, 
+				centerArrows + Vector2f(-arrowPlacement / 2.0f, 0), Vector2f(size * 2, size), 
+				Color(60, 60, 160), joystickAxisToString(playerDummys->at(i)->axisX), 
+				(markedIndex == (int)i && catchIndex == 1), window);
+			drawButton(box, text, 
+				centerArrows + Vector2f(arrowPlacement, -arrowPlacement / 2.0f), Vector2f(size, size * 2), 
+				Color(60, 160, 60), joystickAxisToString(playerDummys->at(i)->axisY),
+				(markedIndex == (int)i && catchIndex == 2), window);
 
 			sprintf(str, "%d", playerDummys->at(i)->actionButton[0]);
-			Button(centerButton + Vector2f(-buttonPlacement, 0), Vector2f(size, size), Color(160, 60, 60), str).draw(window);
+			drawButton(box, text, 
+				centerButton + Vector2f(-buttonPlacement, 0), Vector2f(size, size), 
+				Color(160, 60, 60), str,
+				(markedIndex == (int)i && catchIndex == 3), window);
 			sprintf(str, "%d", playerDummys->at(i)->actionButton[1]);
-			Button(centerButton + Vector2f(buttonPlacement, 0), Vector2f(size, size), Color(60, 160, 160), str).draw(window);
+			drawButton(box, text, 
+				centerButton + Vector2f(buttonPlacement, 0), Vector2f(size, size), 
+				Color(60, 160, 160), str, 
+				(markedIndex == (int)i && catchIndex == 4), window);
 		}
 	}
 }
 
 
+void CharacterSelect::drawButton(sf::RectangleShape box, sf::Text text, sf::Vector2f pos, sf::Vector2f size, sf::Color color, sf::String str, bool active, sf::RenderWindow *window) {
+	
+	box.setPosition(pos);
+	box.setOrigin(0.5f * size);
+	box.setSize(size);
 
 
+	if (active) {
+		box.setFillColor(Color(120, 0, 0));
+		text.setString("?");
+		box.setRotation(sin((timer + markedIndex) * 16.0f) * 16);
+
+		window->draw(box);
+
+		box.setRotation(0);
+
+	} else {
+		box.setFillColor(color);
+		text.setString(str);
+
+		window->draw(box);
+	}
+
+	text.setPosition(pos - 0.5f * Vector2f(text.getGlobalBounds().width, text.getGlobalBounds().height * 1.3));
+	window->draw(text);
+}
 
 
 void CharacterSelect::loadPlayerList(const char* path) {
@@ -505,7 +561,7 @@ void CharacterSelect::loadPlayerList(const char* path) {
 			PlayerDummy *pl = new PlayerDummy(sf::Color(cr, cg, cb), -(1 + playerDummys->size()));
 
 			// if input settings in file is ok, use them, otherwise use preset
-			if (num_back == 7) {
+			if (num_back == 6) {
 
 				pl->UP = k_up;
 				pl->DOWN = k_down;

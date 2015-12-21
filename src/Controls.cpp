@@ -80,13 +80,16 @@ JoystickControls::JoystickControls(int joystickIdParam, int axisXParam, int axis
 				cout << "Joystick " << joystickId << " doesn't have axis " << axisY << endl;
 			}
 
-			num_buttons = sf::Joystick::getButtonCount(joystickId);
+			int button_count = sf::Joystick::getButtonCount(joystickId);
 
-			if (num_in_buttons > num_buttons) {
+			if (num_in_buttons > button_count) {
 				cout << "Joystick " << joystickId << " doesn't have enought buttons" << endl;
 			} else {
+
+				num_buttons = num_in_buttons;
+
 				for (int i = 0; i < num_in_buttons; i++) {
-					if (in_buttons[i] >= 0 && in_buttons[i] < num_buttons) {
+					if (in_buttons[i] >= 0 && in_buttons[i] < button_count) {
 						actionButton[i] = in_buttons[i];
 					} else {
 						cout << "Joystick " << joystickId << " doesn't have button " << in_buttons[i] << endl;
