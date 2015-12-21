@@ -20,8 +20,8 @@ public:
 	{
 
 		text.setFont(font);
-		text.setCharacterSize(40);
-		text.setScale(Vector2f(0.003,0.003));
+		text.setCharacterSize(64);
+		text.setScale(0.002f, 0.002f);
 
 		text.setString(message);
 	}
