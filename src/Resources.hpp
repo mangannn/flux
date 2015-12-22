@@ -3,8 +3,6 @@
 
 #include <SFML/System.hpp>
 
-using namespace sf;
-
 extern sf::Texture startScreenTex;
 extern sf::Vector2i startScreenTexSize;
 

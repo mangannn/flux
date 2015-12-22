@@ -10,7 +10,10 @@ using namespace std;
 #include "CharacterSelect.hpp"
 #include "Startup.hpp"
 
-#define WINDOW_TITLE ("FLUX: MÖÖP!")
+#include "InputCodeString.hpp"
+
+#define WINDOW_TITLE ("FLUX!")
+#define FRAMERATE_LIMIT (50)
 
 sf::Texture startScreenTex;
 sf::Vector2i startScreenTexSize(1900, 1500);
@@ -45,14 +48,14 @@ bool load_resources() {
 		return false;
 	}
 	std::cout << "Done!" << std::endl;
-
+/*
 	standingTex.setSmooth(true);
 	runningTex.setSmooth(true);
 	bodyTex.setSmooth(true);
 	eyesTex.setSmooth(true);
 	mouthTex.setSmooth(true);
 	bollTex.setSmooth(true);
-
+*/
 
 
 	std::cout << "Loading font..." << std::endl;
@@ -74,15 +77,16 @@ int main() {
 	srand(time(NULL));
 
 	sf::ContextSettings settings;
-	settings.antialiasingLevel = 5;
+	settings.antialiasingLevel = 0;
 
 	sf::RenderWindow *window;
 	bool fullscreen = false;
 
 	window = new RenderWindow(VideoMode(800, 620), WINDOW_TITLE, sf::Style::Resize | sf::Style::Close, settings);
-	window->setMouseCursorVisible(true);
+	window->setMouseCursorVisible(false);
 	window->setKeyRepeatEnabled(false);
-	window->setFramerateLimit(50);
+	window->setVerticalSyncEnabled(false);
+	window->setFramerateLimit(FRAMERATE_LIMIT);
 
 
 
@@ -101,6 +105,7 @@ int main() {
 
 		while (window->pollEvent(event)) {
 
+			// Event pass can be changed from the event passes eventHandle
 			if ((temp_eventPass = eventPass->eventHandle(event)) != NULL) {
 				delete eventPass;
 				eventPass = temp_eventPass;
@@ -125,19 +130,18 @@ int main() {
 						case sf::Keyboard::F11:
 						{
 
-							window->close();
-							delete window;
-
 							fullscreen = !fullscreen;
 
 							if (fullscreen) {
-								window = new RenderWindow(VideoMode(), WINDOW_TITLE, sf::Style::Fullscreen | sf::Style::Close, settings);
+								window->create(sf::VideoMode::getFullscreenModes().front(), WINDOW_TITLE, sf::Style::Fullscreen | sf::Style::Close, settings);
 							} else {
-								window = new RenderWindow(VideoMode(800, 620), WINDOW_TITLE, sf::Style::Resize | sf::Style::Close, settings);
+								window->create(VideoMode(800, 620), WINDOW_TITLE, sf::Style::Resize | sf::Style::Close, settings);
 							}
 
-							window->setMouseCursorVisible(!fullscreen);
+							window->setMouseCursorVisible(false);
 							window->setKeyRepeatEnabled(false);
+							window->setVerticalSyncEnabled(false);
+							window->setFramerateLimit(FRAMERATE_LIMIT);
 
 						} break;
 						default: break;
@@ -148,19 +152,25 @@ int main() {
 
 					int id = event.joystickConnect.joystickId;
 
-					cout << "Joystick connected: " << id << endl;
-					cout << "Button Count: " << sf::Joystick::getButtonCount(id) << endl;
-					cout << "X Axis: " << (sf::Joystick::hasAxis(id, sf::Joystick::X) ? "yes" : "no") << endl;
-					cout << "Y Axis: " << (sf::Joystick::hasAxis(id, sf::Joystick::Y) ? "yes" : "no") << endl;
-					cout << "Z Axis: " << (sf::Joystick::hasAxis(id, sf::Joystick::Z) ? "yes" : "no") << endl;
+					std::cout << "Joystick connected:\t" << id << std::endl;
+					std::cout << "Button Count:\t" << sf::Joystick::getButtonCount(id) << std::endl;
+
+					std::cout << "Axises:\t";
+					for (int i = 0; i < sf::Joystick::AxisCount; i++) {
+						if (sf::Joystick::hasAxis(id, (sf::Joystick::Axis)i)) {
+							std::cout << joystickAxisToString(i) << " ";
+						}
+					}
+					std::cout << std::endl;
 				} break;
 				case sf::Event::JoystickDisconnected: {
-					std::cout << "Joystick disconnected: " << event.joystickConnect.joystickId << std::endl;
+					std::cout << "Joystick disconnected:\t" << event.joystickConnect.joystickId << std::endl;
 				} break;
 				default: break;
 			}
 		}
 
+		// Event pass can be changed from the event passes update
 		if ((temp_eventPass = eventPass->update(elapsedTime)) != NULL) {
 			delete eventPass;
 			eventPass = temp_eventPass;

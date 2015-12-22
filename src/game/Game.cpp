@@ -23,7 +23,7 @@ Game::Game(std::vector<Player *> *playersParam):
 	objects = new std::vector<Object *>();
 	constraints = new std::vector<Constraint *>();
 
-	world = new Battleground(200.0f, 40.0f);
+	world = new Battleground(200.0f, 0.004f);
 
 
 	followedObjects = new std::vector<Object *>();

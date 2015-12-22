@@ -111,7 +111,7 @@ public:
 	float radius, elasticity;
 	CircleShape shape;
 
-	ElasticCircleWorld(float radiusParam, float elasticityParam = 0.5f):
+	ElasticCircleWorld(float radiusParam, float elasticityParam = 0.0005f):
 		radius(radiusParam),
 		elasticity(elasticityParam),
 		shape(radiusParam)
@@ -134,9 +134,7 @@ public:
 
 		if (current_distance > radius) {
 			Vector2f normal = (difference / current_distance);
-			//a->vel -= normal * (((current_distance - radius) * elasticity) / a->mass);
-			//a->vel -= normal * (((current_distance - radius) * elasticity) * 0.01f);
-			a->vel -= normal * (((current_distance - radius) * elasticity) * 0.0001f * a->mass);
+			a->vel -= normal * (((current_distance - radius) * elasticity) * a->mass);
 		}
 	}
 
