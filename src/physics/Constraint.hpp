@@ -29,7 +29,7 @@ public:
 
 	virtual void solve() = 0;
 
-	virtual void draw(RenderWindow *window) {};
+	virtual void draw(RenderTarget *target) {};
 };
 
 class PointConstraint: public Constraint {
@@ -110,7 +110,7 @@ public:
 	}
 
 
-	virtual void draw(RenderWindow *window) {
+	virtual void draw(RenderTarget *target) {
 		CircleShape shape(distance / 2.0f);
 		shape.setPosition(((a->pos + b->pos) / 2.0f) - Vector2f(distance / 2.0f, distance / 2.0f));
 		shape.setFillColor(Color(0,0,0,0));
@@ -118,7 +118,7 @@ public:
 		shape.setOutlineThickness(1);
 		shape.setOutlineColor(Color(0xff, 0, 0));
 
-		window->draw(shape);
+		target->draw(shape);
 	}
 };
 
@@ -152,7 +152,7 @@ public:
 	}
 
 
-	virtual void draw(RenderWindow *window) {
+	virtual void draw(RenderTarget *target) {
 		CircleShape shape(distance / 2.0f);
 		shape.setPosition(((a->pos + b->pos) / 2.0f) - Vector2f(distance / 2.0f, distance / 2.0f));
 		shape.setFillColor(Color(0,0,0,0));
@@ -160,7 +160,7 @@ public:
 		shape.setOutlineThickness(1);
 		shape.setOutlineColor(Color(0xff, 0, 0));
 
-		window->draw(shape);
+		target->draw(shape);
 	}
 };
 
@@ -227,7 +227,7 @@ public:
 		}
 	}
 
-	virtual void draw(RenderWindow *window) {
+	virtual void draw(RenderTarget *target) {
 		CircleShape shape;
 
 		shape.setRadius(distance_outer / 2.0f);
@@ -237,7 +237,7 @@ public:
 		shape.setOutlineThickness(1);
 		shape.setOutlineColor(Color(0xff, 0, 0));
 
-		window->draw(shape);
+		target->draw(shape);
 
 
 		shape.setRadius(distance_inner / 2.0f);
@@ -247,7 +247,7 @@ public:
 		shape.setOutlineThickness(1);
 		shape.setOutlineColor(Color(0xff, 0, 0));
 
-		window->draw(shape);
+		target->draw(shape);
 	}
 };
 

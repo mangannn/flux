@@ -108,7 +108,7 @@ void Boll::update(float elapsedTime) {
 	}
 }
 
-void Boll::draw(RenderWindow *window) {
+void Boll::draw(RenderTarget *target) {
 
 	body.setPosition(pos);
 	body.setRotation(direction);
@@ -117,10 +117,10 @@ void Boll::draw(RenderWindow *window) {
 	mouth.setPosition(pos);
 	mouth.setRotation(direction);
 
-	window->draw(body);
-	window->draw(eyes);
+	target->draw(body);
+	target->draw(eyes);
 
 	if (connected) {
-		window->draw(mouth);
+		target->draw(mouth);
 	}
 }

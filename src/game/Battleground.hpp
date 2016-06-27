@@ -13,8 +13,8 @@ public:
 	}
 	virtual ~Battleground() {}
 
-	virtual void draw(RenderWindow *window) {
-		ElasticCircleWorld::draw(window);
+	virtual void draw(RenderTarget *target) {
+		ElasticCircleWorld::draw(target);
 	}
 };
 

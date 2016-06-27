@@ -12,7 +12,7 @@ public:
 
 	virtual void collision(Object *a, float elapsedTime) = 0;
 
-	virtual void draw(RenderWindow *window) = 0;
+	virtual void draw(RenderTarget *target) = 0;
 };
 
 class RectWorld : public World {
@@ -57,8 +57,8 @@ public:
 		}
 	}
 
-	virtual void draw(RenderWindow *window) {
-		window->draw(shape);
+	virtual void draw(RenderTarget *target) {
+		target->draw(shape);
 	}
 };
 
@@ -99,8 +99,8 @@ public:
 		}
 	}
 
-	virtual void draw(RenderWindow *window) {
-		window->draw(shape);
+	virtual void draw(RenderTarget *target) {
+		target->draw(shape);
 	}
 };
 
@@ -138,8 +138,8 @@ public:
 		}
 	}
 
-	virtual void draw(RenderWindow *window) {
-		window->draw(shape);
+	virtual void draw(RenderTarget *target) {
+		target->draw(shape);
 	}
 };
 

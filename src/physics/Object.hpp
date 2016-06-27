@@ -39,9 +39,9 @@ public:
 
 	virtual void update(float elapsedTime) {}
 
-	virtual void draw(RenderWindow *window) {
+	virtual void draw(RenderTarget *target) {
 		shape.setPosition(pos - Vector2f(radius, radius));
-		window->draw(shape);
+		target->draw(shape);
 	}
 };
 

@@ -144,16 +144,16 @@ public:
 		}
 	}
 
-	virtual void draw(RenderWindow *window) {
+	virtual void draw(RenderTarget *target) {
 		body.setRotation(direction);
 		body.setPosition(pos);
-		window->draw(body);
+		target->draw(body);
 		eyes.setRotation(direction);
 		eyes.setPosition(pos);
-		window->draw(eyes);
+		target->draw(eyes);
 		mouth.setRotation(direction);
 		mouth.setPosition(pos);
-		window->draw(mouth);
+		target->draw(mouth);
 	}
 };
 
