@@ -232,14 +232,19 @@ EventPass *CharacterSelect::eventHandle(sf::Event event) {
 						switch (catchIndex) {
 							case 1: {
 								pl->axisX = axis;
+						
+								catchIndex += 1;
+
 							} break;
 							default: {
-								pl->axisY = axis;
-								catchEvent = sf::Event::JoystickButtonPressed;
+								if (axis != pl->axisX) {
+									pl->axisY = axis;
+									catchEvent = sf::Event::JoystickButtonPressed;
+
+									catchIndex += 1;
+								}
 							} break;
 						}
-						
-						catchIndex += 1;
 					}
 				}
 			} break;
