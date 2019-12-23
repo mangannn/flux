@@ -380,7 +380,7 @@ void CharacterSelect::draw(RenderWindow *window) {
 	/*textColor.r = 255 - backgroundColor.r;
 	textColor.g = 255 - backgroundColor.g;
 	textColor.b = 255 - backgroundColor.b;*/
-	text.setColor(textColor);
+	text.setFillColor(textColor);
 	window->draw(text);
 
 
