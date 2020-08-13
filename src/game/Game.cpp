@@ -155,13 +155,13 @@ EventPass *Game::update(float elapsedTime) {
 
 
 			players->erase(players->begin()+i);
+
 			for (unsigned int j = 0; j < objects->size(); j++) {
 				if (objects->at(j) == p) {
 					objects->erase(objects->begin()+j);
 					break;
 				}
 			}
-
 			for (unsigned int j = 0; j < followedObjects->size(); j++) {
 				if (followedObjects->at(j) == p) {
 					followedObjects->erase(followedObjects->begin()+j);
@@ -171,8 +171,12 @@ EventPass *Game::update(float elapsedTime) {
 
 			delete p;
 
-			if (players->size() < 2) {
-				return new GameEnd(players->at(0)->sprite.getColor(), 6);//4);
+			if (players->size() <= 1) {
+				if (players->size() == 1) {
+					return new GameEnd(players->at(0)->sprite.getColor(), 4);
+				} else {
+					return new CharacterSelect();
+				}
 			}
 		}
 	}
