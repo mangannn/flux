@@ -20,18 +20,21 @@ Game::Game(std::vector<Player *> *playersParam):
 	players(playersParam)
 {
 
-	objects = new std::vector<Object *>();
-	constraints = new std::vector<Constraint *>();
-
 	world = new Battleground(200.0f, 0.004f);
 
 
 	followedObjects = new std::vector<Object *>();
 
+	CPUControls *c;
 
 	for (unsigned int i = 0; i < players->size(); i++) {
 		objects->push_back(players->at(i));
 		followedObjects->push_back(players->at(i));
+
+		if ((c = dynamic_cast<CPUControls *>(players->at(i)->controls))) {
+			c->game = this;
+			c->player = players->at(i);
+		}
 	}
 
 	clumsy = new Clumsy(Vector2f(0.0f, -80.0f), Color(160, 200, 80));
@@ -54,30 +57,10 @@ Game::~Game() {
 
 	delete world;
 
-	// dont delete the objects i the player vector because they are also a part och the objects vector
+	// dont delete the objects in the player vector because they are also a part och the objects vector
 	delete players;
 
 	delete followedObjects;
-
-	{
-		Constraint *temp;
-		while (!constraints->empty()) {
-			temp = constraints->back();
-			delete temp;
-			constraints->pop_back();
-		}
-		delete constraints;
-	}
-
-	{
-		Object *temp;
-		while (!objects->empty()) {
-			temp = objects->back();
-			delete temp;
-			objects->pop_back();
-		}
-		delete objects;
-	}
 }
 
 
@@ -152,9 +135,45 @@ EventPass *Game::update(float elapsedTime) {
 
 	for (unsigned int i = 0; i < players->size(); i++) {
 		if (players->at(i)->health <= 0) {
-			char buffer[20];
-			sprintf(buffer, "Player %u dead!", i + 1);
-			return new GameEnd(buffer, 4);
+			Player *p = players->at(i);
+
+
+			if (boll->connected) {
+				Constraint *c = boll->constraint;
+				Player *pl;
+
+				if (c->a == boll) {
+					pl = dynamic_cast<Player *>(c->b);
+				} else {
+					pl = dynamic_cast<Player *>(c->a);
+				}
+
+				if (pl == p) {
+					cutOffRope();
+				}
+			}
+
+
+			players->erase(players->begin()+i);
+			for (unsigned int j = 0; j < objects->size(); j++) {
+				if (objects->at(j) == p) {
+					objects->erase(objects->begin()+j);
+					break;
+				}
+			}
+
+			for (unsigned int j = 0; j < followedObjects->size(); j++) {
+				if (followedObjects->at(j) == p) {
+					followedObjects->erase(followedObjects->begin()+j);
+					break;
+				}
+			}
+
+			delete p;
+
+			if (players->size() < 2) {
+				return new GameEnd(players->at(0)->sprite.getColor(), 6);//4);
+			}
 		}
 	}
 

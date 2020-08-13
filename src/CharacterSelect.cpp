@@ -21,7 +21,15 @@ class PlayerDummy {
 
 public:
 
+	enum ControllType {
+		Keyboard = 0,
+		Joystick,
+		Computer
+	};
+
 	Color color;
+
+	ControllType type;
 
 	int UP, DOWN, LEFT, RIGHT;
 
@@ -30,69 +38,74 @@ public:
 
 	int actionButton[2];
 
-	PlayerDummy(Color colorParam, int inputParam):
-		color(colorParam)
+	PlayerDummy(Color colorParam, ControllType t, int inputParam):
+		color(colorParam),
+		type(t)
 	{
+		switch (type) {
+			case ControllType::Keyboard: {
+				switch (inputParam) {
+					case 0: {
+						UP = sf::Keyboard::Up;
+						DOWN = sf::Keyboard::Down;
+						LEFT = sf::Keyboard::Left;
+						RIGHT = sf::Keyboard::Right;
 
-		if (inputParam < 0) {
+						actionButton[0] = sf::Keyboard::N;
+						actionButton[1] = sf::Keyboard::M;
+					} break;
+					case 1: {
+						UP = sf::Keyboard::W;
+						DOWN = sf::Keyboard::S;
+						LEFT = sf::Keyboard::A;
+						RIGHT = sf::Keyboard::D;
 
-			joystickId = -1;
+						actionButton[0] = sf::Keyboard::Z;
+						actionButton[1] = sf::Keyboard::X;
+					} break;
+					case 2: {
+						UP = sf::Keyboard::T;
+						DOWN = sf::Keyboard::G;
+						LEFT = sf::Keyboard::F;
+						RIGHT = sf::Keyboard::H;
 
-			int keyboard_type = -(1 + inputParam);
+						actionButton[0] = sf::Keyboard::V;
+						actionButton[1] = sf::Keyboard::B;
+					} break;
+					case 3: {
+						UP = sf::Keyboard::I;
+						DOWN = sf::Keyboard::K;
+						LEFT = sf::Keyboard::J;
+						RIGHT = sf::Keyboard::L;
 
-			if (keyboard_type == 0) {
-				UP = sf::Keyboard::Up;
-				DOWN = sf::Keyboard::Down;
-				LEFT = sf::Keyboard::Left;
-				RIGHT = sf::Keyboard::Right;
+						actionButton[0] = sf::Keyboard::O;
+						actionButton[1] = sf::Keyboard::P;
+					} break;
+					default: {
+						UP = sf::Keyboard::Unknown;
+						DOWN = sf::Keyboard::Unknown;
+						LEFT = sf::Keyboard::Unknown;
+						RIGHT = sf::Keyboard::Unknown;
 
-				actionButton[0] = sf::Keyboard::N;
-				actionButton[1] = sf::Keyboard::M;
+						actionButton[0] = sf::Keyboard::Unknown;
+						actionButton[1] = sf::Keyboard::Unknown;
+					}
+				}
+			} break;
+			case ControllType::Joystick: {
 
-			} else if (keyboard_type == 1) {
-				UP = sf::Keyboard::W;
-				DOWN = sf::Keyboard::S;
-				LEFT = sf::Keyboard::A;
-				RIGHT = sf::Keyboard::D;
+				joystickId = inputParam;
 
-				actionButton[0] = sf::Keyboard::Z;
-				actionButton[1] = sf::Keyboard::X;
+				axisX = sf::Joystick::X;
+				axisY = sf::Joystick::Y;
 
-			} else if (keyboard_type == 2) {
-				UP = sf::Keyboard::T;
-				DOWN = sf::Keyboard::G;
-				LEFT = sf::Keyboard::F;
-				RIGHT = sf::Keyboard::H;
+				actionButton[0] = 0;
+				actionButton[1] = 1;
 
-				actionButton[0] = sf::Keyboard::V;
-				actionButton[1] = sf::Keyboard::B;
-
-			} else if (keyboard_type == 3) {
-				UP = sf::Keyboard::I;
-				DOWN = sf::Keyboard::K;
-				LEFT = sf::Keyboard::J;
-				RIGHT = sf::Keyboard::L;
-
-				actionButton[0] = sf::Keyboard::O;
-				actionButton[1] = sf::Keyboard::P;
-			} else {
-				UP = sf::Keyboard::Unknown;
-				DOWN = sf::Keyboard::Unknown;
-				LEFT = sf::Keyboard::Unknown;
-				RIGHT = sf::Keyboard::Unknown;
-
-				actionButton[0] = sf::Keyboard::Unknown;
-				actionButton[1] = sf::Keyboard::Unknown;
+			} break;
+			case ControllType::Computer: {
+				// Nothing need be done
 			}
-		} else {
-
-			joystickId = inputParam;
-
-			axisX = sf::Joystick::X;
-			axisY = sf::Joystick::Y;
-
-			actionButton[0] = 0;
-			actionButton[1] = 1;
 		}
 	}
 };
@@ -107,9 +120,9 @@ CharacterSelect::CharacterSelect() :
 	catchEvent((sf::Event::EventType)0),
 	catchIndex(-1),
 
-	markPosition(0),
-	markDirection(0),
-	markedIndex(0)
+	selectMarkerPosition(0),
+	selectMarkerDirection(0),
+	selectMarkerIndex(0)
 {
 
 	playerDummys = new std::vector<PlayerDummy *>();
@@ -118,8 +131,7 @@ CharacterSelect::CharacterSelect() :
 
 	if (playerDummys->size() < 1) {
 		playerDummys->push_back(new PlayerDummy(
-			RANDOM_COLOR, 
-			-1));
+			RANDOM_COLOR, PlayerDummy::ControllType::Keyboard, 0));
 	}
 
 	float radius = 0.1f;
@@ -161,7 +173,7 @@ EventPass *CharacterSelect::eventHandle(sf::Event event) {
 
 				int key = event.key.code;
 
-				PlayerDummy *pl = playerDummys->at(markedIndex);
+				PlayerDummy *pl = playerDummys->at(selectMarkerIndex);
 
 				switch (catchIndex) {
 					case 0: {
@@ -193,12 +205,12 @@ EventPass *CharacterSelect::eventHandle(sf::Event event) {
 			} break;
 			case sf::Event::JoystickButtonPressed: {
 				if (catchIndex == 0) {
-					playerDummys->at(markedIndex)->joystickId = event.joystickButton.joystickId;
+					playerDummys->at(selectMarkerIndex)->joystickId = event.joystickButton.joystickId;
 					catchEvent = sf::Event::JoystickMoved;
 					catchIndex += 1;
 				} else {
 
-					PlayerDummy *pl = playerDummys->at(markedIndex);
+					PlayerDummy *pl = playerDummys->at(selectMarkerIndex);
 
 					if (pl->joystickId == (int)event.joystickButton.joystickId) {
 
@@ -222,7 +234,7 @@ EventPass *CharacterSelect::eventHandle(sf::Event event) {
 				}
 			} break;
 			case sf::Event::JoystickMoved: {
-				PlayerDummy *pl = playerDummys->at(markedIndex);
+				PlayerDummy *pl = playerDummys->at(selectMarkerIndex);
 
 				if (pl->joystickId == (int)event.joystickMove.joystickId) {
 					if (fabs(event.joystickMove.position) > 50.0f) { // catch twitch events
@@ -249,7 +261,7 @@ EventPass *CharacterSelect::eventHandle(sf::Event event) {
 				}
 			} break;
 			default: {
-				std::cout << "Not valid catchEvent" << std::endl;
+				std::cout << "Not valid event to catch" << std::endl;
 			} break;
 		}
 		
@@ -263,29 +275,31 @@ EventPass *CharacterSelect::eventHandle(sf::Event event) {
 
 					playerDummys->push_back(new PlayerDummy(
 						RANDOM_COLOR,
-						-(1 + playerDummys->size())));
+						PlayerDummy::ControllType::Keyboard, 
+						playerDummys->size()));
 
-					markedIndex = playerDummys->size() - 1;
+					selectMarkerIndex = playerDummys->size() - 1;
 
 				} break;
 				case sf::Keyboard::W: {
 
-					if (markedIndex >= 0 && markedIndex < (int)playerDummys->size()) {
+					if (selectMarkerIndex >= 0 && selectMarkerIndex < (int)playerDummys->size()) {
 				
 						PlayerDummy *temp;
-						temp = playerDummys->at(markedIndex);
+						temp = playerDummys->at(selectMarkerIndex);
 						delete temp;
-						playerDummys->erase(playerDummys->begin() + markedIndex);
+						playerDummys->erase(playerDummys->begin() + selectMarkerIndex);
 
-						markedIndex -= 1;
-						if (markedIndex < 0) {
-							markedIndex = 0;
+						selectMarkerIndex -= 1;
+						if (selectMarkerIndex < 0) {
+							selectMarkerIndex = 0;
 						}
 
 						if (playerDummys->size() < 1) {
 							playerDummys->push_back(new PlayerDummy(
 								RANDOM_COLOR,
-								-1));
+								PlayerDummy::ControllType::Keyboard, 
+								0));
 						}
 					}
 
@@ -302,18 +316,18 @@ EventPass *CharacterSelect::eventHandle(sf::Event event) {
 					}
 
 					loadPlayerList("media/player_list.txt");
-					markedIndex = 0;
+					selectMarkerIndex = 0;
 
 				} break;
 				case sf::Keyboard::C: {
-					playerDummys->at(markedIndex)->color = RANDOM_COLOR;
+					playerDummys->at(selectMarkerIndex)->color = RANDOM_COLOR;
 				} break;
 				case sf::Keyboard::K: {
 
 					catchIndex = 0;
 					catchEvent = sf::Event::KeyPressed;
 
-					playerDummys->at(markedIndex)->joystickId = -1;
+					playerDummys->at(selectMarkerIndex)->type = PlayerDummy::ControllType::Keyboard;
 
 				} break;
 				case sf::Keyboard::J: {
@@ -321,22 +335,28 @@ EventPass *CharacterSelect::eventHandle(sf::Event event) {
 					catchIndex = 0;
 					catchEvent = sf::Event::JoystickButtonPressed;
 
+					playerDummys->at(selectMarkerIndex)->type = PlayerDummy::ControllType::Joystick;
+
+				} break;
+				case sf::Keyboard::H: {
+					playerDummys->at(selectMarkerIndex)->type = PlayerDummy::ControllType::Computer;
+
 				} break;
 				case sf::Keyboard::Left: {
-					markedIndex -= 1;
-					if (markedIndex < 0) {
-						markedIndex += playerDummys->size();
+					selectMarkerIndex -= 1;
+					if (selectMarkerIndex < 0) {
+						selectMarkerIndex += playerDummys->size();
 					}
 				} break;
 				case sf::Keyboard::Right: {
-					markedIndex += 1;
-					if (markedIndex >= (int)playerDummys->size()) {
-						markedIndex -= playerDummys->size();
+					selectMarkerIndex += 1;
+					if (selectMarkerIndex >= (int)playerDummys->size()) {
+						selectMarkerIndex -= playerDummys->size();
 					}
 				} break;
 
 				case sf::Keyboard::Return: {
-					return createGame();
+					return newGame();
 				} break;
 				default: break;
 			}
@@ -389,11 +409,11 @@ void CharacterSelect::draw(RenderWindow *window) {
 
 
 	// Update mark position
-	const float markGoalPosition = -startx + (markedIndex * spacing);
-	const float markGoalDirection = sin((timer + markedIndex) * 2.0f) * 20;
+	const float selectMarkerPositionGoal = -startx + (selectMarkerIndex * spacing);
+	const float selectMarkerDirectionGoal = sin((timer + selectMarkerIndex) * 2.0f) * 20;
 
-	markPosition = (markGoalPosition - markPosition) / 5.0f + markPosition;
-	markDirection = (markGoalDirection - markDirection) / 5.0f + markDirection;
+	selectMarkerPosition = (selectMarkerPositionGoal - selectMarkerPosition) / 5.0f + selectMarkerPosition;
+	selectMarkerDirection = (selectMarkerDirectionGoal - selectMarkerDirection) / 5.0f + selectMarkerDirection;
 
 
 	const float markSize = 0.3;
@@ -402,9 +422,9 @@ void CharacterSelect::draw(RenderWindow *window) {
 	sf::RectangleShape box;
 	box.setSize(markV);
 	box.setOrigin(markV * 0.5f);
-	box.setPosition(Vector2f(markPosition, -0.12f));
+	box.setPosition(Vector2f(selectMarkerPosition, -0.12f));
 	box.setFillColor(Color::Red);
-	box.setRotation(markDirection);
+	box.setRotation(selectMarkerDirection);
 	window->draw(box);
 
 	char str[10];
@@ -435,61 +455,70 @@ void CharacterSelect::draw(RenderWindow *window) {
 		const Vector2f centerButton = centerArrows + Vector2f(0, 0.15);
 		const float buttonPlacement = size * 0.7f;
 
-		if (playerDummys->at(i)->joystickId < 0) {
+		switch (playerDummys->at(i)->type) {
+			case PlayerDummy::ControllType::Keyboard: {
 
-			drawButton(box, text, 
-				centerArrows + Vector2f(0, -arrowPlacement), Vector2f(size, size), 
-				Color(60, 60, 160), keyCodeToString(playerDummys->at(i)->UP),
-				(markedIndex == (int)i && catchIndex == 0), window);
-			drawButton(box, text, 
-				centerArrows + Vector2f(0, arrowPlacement), Vector2f(size, size),
-				Color(60, 160, 60), keyCodeToString(playerDummys->at(i)->DOWN),
-				(markedIndex == (int)i && catchIndex == 1), window);
-			drawButton(box, text, 
-				centerArrows + Vector2f(-arrowPlacement, 0), Vector2f(size, size), 
-				Color(160, 60, 160), keyCodeToString(playerDummys->at(i)->LEFT), 
-				(markedIndex == (int)i && catchIndex == 2), window);
-			drawButton(box, text, 
-				centerArrows + Vector2f(arrowPlacement, 0), Vector2f(size, size), 
-				Color(160, 160, 60), keyCodeToString(playerDummys->at(i)->RIGHT),
-				(markedIndex == (int)i && catchIndex == 3), window);
+				drawButton(box, text, 
+					centerArrows + Vector2f(0, -arrowPlacement), Vector2f(size, size), 
+					Color(60, 60, 160), keyCodeToString(playerDummys->at(i)->UP),
+					(selectMarkerIndex == (int)i && catchIndex == 0), window);
+				drawButton(box, text, 
+					centerArrows + Vector2f(0, arrowPlacement), Vector2f(size, size),
+					Color(60, 160, 60), keyCodeToString(playerDummys->at(i)->DOWN),
+					(selectMarkerIndex == (int)i && catchIndex == 1), window);
+				drawButton(box, text, 
+					centerArrows + Vector2f(-arrowPlacement, 0), Vector2f(size, size), 
+					Color(160, 60, 160), keyCodeToString(playerDummys->at(i)->LEFT), 
+					(selectMarkerIndex == (int)i && catchIndex == 2), window);
+				drawButton(box, text, 
+					centerArrows + Vector2f(arrowPlacement, 0), Vector2f(size, size), 
+					Color(160, 160, 60), keyCodeToString(playerDummys->at(i)->RIGHT),
+					(selectMarkerIndex == (int)i && catchIndex == 3), window);
 
-			drawButton(box, text, 
-				centerButton + Vector2f(-buttonPlacement, 0), Vector2f(size, size), 
-				Color(160, 60, 60), keyCodeToString(playerDummys->at(i)->actionButton[0]),
-				(markedIndex == (int)i && catchIndex == 4), window);
-			drawButton(box, text, 
-				centerButton + Vector2f(buttonPlacement, 0), Vector2f(size, size), 
-				Color(60, 160, 160), keyCodeToString(playerDummys->at(i)->actionButton[1]),
-				(markedIndex == (int)i && catchIndex == 5), window);
+				drawButton(box, text, 
+					centerButton + Vector2f(-buttonPlacement, 0), Vector2f(size, size), 
+					Color(160, 60, 60), keyCodeToString(playerDummys->at(i)->actionButton[0]),
+					(selectMarkerIndex == (int)i && catchIndex == 4), window);
+				drawButton(box, text, 
+					centerButton + Vector2f(buttonPlacement, 0), Vector2f(size, size), 
+					Color(60, 160, 160), keyCodeToString(playerDummys->at(i)->actionButton[1]),
+					(selectMarkerIndex == (int)i && catchIndex == 5), window);
+				
+			} break;
+			case PlayerDummy::ControllType::Joystick: {
 
-		} else {
+				sprintf(str, "%d", playerDummys->at(i)->joystickId);
+				drawButton(box, text, 
+					centerArrows + Vector2f(0, arrowPlacement), Vector2f(size, size), 
+					Color(60, 60, 60), str,
+					(selectMarkerIndex == (int)i && catchIndex == 0), window);
 
-			sprintf(str, "%d", playerDummys->at(i)->joystickId);
-			drawButton(box, text, 
-				centerArrows + Vector2f(0, arrowPlacement), Vector2f(size, size), 
-				Color(60, 60, 60), str,
-				(markedIndex == (int)i && catchIndex == 0), window);
+				drawButton(box, text, 
+					centerArrows + Vector2f(-arrowPlacement / 2.0f, 0), Vector2f(size * 2, size), 
+					Color(60, 60, 160), joystickAxisToString(playerDummys->at(i)->axisX), 
+					(selectMarkerIndex == (int)i && catchIndex == 1), window);
+				drawButton(box, text, 
+					centerArrows + Vector2f(arrowPlacement, -arrowPlacement / 2.0f), Vector2f(size, size * 2), 
+					Color(60, 160, 60), joystickAxisToString(playerDummys->at(i)->axisY),
+					(selectMarkerIndex == (int)i && catchIndex == 2), window);
 
-			drawButton(box, text, 
-				centerArrows + Vector2f(-arrowPlacement / 2.0f, 0), Vector2f(size * 2, size), 
-				Color(60, 60, 160), joystickAxisToString(playerDummys->at(i)->axisX), 
-				(markedIndex == (int)i && catchIndex == 1), window);
-			drawButton(box, text, 
-				centerArrows + Vector2f(arrowPlacement, -arrowPlacement / 2.0f), Vector2f(size, size * 2), 
-				Color(60, 160, 60), joystickAxisToString(playerDummys->at(i)->axisY),
-				(markedIndex == (int)i && catchIndex == 2), window);
+				sprintf(str, "%d", playerDummys->at(i)->actionButton[0]);
+				drawButton(box, text, 
+					centerButton + Vector2f(-buttonPlacement, 0), Vector2f(size, size), 
+					Color(160, 60, 60), str,
+					(selectMarkerIndex == (int)i && catchIndex == 3), window);
+				sprintf(str, "%d", playerDummys->at(i)->actionButton[1]);
+				drawButton(box, text, 
+					centerButton + Vector2f(buttonPlacement, 0), Vector2f(size, size), 
+					Color(60, 160, 160), str, 
+					(selectMarkerIndex == (int)i && catchIndex == 4), window);
 
-			sprintf(str, "%d", playerDummys->at(i)->actionButton[0]);
-			drawButton(box, text, 
-				centerButton + Vector2f(-buttonPlacement, 0), Vector2f(size, size), 
-				Color(160, 60, 60), str,
-				(markedIndex == (int)i && catchIndex == 3), window);
-			sprintf(str, "%d", playerDummys->at(i)->actionButton[1]);
-			drawButton(box, text, 
-				centerButton + Vector2f(buttonPlacement, 0), Vector2f(size, size), 
-				Color(60, 160, 160), str, 
-				(markedIndex == (int)i && catchIndex == 4), window);
+			} break;
+			case PlayerDummy::ControllType::Computer: {
+				drawButton(box, text, 
+					centerArrows + Vector2f(0, arrowPlacement), Vector2f(size*2, size), 
+					Color(160, 0, 160), "CPU", false, window);
+			} break;
 		}
 	}
 }
@@ -505,7 +534,7 @@ void CharacterSelect::drawButton(sf::RectangleShape box, sf::Text text, sf::Vect
 	if (active) {
 		box.setFillColor(Color(120, 0, 0));
 		text.setString("?");
-		box.setRotation(sin((timer + markedIndex) * 16.0f) * 16);
+		box.setRotation(sin((timer + selectMarkerIndex) * 16.0f) * 16);
 
 		window->draw(box);
 
@@ -539,7 +568,6 @@ void CharacterSelect::loadPlayerList(const char* path) {
 
 	int cr = 0, cg = 0, cb = 0;
 
-	char input_type = 'k';
 	int joystickId = 0;
 	int k_up = 0, k_down = 0, k_left = 0, k_right = 0, a1 = 0, a2 = 0, axisX = 0, axisY = 0;
 
@@ -550,55 +578,66 @@ void CharacterSelect::loadPlayerList(const char* path) {
 		// %[^}\n] saves all characters until a } or \n
 
 		num_back = sscanf(buffer, 
-			"color{%d,%d,%d} input{%c,%[^}\n]}", 
-			&cr, &cg, &cb, &input_type, str);
+			"color{%d,%d,%d} input{%[^}\n]}", 
+			&cr, &cg, &cb, str);
 
-		if (num_back != 5) {
+		if (num_back != 4) {
 			continue;
 		}
 
-		if (input_type == 'k') {
+		switch (str[0]) {
+			case 'k': {
 
-			num_back = sscanf(str, 
-			"%d,%d,%d,%d,%d,%d", 
-			&k_up, &k_down, &k_left, &k_right, &a1, &a2);
+				num_back = sscanf(str, 
+				"k,%d,%d,%d,%d,%d,%d", 
+				&k_up, &k_down, &k_left, &k_right, &a1, &a2);
 
-			PlayerDummy *pl = new PlayerDummy(sf::Color(cr, cg, cb), -(1 + playerDummys->size()));
+				PlayerDummy *pl = new PlayerDummy(sf::Color(cr, cg, cb), PlayerDummy::ControllType::Keyboard, 0);
 
-			// if input settings in file is ok, use them, otherwise use preset
-			if (num_back == 6) {
+				// if input settings in file is ok, use them, otherwise use preset
+				if (num_back == 6) {
 
-				pl->UP = k_up;
-				pl->DOWN = k_down;
-				pl->LEFT = k_left;
-				pl->RIGHT = k_right;
+					pl->UP = k_up;
+					pl->DOWN = k_down;
+					pl->LEFT = k_left;
+					pl->RIGHT = k_right;
 
-				pl->actionButton[0] = a1;
-				pl->actionButton[1] = a2;
+					pl->actionButton[0] = a1;
+					pl->actionButton[1] = a2;
+				}
+
+				playerDummys->push_back(pl);
+			} break;
+			case 'j': {
+				num_back = sscanf(str, 
+				"j,%d,%d,%d,%d",
+				&axisX, &axisY, &a1, &a2);
+
+				PlayerDummy *pl = new PlayerDummy(sf::Color(cr, cg, cb), PlayerDummy::ControllType::Joystick, joystickId);
+
+				joystickId += 1;
+
+				// if input settings in file is ok, use them, otherwise use preset
+				if (num_back == 5) {
+
+					pl->axisX = axisX;
+					pl->axisY = axisY;
+
+					pl->actionButton[0] = a1;
+					pl->actionButton[1] = a2;
+				}
+
+				playerDummys->push_back(pl);
+			} break;
+			case 'c': {
+
+				PlayerDummy *pl = new PlayerDummy(sf::Color(cr, cg, cb), PlayerDummy::ControllType::Computer, 0);
+
+				playerDummys->push_back(pl);
+			} break;
+			default: {
+
 			}
-
-			playerDummys->push_back(pl);
-
-		} else {
-			num_back = sscanf(str, 
-			"%d,%d,%d,%d",
-			&axisX, &axisY, &a1, &a2);
-
-			PlayerDummy *pl = new PlayerDummy(sf::Color(cr, cg, cb), joystickId);
-
-			joystickId += 1;
-
-			// if input settings in file is ok, use them, otherwise use preset
-			if (num_back == 5) {
-
-				pl->axisX = axisX;
-				pl->axisY = axisY;
-
-				pl->actionButton[0] = a1;
-				pl->actionButton[1] = a2;
-			}
-
-			playerDummys->push_back(pl);
 		}
 	}
 	fclose(file);
@@ -619,26 +658,33 @@ void CharacterSelect::savePlayerList(const char* path) {
 		const int MAXSTR = 256;
 		char str[MAXSTR];
 
-		if (pl->joystickId < 0) {
-			sprintf(str, "%c, %d, %d, %d, %d, %d, %d", 
-				'k', pl->UP, pl->DOWN, pl->LEFT, pl->RIGHT, pl->actionButton[0], pl->actionButton[1]);
-		} else {
-			sprintf(str, "%c, %d, %d, %d, %d", 
-				'j', pl->axisX, pl->axisY, pl->actionButton[0], pl->actionButton[1]);
+		switch (pl->type) {
+			case PlayerDummy::ControllType::Keyboard: {
+				sprintf(str, "%c, %d, %d, %d, %d, %d, %d", 
+					'k', pl->UP, pl->DOWN, pl->LEFT, pl->RIGHT, pl->actionButton[0], pl->actionButton[1]);
+			} break;
+			case PlayerDummy::ControllType::Joystick: {
+				sprintf(str, "%c, %d, %d, %d, %d", 
+					'j', pl->axisX, pl->axisY, pl->actionButton[0], pl->actionButton[1]);
+			} break;
+			case PlayerDummy::ControllType::Computer: {
+				sprintf(str, "%c", 
+					'c');
+			}
 		}
 
 		if (fprintf(file, 
 			"color{%d, %d, %d} input{%s}\n", 
 			pl->color.r, pl->color.g, pl->color.b, str) < 1) {
 
-			std::cout << "Error writeing to file: " << path << std::endl;
+			std::cout << "Error writing to file: " << path << std::endl;
 			exit(-1);
 		}
 	}
 	fclose(file);
 }
 
-EventPass *CharacterSelect::createGame() {
+EventPass *CharacterSelect::newGame() {
 
 	if (playerDummys->size() < 1) {
 		return NULL;
@@ -661,10 +707,16 @@ EventPass *CharacterSelect::createGame() {
 		PlayerDummy *pl = playerDummys->at(i);
 		Controls *controls;
 
-		if (pl->joystickId < 0) {
-			controls = new KeyboardControls(pl->UP, pl->DOWN, pl->LEFT, pl->RIGHT, pl->actionButton, 2);
-		} else {
-			controls = new JoystickControls(pl->joystickId, pl->axisX, pl->axisY, pl->actionButton, 2);
+		switch (pl->type) {
+			case PlayerDummy::ControllType::Keyboard: {
+				controls = new KeyboardControls(pl->UP, pl->DOWN, pl->LEFT, pl->RIGHT, pl->actionButton, 2);
+			} break;
+			case PlayerDummy::ControllType::Joystick: {
+				controls = new JoystickControls(pl->joystickId, pl->axisX, pl->axisY, pl->actionButton, 2);
+			} break;
+			case PlayerDummy::ControllType::Computer: {
+				controls = new CPUControls();
+			}
 		}
 
 		players->push_back(new Player(

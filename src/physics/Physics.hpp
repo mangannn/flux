@@ -25,8 +25,8 @@ public:
 
 	World *world;
 
-	Physics() {}
-	virtual ~Physics() {}
+	Physics();
+	virtual ~Physics();
 
 	virtual bool collision_callback(Object *a, Object *b) {
 		return true;

@@ -10,6 +10,36 @@
 
 using namespace sf;
 
+
+Physics::Physics() {
+
+	objects = new std::vector<Object *>();
+	constraints = new std::vector<Constraint *>();
+
+}
+Physics::~Physics() {
+
+	{
+		Constraint *temp;
+		while (!constraints->empty()) {
+			temp = constraints->back();
+			delete temp;
+			constraints->pop_back();
+		}
+		delete constraints;
+	}
+
+	{
+		Object *temp;
+		while (!objects->empty()) {
+			temp = objects->back();
+			delete temp;
+			objects->pop_back();
+		}
+		delete objects;
+	}
+}
+
 bool Physics::can_collide(Object *a, Object *b) {
 
 	/*for (unsigned int i = 0; i < constraints->size(); i++) {

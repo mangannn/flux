@@ -95,4 +95,24 @@ public:
 	virtual Vector2f movement();
 };
 
+class Game;
+class Player;
+
+class CPUControls : public Controls {
+
+public:
+
+	Game *game;
+	Player *player;
+
+	CPUControls();
+	virtual ~CPUControls() {}
+
+	virtual void eventHandle(sf::Event event) {}
+
+	virtual bool action(int num);
+	virtual Vector2f movement();
+};
+
+
 #endif

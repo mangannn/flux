@@ -25,16 +25,18 @@ public:
 
 	virtual void draw(sf::RenderWindow *window);
 
-private:
 
-	sf::View gameView;
-	sf::View guiView;
-
-	std::vector<Object *> *followedObjects;
 	std::vector<Player *> *players;
 
 	Boll *boll;
 	Clumsy *clumsy;
+
+private:
+	
+	sf::View gameView;
+	sf::View guiView;
+
+	std::vector<Object *> *followedObjects;
 
 	void cutOffRope();
 };
