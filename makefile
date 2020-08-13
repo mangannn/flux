@@ -2,15 +2,15 @@ CC			= g++
 
 #DEBUG		= -g -D DEBUG
 
-LFLAGS		= -Wall $(DEBUG) $(LIBS) $(LINKS)
-CFLAGS		= -Wall -MMD $(DEBUG) $(INCLUDES) $(DEFINES)
+LFLAGS		= -Wall $(DEBUG)
+CFLAGS		= -Wall -MMD $(DEBUG)
 
 TARGET		= flux
 
-SRCS		= \
-$(wildcard src/*.cpp src/*/*.cpp)
+SRCS		= $(shell find src/ -type f -name "*.cpp")
+OBJS		= $(subst src/,build/,$(SRCS:.cpp=.o))
+BUILD_DIRS 	= $(sort $(dir $(OBJS)))
 
-OBJS		= $(addprefix build/, $(notdir $(SRCS:.cpp=.o)))
 
 DEFINES		= 
 
@@ -18,30 +18,25 @@ INCLUDES	=
 
 LIBS		= 
 
-LINKS		= -lsfml-window -lsfml-audio -lsfml-graphics -lsfml-system
+LINKS		= -lsfml-graphics -lsfml-window -lsfml-system
 
 
+build: $(BUILD_DIRS) $(TARGET)
 
-build: $(TARGET)
+$(BUILD_DIRS):
+	mkdir -p $@
 
 $(TARGET): $(OBJS)
-	$(CC) $(LFLAGS) -o $(TARGET) $(OBJS)
+	$(CC) $(LFLAGS) $(OBJS) -o $(TARGET) $(LIBS) $(LINKS)
 
 build/%.o: src/%.cpp
-	$(CC) $(CFLAGS) -c $< -o $@ 
-build/%.o: src/*/%.cpp
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -c $< -o $@ $(INCLUDES) $(DEFINES)
 
 clean:
-	rm -fv $(OBJS) $(OBJS:.o=.d) $(TARGET)
+	rm -Rv build/ $(TARGET)
+	rm -fv $(TARGET)
 
 rebuild: clean build
-
-valgrind: $(TARGET)
-	(valgrind --show-reachable=yes --leak-check=full -v ./$(TARGET))
-
-run:
-	./$(TARGET)
 
 cleandepend:
 	rm -fv $(OBJS:.o=.d)
