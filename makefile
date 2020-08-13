@@ -7,7 +7,7 @@ CFLAGS		= -Wall -MMD $(DEBUG)
 
 TARGET		= flux
 
-SRCS		= $(shell find src/ -type f -name "*.cpp")
+SRCS		= $(wildcard src/*.cpp src/*/*.cpp)
 OBJS		= $(subst src/,build/,$(SRCS:.cpp=.o))
 BUILD_DIRS 	= $(sort $(dir $(OBJS)))
 
