@@ -557,8 +557,8 @@ void CharacterSelect::loadPlayerList(const char* path) {
 	FILE *file;
 
 	if (!(file = fopen(path, "r"))) {
-		std::cout << "Failed to open file: " << path << std::endl;
-		exit(-1);
+		std::cout << "Failed to load player list (" << path << ")\n";
+		return;
 	}
 
 	const int MAXSTR = 256;
@@ -647,8 +647,8 @@ void CharacterSelect::savePlayerList(const char* path) {
 	FILE *file;
 
 	if (!(file = fopen(path, "w"))) {
-		std::cout << "Failed to open file: " << path << std::endl;
-		exit(-1);
+		std::cout << "Failed to save player list (" << path << ")\n";
+		return;
 	}
 
 	for (unsigned int i = 0; i < playerDummys->size(); i++) {
