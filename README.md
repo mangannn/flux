@@ -19,7 +19,6 @@ All that witch is are ours to give, we give for free to those who need! (WTFPL)
 
 # Compile:
 
-- mkdir ./build
 - make
 
 # Run:
