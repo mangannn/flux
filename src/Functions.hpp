@@ -24,5 +24,6 @@ bool lineIntersectDebug();
 
 #define RANDOM ((float)rand()/(float)RAND_MAX)
 #define RANDOM2 ((RANDOM * 2.0f) - 1.0f)
+#define RANDOM_VECTOR2F (Vector2f(RANDOM2, RANDOM2))
 
 #endif

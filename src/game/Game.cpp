@@ -14,6 +14,7 @@
 #include "../physics/Constraint.hpp"
 
 #include "Game.hpp"
+#include "ParticleSystem.hpp"
 
 
 Game::Game(std::vector<Player *> *playersParam):
@@ -22,6 +23,7 @@ Game::Game(std::vector<Player *> *playersParam):
 
 	world = new Battleground(200.0f, 0.004f);
 
+	ParticleSystem::init();
 
 	followedObjects = new std::vector<Object *>();
 
@@ -54,6 +56,8 @@ Game::Game(std::vector<Player *> *playersParam):
 	gameView.setCenter(Vector2f(0,0));;
 }
 Game::~Game() {
+
+	ParticleSystem::exit();
 
 	delete world;
 
@@ -102,6 +106,8 @@ EventPass *Game::update(float elapsedTime) {
 		objects->at(i)->update(elapsedTime);
 	}
 
+	ParticleSystem::update(elapsedTime);
+
 	step(elapsedTime);
 
 
@@ -122,7 +128,7 @@ EventPass *Game::update(float elapsedTime) {
 
 			for (unsigned int i = 0; i < players->size(); i++) {
 				if (players->at(i) != pl) {
-					if (sqrSize(players->at(i)->vel) > 100.0f * 100.0f) {
+					if (players->at(i)->dashing) {
 						if (lineIntersect(players->at(i)->lastPos, players->at(i)->pos, clumsy->pos, boll->pos)) {
 
 							cutOffRope();
@@ -280,6 +286,8 @@ void Game::draw(RenderWindow *window) {
 
 		window->draw(line);
 	}
+
+	ParticleSystem::draw(window);
 
 	for (unsigned int i = 0; i < objects->size(); i++) {
 		objects->at(i)->draw(window);

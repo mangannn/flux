@@ -11,15 +11,14 @@ public:
 
 	sf::Sprite sprite;
 
-	Vector2f dashVel;
-
 	Vector2f lastPos;
 
-	bool running;
-	float dashBegin;
+	bool dashing;
+	float dashTimer;
+	Vector2f dashVel;
 
 	float sprite_pos;
-	float timer;
+	float sprite_timer;
 
 	float spriteDirection;
 

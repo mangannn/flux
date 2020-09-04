@@ -3,16 +3,21 @@
 
 #include "Player.hpp"
 
+#include "ParticleSystem.hpp"
+
 #include <iostream>
 
 using namespace std;
 
 
-#define MOVEMENT_SPEED (700.0f)
+#define MOVEMENT_ACCELRATION (700.0f)
 #define HEAL_RATE (0.001f)
 
+// max velocity is about 350.f
+
 #define DASH_LOADING_TIME (1.0f)
-#define DASH_STARTVELOCITY (15000.0f)
+#define DASH_START_VELOCITY (1200.0f)
+#define DASH_END_VELOCITY (370.0f)
 
 #define IMPULSE_DMG (0.00001f)
 #define CLUMSY_DMG (5.0f)
@@ -23,14 +28,13 @@ Player::Player(Vector2f position, float direction, Color color, Controls *con):
 	Object(position, Vector2f(0,0), 6.0f, 50.0f, 100.0f, color),
 	Controlled(con),
 
-	dashVel(Vector2f(0.0f, 0.0f)),
-
 	lastPos(pos),
 
-	running(false),
-	dashBegin(0),
+	dashing(false),
+	dashTimer(0),
+
 	sprite_pos(0),
-	timer(0.0f),
+	sprite_timer(0.0f),
 	spriteDirection(direction),
 
 	health(1.0f),
@@ -51,13 +55,14 @@ Player::Player(Vector2f position, float direction, Color color, Controls *con):
 void Player::eventCallback(int id) {
 	switch (id) {
 		case 0: {
-			if (dashBegin >= 0) {
+			if (dashTimer >= DASH_LOADING_TIME) {
 
 				Vector2f v = controls->movement();
 				float vSize = size(v);
 				if (vSize > 0) {
-					dashVel = (v / vSize) * DASH_STARTVELOCITY;
-					dashBegin = -DASH_LOADING_TIME;
+					dashVel = (v / vSize) * DASH_START_VELOCITY;
+					dashing = true;
+					dashTimer = 0;
 				}
 			}
 		} break;
@@ -85,35 +90,26 @@ void Player::update(float elapsedTime) {
 
 	lastPos = pos;
 
-
-
-
-	Vector2f v = controls->movement();
-
-	vel += (v * MOVEMENT_SPEED) * elapsedTime;
+	dashTimer += elapsedTime;
 
 
 
 
+	if (!dashing) {
 
+		vel += (controls->movement() * MOVEMENT_ACCELRATION) * elapsedTime;
 
-	// Dash update
-
-	if (dashBegin < 0){
-		dashBegin += elapsedTime;
-	}
-
-	dashVel *= 0.8f;
-
-	const float dashEndVel = 5000;
-
-	if (sqrSize(dashVel) < dashEndVel * dashEndVel) {
-		dashVel = Vector2f(0.0f, 0.0f);
 	} else {
-		vel += dashVel * elapsedTime;
+
+		if (sqrSize(dashVel) < DASH_END_VELOCITY * DASH_END_VELOCITY) {
+			dashing = false;
+		}
+		
+		vel = dashVel;
+		dashVel *= 0.95f;
+		
+		ParticleSystem::addParticle(pos + 3.f * RANDOM_VECTOR2F,-0.05f * vel + 60.f * RANDOM_VECTOR2F);
 	}
-
-
 
 
 
@@ -126,13 +122,13 @@ void Player::update(float elapsedTime) {
 		vel = Vector2f(0,0);
 
 
-		timer += elapsedTime;
+		sprite_timer += elapsedTime;
 
-		if (timer > 0.25f) {
+		if (sprite_timer > 0.25f) {
 
 			sprite.setTexture(standingTex);
 
-			timer -= 0.25f;
+			sprite_timer -= 0.25f;
 
 			sprite_pos += 1.0f;
 			if (sprite_pos >= 4.0f) {

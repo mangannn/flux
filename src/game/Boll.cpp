@@ -1,5 +1,6 @@
 
 #include "../physics/Constraint.hpp"
+#include "../Resources.hpp"
 #include "Clumsy.hpp"
 
 #include "Boll.hpp"
