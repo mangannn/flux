@@ -29,13 +29,15 @@ Game::Game(std::vector<Player *> *playersParam):
 
 	CPUControls *c;
 
-	for (unsigned int i = 0; i < players->size(); i++) {
-		objects->push_back(players->at(i));
-		followedObjects->push_back(players->at(i));
+	for (std::vector<Player *>::iterator it = players->begin(); it != players->end(); it++) {
+		Player *p = *it;
 
-		if ((c = dynamic_cast<CPUControls *>(players->at(i)->controls))) {
+		objects->push_back(p);
+		followedObjects->push_back(p);
+
+		if ((c = dynamic_cast<CPUControls *>(p->controls))) {
 			c->game = this;
-			c->player = players->at(i);
+			c->player = p;
 		}
 	}
 
@@ -74,8 +76,8 @@ Game::~Game() {
 
 EventPass *Game::eventHandle(sf::Event event) {
 
-	for (unsigned int i = 0; i < players->size(); i++) {
-		players->at(i)->controls->eventHandle(event);
+	for (std::vector<Player *>::iterator it = players->begin(); it != players->end(); it++) {
+		(*it)->controls->eventHandle(event);
 	}
 
 	switch (event.type) {
@@ -102,14 +104,13 @@ EventPass *Game::eventHandle(sf::Event event) {
 
 EventPass *Game::update(float elapsedTime) {
 
-	for (unsigned int i = 0; i < objects->size(); i++) {
-		objects->at(i)->update(elapsedTime);
+	for (std::vector<Object *>::iterator it = objects->begin(); it != objects->end(); it++) {
+		(*it)->update(elapsedTime);
 	}
 
 	ParticleSystem::update(elapsedTime);
 
 	step(elapsedTime);
-
 
 
 	if (boll->connected) {
@@ -126,10 +127,12 @@ EventPass *Game::update(float elapsedTime) {
 			cutOffRope();
 		} else {
 
-			for (unsigned int i = 0; i < players->size(); i++) {
-				if (players->at(i) != pl) {
-					if (players->at(i)->dashing) {
-						if (lineIntersect(players->at(i)->lastPos, players->at(i)->pos, clumsy->pos, boll->pos)) {
+			for (std::vector<Player *>::iterator it = players->begin(); it != players->end(); it++) {
+				Player *p = *it;
+
+				if (p != pl) {
+					if (p->dashing) {
+						if (lineIntersect(p->lastPos, p->pos, clumsy->pos, boll->pos)) {
 
 							cutOffRope();
 						}
@@ -139,10 +142,10 @@ EventPass *Game::update(float elapsedTime) {
 		}
 	}
 
-	for (unsigned int i = 0; i < players->size(); i++) {
-		if (players->at(i)->health <= 0) {
-			Player *p = players->at(i);
+	for (std::vector<Player *>::iterator it = players->begin(); it != players->end(); it++) {
+		Player *p = *it;
 
+		if (p->health <= 0) {
 
 			if (boll->connected) {
 				Constraint *c = boll->constraint;
@@ -160,17 +163,17 @@ EventPass *Game::update(float elapsedTime) {
 			}
 
 
-			players->erase(players->begin()+i);
+			players->erase(it);
 
-			for (unsigned int j = 0; j < objects->size(); j++) {
-				if (objects->at(j) == p) {
-					objects->erase(objects->begin()+j);
+			for (std::vector<Object *>::iterator it2 = objects->begin(); it2 != objects->end(); it2++) {
+				if (*it2 == p) {
+					objects->erase(it2);
 					break;
 				}
 			}
-			for (unsigned int j = 0; j < followedObjects->size(); j++) {
-				if (followedObjects->at(j) == p) {
-					followedObjects->erase(followedObjects->begin()+j);
+			for (std::vector<Object *>::iterator it2 = followedObjects->begin(); it2 != followedObjects->end(); it2++) {
+				if (*it2 == p) {
+					followedObjects->erase(it2);
 					break;
 				}
 			}
@@ -179,11 +182,12 @@ EventPass *Game::update(float elapsedTime) {
 
 			if (players->size() <= 1) {
 				if (players->size() == 1) {
-					return new GameEnd(players->at(0)->sprite.getColor(), 4);
+					return new GameEnd(players->front()->sprite.getColor(), 4);
 				} else {
 					return new CharacterSelect();
 				}
 			}
+			break;
 		}
 	}
 
@@ -233,8 +237,8 @@ void Game::draw(RenderWindow *window) {
 
 		Vector2f smallest_most = followedObjects->at(0)->pos;
 		Vector2f largest_most = followedObjects->at(0)->pos;
-		for (unsigned int i = 1; i < followedObjects->size(); i++) {
-			Vector2f v = followedObjects->at(i)->pos;
+		for (std::vector<Object *>::iterator it = followedObjects->begin() + 1; it != followedObjects->end(); it++) {
+			Vector2f v = (*it)->pos;
 			if (v.x > largest_most.x) {
 				largest_most.x = v.x;
 			} else if (v.x < smallest_most.x) {
@@ -289,8 +293,8 @@ void Game::draw(RenderWindow *window) {
 
 	ParticleSystem::draw(window);
 
-	for (unsigned int i = 0; i < objects->size(); i++) {
-		objects->at(i)->draw(window);
+	for (std::vector<Object *>::iterator it = objects->begin(); it != objects->end(); it++) {
+		(*it)->draw(window);
 	}
 
 
@@ -326,18 +330,16 @@ void Game::draw(RenderWindow *window) {
 		outline.setPosition(offset - border);
 		outline.setFillColor(Color(0, 0, 0, 100));
 
-		for (unsigned int i = 0; i < players->size(); i++) {
+		for (std::vector<Player *>::iterator it = players->begin(); it != players->end(); it++) {
+			Player *p = *it;
 
 			window->draw(outline);
 
-			if (players->at(i)->health > 0.0f) {
-
-				Color color(players->at(i)->sprite.getColor());
-				color.a = 200;
-				healthBar.setFillColor(color);
-				healthBar.setScale(Vector2f(players->at(i)->health, 1.0f));
-				window->draw(healthBar);
-			}
+			Color color(p->sprite.getColor());
+			color.a = 200;
+			healthBar.setFillColor(color);
+			healthBar.setScale(Vector2f(p->health, 1.0f));
+			window->draw(healthBar);
 
 			outline.move(Vector2f(0, size.y + space));
 			healthBar.move(Vector2f(0, size.y + space));
@@ -359,9 +361,10 @@ void Game::cutOffRope() {
 		o = c->a;
 	}
 
-	for (unsigned int i = 0; i < constraints->size(); i++) {
-		if (c == constraints->at(i)) {
-			constraints->erase(constraints->begin() + i);
+	for (std::vector<Constraint *>::iterator it = constraints->begin(); it != constraints->end(); it++) {
+		if (c == *it) {
+			constraints->erase(it);
+			break;
 		}
 	}
 

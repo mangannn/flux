@@ -52,16 +52,20 @@ bool Physics::can_collide(Object *a, Object *b) {
 }
 
 void Physics::handle_collisions(float elapsedTime) {
-	for (unsigned int i = 0; i < objects->size(); i++) {
 
-		Object *a = objects->at(i);
+	std::vector<Object *>::iterator it_a, it_b;
+
+	for (it_a = objects->begin(); it_a != objects->end(); it_a++) {
+
+		Object *a = *it_a;
 
 		// check collisions with all after object a
-		for (unsigned int j = i + 1; j < objects->size(); j++) {
 
-			Object *b = objects->at(j);
+		for (it_b = it_a + 1; it_b != objects->end(); it_b++) {
 
-			if (can_collide(a, b)) {
+			Object *b = *it_b;
+
+			//if (can_collide(a, b)) {
 
 				Vector2f next_a = a->pos + (a->vel * elapsedTime);
 				Vector2f next_b = b->pos + (b->vel * elapsedTime);
@@ -115,7 +119,7 @@ void Physics::handle_collisions(float elapsedTime) {
 						//cout << " -> " << ((size(a->vel) * a->mass) + (size(b->vel) * b->mass)) << endl;
 					}
 				}
-			}
+			//}
 		}
 
 		world->collision(a, elapsedTime);
@@ -123,15 +127,15 @@ void Physics::handle_collisions(float elapsedTime) {
 }
 
 void Physics::solve_constraints() {
-	for (unsigned int i = 0; i < constraints->size(); i++) {
-		constraints->at(i)->solve();
+	for (std::vector<Constraint *>::iterator it = constraints->begin(); it != constraints->end(); it++) {
+		(*it)->solve();
 	}
 }
 
 void Physics::update_positions(float elapsedTime) {
 
-	for (unsigned int i = 0; i < objects->size(); i++) {
-		Object *a = objects->at(i);
+	for (std::vector<Object *>::iterator it = objects->begin(); it < objects->end(); it++) {
+		Object *a = *it;
 
 		// update positions
 		a->pos += (a->vel * elapsedTime);

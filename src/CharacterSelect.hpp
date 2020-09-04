@@ -27,11 +27,10 @@ private:
 
 	sf::Sprite characterSprite;
 	sf::Text text;
-	sf::Color backgroundColor;
 
 	float timer;
 
-	std::vector<PlayerDummy *> *playerDummys;
+	std::vector<PlayerDummy> playerDummys;
 
 	sf::Event::EventType catchEvent;
 	int catchIndex;
